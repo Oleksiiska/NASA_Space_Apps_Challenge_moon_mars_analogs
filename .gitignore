@@ -1,0 +1,34 @@
+# Raw downloads and intermediate files are not committed: they are rebuilt by
+# `python -m analog_finder fetch ...` (see README.md). Only the small Natural Earth
+# land mask stays in the repository so that the grid can be rebuilt offline.
+data/raw/**
+!data/raw/**/
+!data/raw/**/.gitkeep
+!data/raw/earth/naturalearth/*.geojson
+data/interim/**
+!data/interim/.gitkeep
+*.part
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Earthdata Login: never commit credentials
+.netrc
+_netrc
+.env
+
+# Web app
+node_modules/
+dist/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.dodsrc

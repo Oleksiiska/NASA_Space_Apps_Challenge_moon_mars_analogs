@@ -1,0 +1,96 @@
+{
+  "about": "What a terrestrial analog cannot reproduce. Shown next to every candidate, never mixed into the similarity score.",
+  "status": "Reference values; check each number against its source before quoting it in the submission.",
+  "sources": {
+    "fact_sheets": "NASA Planetary Fact Sheets (Earth, Moon, Mars), NSSDCA",
+    "mars_radiation": "Hassler, D. M., et al. (2014). Mars' surface radiation environment measured with the Mars Science Laboratory's Curiosity rover. Science, 343, 1244797.",
+    "moon_radiation": "Zhang, S., et al. (2020). First measurements of the radiation dose on the lunar surface. Science Advances, 6, eaaz1334.",
+    "earth_radiation": "UNSCEAR 2008 Report: world average natural background dose."
+  },
+  "quantities": [
+    {
+      "id": "gravity",
+      "name": "Surface gravity",
+      "name_uk": "Сила тяжіння на поверхні",
+      "unit": "m/s^2",
+      "earth": 9.81, "moon": 1.62, "mars": 3.71,
+      "reproducible_on_earth": false,
+      "affects": ["rover traction", "soil mechanics", "walking in suits", "dust settling"],
+      "workaround": "Parabolic flights, suspension rigs, scaled mass models.",
+      "source": "fact_sheets"
+    },
+    {
+      "id": "pressure",
+      "name": "Surface pressure",
+      "name_uk": "Тиск на поверхні",
+      "unit": "Pa",
+      "earth": 101325, "moon": 3e-10, "mars": 636,
+      "note": "Mars varies with season between about 400 and 870 Pa; the Moon is a hard vacuum.",
+      "reproducible_on_earth": false,
+      "affects": ["thermal control", "lubricants", "dust behaviour", "ice sublimation"],
+      "workaround": "Vacuum and Mars-pressure chambers.",
+      "source": "fact_sheets"
+    },
+    {
+      "id": "day_length",
+      "name": "Length of the solar day",
+      "name_uk": "Тривалість сонячної доби",
+      "unit": "hours",
+      "earth": 24.0, "moon": 708.7, "mars": 24.66,
+      "note": "The lunar day lasts 29.53 Earth days: about two weeks of light and two weeks of darkness away from the poles.",
+      "reproducible_on_earth": false,
+      "affects": ["power and thermal cycles", "operations planning"],
+      "workaround": "Simulated schedules; polar day and night at high latitudes for long light or darkness.",
+      "source": "fact_sheets"
+    },
+    {
+      "id": "axial_tilt",
+      "name": "Tilt of the spin axis",
+      "name_uk": "Нахил осі обертання",
+      "unit": "deg",
+      "earth": 23.44, "moon": 1.54, "mars": 25.19,
+      "note": "Moon: tilt to the ecliptic. It is why the polar Sun stays within a few degrees of the horizon.",
+      "reproducible_on_earth": "partly",
+      "affects": ["illumination geometry", "permanent shadow"],
+      "workaround": "High-latitude sites in the season of low Sun (see the low-Sun layer).",
+      "source": "fact_sheets"
+    },
+    {
+      "id": "solar_irradiance",
+      "name": "Sunlight above the atmosphere",
+      "name_uk": "Сонячне випромінювання",
+      "unit": "W/m^2",
+      "earth": 1361, "moon": 1361, "mars": 586,
+      "reproducible_on_earth": "partly",
+      "affects": ["solar power", "thermal loads"],
+      "workaround": "Scale by the ratio; no atmosphere on the Moon means harsher light and darker shadows.",
+      "source": "fact_sheets"
+    },
+    {
+      "id": "radiation_dose",
+      "name": "Radiation dose equivalent on the surface",
+      "name_uk": "Доза радіації на поверхні",
+      "unit": "mSv/day",
+      "earth": 0.0066, "moon": 1.37, "mars": 0.64,
+      "note": "Earth: 2.4 mSv per year of natural background. Galactic cosmic rays only; solar particle events add more.",
+      "reproducible_on_earth": false,
+      "affects": ["crew health", "electronics"],
+      "workaround": "Accelerator beam tests, modelling.",
+      "source": ["earth_radiation", "moon_radiation", "mars_radiation"]
+    },
+    {
+      "id": "temperature",
+      "name": "Surface temperature",
+      "name_uk": "Температура поверхні",
+      "unit": "K",
+      "earth": {"mean": 288, "record_low": 184},
+      "moon": {"equator_range": [95, 390], "polar_cold_traps": "below 40"},
+      "mars": {"mean": 210, "typical_diurnal_range": [184, 242]},
+      "note": "Lunar cold traps: Diviner measurements in permanently shadowed craters. Compute the values of each target from the Diviner PRP file instead of quoting these.",
+      "reproducible_on_earth": "partly",
+      "affects": ["thermal control", "materials", "ice stability"],
+      "workaround": "Antarctic and Arctic sites for cold; thermal-vacuum chambers for cryogenic cases.",
+      "source": "fact_sheets"
+    }
+  ]
+}

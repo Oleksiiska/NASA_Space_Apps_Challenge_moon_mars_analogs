@@ -1,0 +1,1207 @@
+{
+ "type": "FeatureCollection",
+ "name": "known_analogs",
+ "note": "Generated from data/reference/known_analogs.csv; edit the CSV, not this file.",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.6318,
+     35.5822
+    ]
+   },
+   "properties": {
+    "id": "sp_crater",
+    "name": "S P Crater, San Francisco Volcanic Field",
+    "name_uk": "Кратер S P, вулканічне поле Сан-Франциско",
+    "country": "USA",
+    "world": "moon",
+    "tasks": [
+     "eva_geology",
+     "mobility"
+    ],
+    "kind": [
+     "volcanic"
+    ],
+    "validate": true,
+    "used_by": "NASA and USGS: JETT surface-walk simulations for Artemis III in the San Francisco Volcanic Field; astronaut training at the crater",
+    "coord_quality": "verified",
+    "coord_source": "https://en.wikipedia.org/wiki/S_P_Crater",
+    "use_source": "https://usgs.gov/centers/astrogeology-science-center/news/artemis-iii-mission-tests-san-francisco-volcanic-field",
+    "use_checked": true,
+    "notes": "The point is the cinder cone; the JETT test areas lie elsewhere in the same volcanic field."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -106.96472,
+     31.97194
+    ]
+   },
+   "properties": {
+    "id": "kilbourne_hole",
+    "name": "Kilbourne Hole, Potrillo Volcanic Field",
+    "name_uk": "Кілборн-Хоул, вулканічне поле Потрільо",
+    "country": "USA",
+    "world": "moon",
+    "tasks": [
+     "eva_geology"
+    ],
+    "kind": [
+     "volcanic"
+    ],
+    "validate": true,
+    "used_by": "NASA: geology training of Apollo crews in 1969-1971; instrument tests in 2017; Artemis training and tests in the Potrillo Volcanic Field",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Hunt%27s_Hole",
+    "use_source": "https://ntrs.nasa.gov/citations/20220013521",
+    "use_checked": true,
+    "notes": "Maar crater, 2.4 by 3.4 km."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.47,
+     37.06
+    ]
+   },
+   "properties": {
+    "id": "sw_nevada_vf",
+    "name": "Southwestern Nevada Volcanic Field",
+    "name_uk": "Вулканічне поле Південно-Західної Невади",
+    "country": "USA",
+    "world": "moon",
+    "tasks": [
+     "eva_geology"
+    ],
+    "kind": [
+     "volcanic"
+    ],
+    "validate": true,
+    "used_by": "NASA: Artemis training and tests",
+    "coord_quality": "approx",
+    "coord_source": "",
+    "use_source": "https://ntrs.nasa.gov/citations/20220013521",
+    "use_checked": true,
+    "notes": "Approximate point, from memory: refine before detailed work."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -16.783,
+     65.033
+    ]
+   },
+   "properties": {
+    "id": "askja",
+    "name": "Askja, Icelandic highlands",
+    "name_uk": "Аск'я, нагір'я Ісландії",
+    "country": "Iceland",
+    "world": "moon",
+    "tasks": [
+     "eva_geology",
+     "mobility"
+    ],
+    "kind": [
+     "volcanic"
+    ],
+    "validate": true,
+    "used_by": "NASA: geology training in the Apollo programme; Artemis training and tests in the Icelandic highlands",
+    "coord_quality": "verified",
+    "coord_source": "https://en.wikipedia.org/wiki/Askja",
+    "use_source": "https://ntrs.nasa.gov/citations/20220013521",
+    "use_checked": true,
+    "notes": "Caldera at about 1,500 m."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -111.02278,
+     35.0275
+    ]
+   },
+   "properties": {
+    "id": "meteor_crater",
+    "name": "Meteor (Barringer) Crater",
+    "name_uk": "Аризонський метеоритний кратер (Беррінджер)",
+    "country": "USA",
+    "world": "both",
+    "tasks": [
+     "eva_geology"
+    ],
+    "kind": [
+     "impact"
+    ],
+    "validate": true,
+    "used_by": "NASA: Apollo crews in the 1960s; field methods and geologic mapping for Artemis crews",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/List_of_impact_structures_on_Earth",
+    "use_source": "https://ntrs.nasa.gov/api/citations/20250004946/downloads/NAS_Nonpolar_28May2025_training_Evans.pdf",
+    "use_checked": true,
+    "notes": "1.2 km wide, far smaller than a 0.5 degree cell: use it in the detail view."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -105.7,
+     36.6
+    ]
+   },
+   "properties": {
+    "id": "rio_grande_del_norte",
+    "name": "Rio Grande del Norte (Rio Grande Gorge)",
+    "name_uk": "Ріо-Гранде-дель-Норте (ущелина Ріо-Гранде)",
+    "country": "USA",
+    "world": "moon",
+    "tasks": [
+     "eva_geology"
+    ],
+    "kind": [
+     "volcanic"
+    ],
+    "validate": true,
+    "used_by": "NASA: field methods and geologic mapping for Artemis crews",
+    "coord_quality": "approx",
+    "coord_source": "",
+    "use_source": "https://ntrs.nasa.gov/api/citations/20250004946/downloads/NAS_Nonpolar_28May2025_training_Evans.pdf",
+    "use_checked": true,
+    "notes": "Approximate point, from memory: refine before detailed work."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -112.1,
+     36.1
+    ]
+   },
+   "properties": {
+    "id": "grand_canyon",
+    "name": "Grand Canyon",
+    "name_uk": "Великий каньйон",
+    "country": "USA",
+    "world": "moon",
+    "tasks": [
+     "eva_geology"
+    ],
+    "kind": [
+     "field_school"
+    ],
+    "validate": false,
+    "used_by": "NASA: field methods and geologic mapping for Artemis crews",
+    "coord_quality": "approx",
+    "coord_source": "",
+    "use_source": "https://ntrs.nasa.gov/api/citations/20250004946/downloads/NAS_Nonpolar_28May2025_training_Evans.pdf",
+    "use_checked": true,
+    "notes": "A place to teach field methods, not a landscape analog, so it is left out of validation. Approximate point, from memory: refine before detailed work."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     10.567,
+     48.883
+    ]
+   },
+   "properties": {
+    "id": "ries",
+    "name": "Noerdlinger Ries",
+    "name_uk": "Нердлінгенський Ріс",
+    "country": "Germany",
+    "world": "moon",
+    "tasks": [
+     "eva_geology"
+    ],
+    "kind": [
+     "impact"
+    ],
+    "validate": true,
+    "used_by": "ESA PANGAEA astronaut geology course (to confirm)",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/List_of_impact_structures_on_Earth",
+    "use_source": "https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/CAVES_and_PANGAEA/What_is_PANGAEA",
+    "use_checked": false,
+    "notes": "24 km impact structure."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -63.3,
+     55.883
+    ]
+   },
+   "properties": {
+    "id": "mistastin",
+    "name": "Mistastin (Kamestastin) impact structure",
+    "name_uk": "Імпактна структура Містастін (Каместастін)",
+    "country": "Canada",
+    "world": "moon",
+    "tasks": [
+     "eva_geology"
+    ],
+    "kind": [
+     "impact"
+    ],
+    "validate": true,
+    "used_by": "CSA: lunar geology training in Canada, 2023 (to confirm)",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/List_of_impact_structures_on_Earth",
+    "use_source": "https://asc-csa.gc.ca/eng/blog/2023/09/19",
+    "use_checked": false,
+    "notes": "28 km structure in Labrador. Anorthosite target rock, the main rock of the lunar highlands (from memory)."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -81.183333,
+     46.6
+    ]
+   },
+   "properties": {
+    "id": "sudbury",
+    "name": "Sudbury Basin",
+    "name_uk": "Садбері",
+    "country": "Canada",
+    "world": "both",
+    "tasks": [
+     "eva_geology"
+    ],
+    "kind": [
+     "impact"
+    ],
+    "validate": true,
+    "used_by": "Listed as a Moon and Mars analogue for its impact rocks; the source names no users",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -89.666667,
+     75.383333
+    ]
+   },
+   "properties": {
+    "id": "haughton",
+    "name": "Haughton impact structure, Devon Island",
+    "name_uk": "Кратер Хоутон, острів Девон",
+    "country": "Canada",
+    "world": "both",
+    "tasks": [
+     "eva_geology",
+     "mobility",
+     "isru_ice",
+     "low_sun_ops"
+    ],
+    "kind": [
+     "impact",
+     "polar_desert"
+    ],
+    "validate": true,
+    "used_by": "NASA Haughton-Mars Project since 1997; named as an example in the challenge statement",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/List_of_impact_structures_on_Earth",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": "23 km structure in a polar desert."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     162.516667,
+     -77.466667
+    ]
+   },
+   "properties": {
+    "id": "mcmurdo_dry_valleys",
+    "name": "McMurdo Dry Valleys",
+    "name_uk": "Сухі долини Мак-Мердо",
+    "country": "Antarctica",
+    "world": "both",
+    "tasks": [
+     "isru_ice",
+     "biosignatures",
+     "low_sun_ops",
+     "mobility"
+    ],
+    "kind": [
+     "polar_desert"
+    ],
+    "validate": true,
+    "used_by": "NASA test ground since the Viking programme; inflatable habitat test in 2008-2009",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://en.wikipedia.org/wiki/Dry_Valleys",
+    "use_checked": true,
+    "notes": "About 4,500 km2. Mean annual valley-floor temperature from -14.7 to -29.6 C; about 100 mm of precipitation a year, as snow."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     123.558,
+     -75.1
+    ]
+   },
+   "properties": {
+    "id": "concordia",
+    "name": "Concordia Station, Dome C",
+    "name_uk": "Станція «Конкордія», Купол C",
+    "country": "Antarctica",
+    "world": "both",
+    "tasks": [
+     "low_sun_ops"
+    ],
+    "kind": [
+     "ice_sheet",
+     "habitat"
+    ],
+    "validate": true,
+    "used_by": "Franco-Italian station used to prepare long-duration missions: extreme cold and isolation",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     16.0,
+     78.0
+    ]
+   },
+   "properties": {
+    "id": "svalbard",
+    "name": "Svalbard (AMASE sites)",
+    "name_uk": "Шпіцберген (полігони AMASE)",
+    "country": "Norway",
+    "world": "both",
+    "tasks": [
+     "isru_ice",
+     "biosignatures",
+     "low_sun_ops",
+     "eva_geology"
+    ],
+    "kind": [
+     "polar_desert",
+     "volcanic"
+    ],
+    "validate": true,
+    "used_by": "NASA AMASE expeditions since 2003",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": "Archipelago-level point from the source: pick the actual field site before detailed work."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -50.71,
+     67.01
+    ]
+   },
+   "properties": {
+    "id": "kangerlussuaq",
+    "name": "Kangerlussuaq",
+    "name_uk": "Кангерлуссуак",
+    "country": "Greenland",
+    "world": "mars",
+    "tasks": [
+     "isru_ice",
+     "biosignatures",
+     "low_sun_ops"
+    ],
+    "kind": [
+     "polar_desert"
+    ],
+    "validate": true,
+    "used_by": "Europlanet field analogue for instrument tests (Mars and icy moons)",
+    "coord_quality": "approx",
+    "coord_source": "",
+    "use_source": "https://europlanet-society.org/?p=8693",
+    "use_checked": true,
+    "notes": "Approximate point, from memory: refine before detailed work."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -20.7144,
+     64.7869
+    ]
+   },
+   "properties": {
+    "id": "chill_ice_lava_tube",
+    "name": "CHILL-ICE lava tube site",
+    "name_uk": "Лавова труба CHILL-ICE",
+    "country": "Iceland",
+    "world": "both",
+    "tasks": [
+     "caves"
+    ],
+    "kind": [
+     "lava_tube"
+    ],
+    "validate": true,
+    "used_by": "CHILL-ICE analogue missions: human-robot cooperation in a lava tube",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -155.487224,
+     19.602091
+    ]
+   },
+   "properties": {
+    "id": "hi_seas",
+    "name": "HI-SEAS, Mauna Loa",
+    "name_uk": "HI-SEAS, Мауна-Лоа",
+    "country": "USA",
+    "world": "both",
+    "tasks": [
+     "eva_geology",
+     "mobility"
+    ],
+    "kind": [
+     "volcanic",
+     "habitat"
+    ],
+    "validate": true,
+    "used_by": "Long-duration crew and robotic tests; run by the International Moonbase Alliance",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -155.291944,
+     19.425
+    ]
+   },
+   "properties": {
+    "id": "kilauea",
+    "name": "Kilauea",
+    "name_uk": "Кілауеа",
+    "country": "USA",
+    "world": "both",
+    "tasks": [
+     "eva_geology",
+     "mobility"
+    ],
+    "kind": [
+     "volcanic"
+    ],
+    "validate": true,
+    "used_by": "Basalt volcanic terrain; NASA tested technologies at nearby Mauna Kea",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -113.52,
+     43.42
+    ]
+   },
+   "properties": {
+    "id": "craters_of_the_moon",
+    "name": "Craters of the Moon",
+    "name_uk": "Кратери Місяця (Айдахо)",
+    "country": "USA",
+    "world": "both",
+    "tasks": [
+     "eva_geology",
+     "caves",
+     "mobility"
+    ],
+    "kind": [
+     "volcanic",
+     "lava_tube"
+    ],
+    "validate": true,
+    "used_by": "Apollo astronauts studied volcanic geology here in 1969; later teams tested lava-tube detection and simulated Mars missions",
+    "coord_quality": "approx",
+    "coord_source": "",
+    "use_source": "https://www.nps.gov/crmo/planyourvisit/scientific-secrets.htm",
+    "use_checked": true,
+    "notes": "Approximate point, from memory: refine before detailed work."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -13.79333,
+     28.99417
+    ]
+   },
+   "properties": {
+    "id": "lanzarote_timanfaya",
+    "name": "Timanfaya, Lanzarote",
+    "name_uk": "Тіманфая, Лансароте",
+    "country": "Spain",
+    "world": "both",
+    "tasks": [
+     "eva_geology",
+     "caves"
+    ],
+    "kind": [
+     "volcanic"
+    ],
+    "validate": true,
+    "used_by": "ESA PANGAEA astronaut geology course (to confirm)",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Timanfaya",
+    "use_source": "https://www.esa.int/Science_Exploration/Human_and_Robotic_Exploration/CAVES_and_PANGAEA/What_is_PANGAEA",
+    "use_checked": false,
+    "notes": "National park of 51 km2. The lava tube used for cave work lies in the north of the island (from memory)."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -16.616,
+     28.263
+    ]
+   },
+   "properties": {
+    "id": "teide",
+    "name": "Teide National Park, Tenerife",
+    "name_uk": "Національний парк Тейде, Тенерифе",
+    "country": "Spain",
+    "world": "both",
+    "tasks": [
+     "eva_geology",
+     "mobility"
+    ],
+    "kind": [
+     "volcanic"
+    ],
+    "validate": true,
+    "used_by": "Listed as a Moon and Mars analogue (basalt and phonolite); the source names no users",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     15.0,
+     37.745
+    ]
+   },
+   "properties": {
+    "id": "etna",
+    "name": "Mount Etna",
+    "name_uk": "Етна",
+    "country": "Italy",
+    "world": "both",
+    "tasks": [
+     "mobility",
+     "eva_geology"
+    ],
+    "kind": [
+     "volcanic"
+    ],
+    "validate": true,
+    "used_by": "ESA and DLR rover tests on fresh volcanic soils and lava flows",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": "Centre of the box given by the source (37.73-37.76 N, 14.99-15.01 E)."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -57.752778,
+     49.621667
+    ]
+   },
+   "properties": {
+    "id": "gros_morne",
+    "name": "Gros Morne National Park",
+    "name_uk": "Національний парк Грос-Морн",
+    "country": "Canada",
+    "world": "both",
+    "tasks": [
+     "eva_geology"
+    ],
+    "kind": [
+     "ophiolite"
+    ],
+    "validate": true,
+    "used_by": "Listed as a Moon and Mars analogue (basalt, gabbro, rough terrain); the source names no users",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     55.713751,
+     -21.243622
+    ]
+   },
+   "properties": {
+    "id": "lmas_reunion",
+    "name": "LMAS Sainte-Rose, Reunion",
+    "name_uk": "LMAS Сент-Роз, Реюньйон",
+    "country": "France",
+    "world": "moon",
+    "tasks": [
+     "eva_geology",
+     "mobility"
+    ],
+    "kind": [
+     "volcanic",
+     "habitat"
+    ],
+    "validate": true,
+    "used_by": "Listed as a Moon analogue (volcanic basalt near an active volcano); the source names no users",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -69.25,
+     -24.5
+    ]
+   },
+   "properties": {
+    "id": "atacama",
+    "name": "Atacama Desert",
+    "name_uk": "Пустеля Атакама",
+    "country": "Chile",
+    "world": "mars",
+    "tasks": [
+     "biosignatures",
+     "mobility"
+    ],
+    "kind": [
+     "hyperarid_desert"
+    ],
+    "validate": true,
+    "used_by": "NASA rover and drill tests; named as an example in the challenge statement",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": "Desert-level point from the source. The hyperarid core near Yungay is around 24.1 S, 69.9 W (from memory)."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -116.82,
+     36.24
+    ]
+   },
+   "properties": {
+    "id": "death_valley",
+    "name": "Death Valley",
+    "name_uk": "Долина Смерті",
+    "country": "USA",
+    "world": "mars",
+    "tasks": [
+     "mobility",
+     "eva_geology"
+    ],
+    "kind": [
+     "hot_desert"
+    ],
+    "validate": true,
+    "used_by": "Named as an example in the challenge statement",
+    "coord_quality": "approx",
+    "coord_source": "",
+    "use_source": "https://github.com/Delnr91/hackanasa",
+    "use_checked": true,
+    "notes": "Approximate point, from memory: refine before detailed work."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -110.791903,
+     38.406458
+    ]
+   },
+   "properties": {
+    "id": "mdrs",
+    "name": "Mars Desert Research Station, Utah",
+    "name_uk": "Марсіанська пустельна дослідницька станція, Юта",
+    "country": "USA",
+    "world": "mars",
+    "tasks": [
+     "mobility",
+     "eva_geology"
+    ],
+    "kind": [
+     "hot_desert",
+     "habitat"
+    ],
+    "validate": true,
+    "used_by": "Mars Society: habitat simulations and surface walks in Mars-like terrain",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -6.55,
+     37.72
+    ]
+   },
+   "properties": {
+    "id": "rio_tinto",
+    "name": "Rio Tinto (headwaters)",
+    "name_uk": "Ріо-Тінто (верхів'я)",
+    "country": "Spain",
+    "world": "mars",
+    "tasks": [
+     "biosignatures"
+    ],
+    "kind": [
+     "acid_river"
+    ],
+    "validate": true,
+    "used_by": "Europlanet field analogue: acidic river (pH about 2), interaction of rock, water and microbes",
+    "coord_quality": "approx",
+    "coord_source": "",
+    "use_source": "https://www.isa.au.dk/networks/euroPlanet/facilities/tna1/overview.html",
+    "use_checked": true,
+    "notes": "Approximate headwaters, from memory. The Wikipedia table gives 37.404, -6.336, on the lower course and in another grid cell: check before use."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -3.357825,
+     39.538238
+    ]
+   },
+   "properties": {
+    "id": "tirez",
+    "name": "Tirez lagoon",
+    "name_uk": "Лагуна Тірес",
+    "country": "Spain",
+    "world": "mars",
+    "tasks": [
+     "biosignatures"
+    ],
+    "kind": [
+     "evaporite"
+    ],
+    "validate": true,
+    "used_by": "Europlanet field analogue: hypersaline lagoon with sulfates and microbial communities",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://www.cordis.europa.eu/project/id/654208/reporting/es",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     40.2983,
+     14.2384
+    ]
+   },
+   "properties": {
+    "id": "dallol",
+    "name": "Dallol, Danakil Depression",
+    "name_uk": "Даллол, западина Данакіль",
+    "country": "Ethiopia",
+    "world": "mars",
+    "tasks": [
+     "biosignatures",
+     "eva_geology"
+    ],
+    "kind": [
+     "hydrothermal",
+     "evaporite"
+    ],
+    "validate": true,
+    "used_by": "Europlanet field analogue; proposed as a planetary field analogue of past hydrothermal activity on Mars (Cavalazzi et al. 2019, Astrobiology 19:553)",
+    "coord_quality": "verified",
+    "coord_source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6459281",
+    "use_source": "https://europlanet-society.org/?p=8693",
+    "use_checked": true,
+    "notes": "Weather station in the hydrothermal area (14 14 18.15 N, 40 17 53.76 E). The salt plain around it lies about 124 m below sea level."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     25.3,
+     -20.7
+    ]
+   },
+   "properties": {
+    "id": "makgadikgadi",
+    "name": "Makgadikgadi salt pans",
+    "name_uk": "Солончаки Макгадикгаді",
+    "country": "Botswana",
+    "world": "mars",
+    "tasks": [
+     "biosignatures",
+     "mobility"
+    ],
+    "kind": [
+     "evaporite"
+    ],
+    "validate": true,
+    "used_by": "Europlanet field analogue for instrument tests",
+    "coord_quality": "approx",
+    "coord_source": "",
+    "use_source": "https://europlanet-society.org/?p=8693",
+    "use_checked": true,
+    "notes": "Approximate point, from memory: refine before detailed work."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     91.45,
+     38.45
+    ]
+   },
+   "properties": {
+    "id": "qaidam",
+    "name": "Qaidam Basin (Dalangtan)",
+    "name_uk": "Басейн Цайдам (Далантань)",
+    "country": "China",
+    "world": "mars",
+    "tasks": [
+     "biosignatures",
+     "mobility"
+    ],
+    "kind": [
+     "hyperarid_desert",
+     "evaporite"
+    ],
+    "validate": true,
+    "used_by": "Europlanet field analogue",
+    "coord_quality": "approx",
+    "coord_source": "",
+    "use_source": "https://www.europlanet-society.org/?p=9087",
+    "use_checked": true,
+    "notes": "Approximate point, from memory: refine before detailed work."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     119.43,
+     -21.15
+    ]
+   },
+   "properties": {
+    "id": "pilbara",
+    "name": "Pilbara (Dresser Formation area)",
+    "name_uk": "Пілбара (район формації Дрессер)",
+    "country": "Australia",
+    "world": "mars",
+    "tasks": [
+     "biosignatures"
+    ],
+    "kind": [
+     "ancient_hydrothermal"
+    ],
+    "validate": true,
+    "used_by": "Field trip of the Mars 2020 and ExoMars science teams to ancient stromatolites, 2019 (to confirm)",
+    "coord_quality": "approx",
+    "coord_source": "",
+    "use_source": "https://www.jpl.nasa.gov/news/mars-scientists-investigate-ancient-life-in-australia/",
+    "use_checked": false,
+    "notes": "Approximate point, from memory: refine before detailed work."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -8.0,
+     31.63
+    ]
+   },
+   "properties": {
+    "id": "ibn_battuta",
+    "name": "Ibn Battuta Centre, Marrakech",
+    "name_uk": "Центр Ібн Баттута, Марракеш",
+    "country": "Morocco",
+    "world": "mars",
+    "tasks": [
+     "mobility"
+    ],
+    "kind": [
+     "field_centre"
+    ],
+    "validate": false,
+    "used_by": "Europlanet: base for desert field analogue sites in Morocco",
+    "coord_quality": "approx",
+    "coord_source": "",
+    "use_source": "https://www.cordis.europa.eu/project/id/654208/reporting/es",
+    "use_checked": true,
+    "notes": "City of the centre, from memory; its test sites are spread across the Moroccan desert."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -121.737442,
+     50.86502
+    ]
+   },
+   "properties": {
+    "id": "pavilion_lake",
+    "name": "Pavilion Lake",
+    "name_uk": "Озеро Павільйон",
+    "country": "Canada",
+    "world": "mars",
+    "tasks": [
+     "biosignatures"
+    ],
+    "kind": [
+     "lake",
+     "underwater"
+    ],
+    "validate": false,
+    "used_by": "Canada and USA: underwater surface-walk analogue and studies of microbialites",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": "Underwater site, not a landscape analog."
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -110.848042,
+     32.57949
+    ]
+   },
+   "properties": {
+    "id": "sam_biosphere2",
+    "name": "SAM at Biosphere 2, Oracle",
+    "name_uk": "SAM у «Біосфері-2», Оракл",
+    "country": "USA",
+    "world": "both",
+    "tasks": [],
+    "kind": [
+     "habitat"
+    ],
+    "validate": false,
+    "used_by": "Sealed habitat and Mars yard for suit, rover and drone tests",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -80.453611,
+     24.95
+    ]
+   },
+   "properties": {
+    "id": "neemo",
+    "name": "NEEMO (Aquarius), Key Largo",
+    "name_uk": "NEEMO («Акваріус»), Кі-Ларго",
+    "country": "USA",
+    "world": "moon",
+    "tasks": [],
+    "kind": [
+     "underwater",
+     "habitat"
+    ],
+    "validate": false,
+    "used_by": "NASA: underwater surface-walk and habitat isolation analogue",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     16.7261,
+     53.1745
+    ]
+   },
+   "properties": {
+    "id": "lunares",
+    "name": "LunAres Research Station",
+    "name_uk": "Дослідницька станція LunAres",
+    "country": "Poland",
+    "world": "both",
+    "tasks": [],
+    "kind": [
+     "habitat"
+    ],
+    "validate": false,
+    "used_by": "Habitat with an indoor area for simulated surface walks",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     5.330772,
+     43.263956
+    ]
+   },
+   "properties": {
+    "id": "marseille_bay",
+    "name": "Marseille Bay (COMEX)",
+    "name_uk": "Марсельська затока (COMEX)",
+    "country": "France",
+    "world": "both",
+    "tasks": [],
+    "kind": [
+     "underwater"
+    ],
+    "validate": false,
+    "used_by": "COMEX: underwater training for surface walks in reduced gravity",
+    "coord_quality": "verified",
+    "coord_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_source": "https://wiki.riteme.site/wiki/Terrestrial_analogue_site",
+    "use_checked": true,
+    "notes": ""
+   }
+  }
+ ]
+}

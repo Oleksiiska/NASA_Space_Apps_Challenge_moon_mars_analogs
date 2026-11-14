@@ -1,0 +1,503 @@
+<title>Moon–Mars Analog Finder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: map pinned on the left, controls and results scroll on the right; stacked on a phone.
+   Palette: cool slate neutrals, one teal-blue accent, a viridis ramp for scores (set in JS).
+   Type: Space Grotesk for names, IBM Plex Sans for text, IBM Plex Mono for numbers. */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#141a22; --muted:#566170; --line:#d8dde5; --accent:#0a6a86; --accent-ink:#ffffff;
+  --accent-soft:#dff0f5; --sea:#e4e9ef; --land:#c5ccd6; --good:#17743a; --warn:#a8530a; --bad:#a8261d; --pick:#141a22;
+  --display:"Space Grotesk","Segoe UI",system-ui,sans-serif; --text:"IBM Plex Sans","Segoe UI",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1117; --surface:#151b24; --ink:#e5e9ef; --muted:#93a0b0; --line:#273040; --accent:#52c3e0; --accent-ink:#06222b;
+  --accent-soft:#12303a; --sea:#0a0e14; --land:#262f3b; --good:#5ccf84; --warn:#f0a35c; --bad:#f08a80; --pick:#ffffff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1117; --surface:#151b24; --ink:#e5e9ef; --muted:#93a0b0; --line:#273040; --accent:#52c3e0; --accent-ink:#06222b;
+  --accent-soft:#12303a; --sea:#0a0e14; --land:#262f3b; --good:#5ccf84; --warn:#f0a35c; --bad:#f08a80; --pick:#ffffff; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--text);padding-block:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
+h1{font-size:22px;letter-spacing:-.01em}
+h2{font-size:15px}
+h3{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+p{margin:0}
+button,select,input{font:inherit;color:inherit}
+.wrap{max-width:1500px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:flex-end;justify-content:space-between;padding-block:16px 12px}
+header p{color:var(--muted);max-width:62ch}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:5px 12px;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.layout{display:grid;gap:16px 24px;grid-template-columns:minmax(0,1fr);grid-template-areas:"ctrl" "map" "res";padding-bottom:40px}
+@media (min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 400px;grid-template-areas:"map ctrl" "map res"}}
+#ctrl{grid-area:ctrl;min-width:0}#res{grid-area:res;min-width:0}
+#mapbox{grid-area:map;min-width:0;align-self:start;position:sticky;top:12px}
+@media (max-width:999px){#mapbox{position:static}#canvaswrap{height:clamp(240px,58vw,520px)}}
+.field{display:grid;gap:4px;margin-bottom:12px}
+.field label,.label{font-size:12px;color:var(--muted)}
+select{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.world{margin-bottom:12px}
+.sliders{display:grid;gap:8px;margin:8px 0 12px}
+.sl{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:2px 8px;align-items:center}
+.sl .nm{font-size:13px;min-width:0}
+.sl output{font-family:var(--mono);font-size:12px;text-align:right;color:var(--muted)}
+.sl input{grid-column:1/-1;width:100%;accent-color:var(--accent);margin:0}
+.sl.off{opacity:.55}
+.sl .tag{font-size:11px;color:var(--warn)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.checks{display:grid;gap:4px;margin:6px 0 4px}
+.checks label{display:flex;gap:8px;align-items:flex-start;font-size:13px}
+.checks input{margin-top:3px;accent-color:var(--accent)}
+.sub{color:var(--muted);font-size:12px}
+section.blk{border-top:1px solid var(--line);padding-top:14px;margin-top:16px}
+#canvaswrap{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--sea);height:clamp(340px,66vh,760px);touch-action:none}
+canvas{display:block;width:100%;height:100%;cursor:grab}
+canvas:active{cursor:grabbing}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:12px;white-space:nowrap;display:none;z-index:3}
+.zoom{position:absolute;right:8px;top:8px;display:grid;gap:4px;z-index:2}
+.zoom button{width:30px;height:30px;border:1px solid var(--line);background:var(--surface);border-radius:6px;cursor:pointer;font-size:16px;line-height:1}
+.empty{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;background:color-mix(in srgb,var(--sea) 80%,transparent);z-index:2}
+.empty div{max-width:42ch;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin-top:8px;font-size:12px;color:var(--muted)}
+.ramp{display:inline-block;width:140px;height:10px;border-radius:2px;vertical-align:middle;margin:0 6px}
+.dot{display:inline-block;width:9px;height:9px;transform:rotate(45deg);margin-right:6px;border:1.5px solid var(--ink)}
+.cands{list-style:none;margin:8px 0 0;padding:0;display:grid}
+.cands li button{width:100%;display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:baseline;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:7px 4px;cursor:pointer}
+.cands li button:hover,.cands li button[aria-current="true"]{background:var(--accent-soft)}
+.cands .rk{font-family:var(--mono);color:var(--muted);font-size:12px}
+.cands .sc{font-family:var(--mono);font-size:13px}
+.cands .nr{font-size:12px;color:var(--muted)}
+.bar{display:grid;grid-template-columns:120px minmax(0,1fr) 40px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
+.bar .nm{min-width:0}
+.bar .tr{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar .fl{height:100%;background:var(--accent)}
+.bar .vl{font-family:var(--mono);font-size:12px;text-align:right}
+.bar.na .nm,.bar.na .vl{color:var(--muted)}
+.big{font-family:var(--mono);font-size:28px;line-height:1.1}
+.kv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;font-size:13px}
+.kv span:nth-child(even){font-family:var(--mono);text-align:right}
+.chip{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:10px;padding:0 7px;white-space:nowrap}
+.chip.ok{color:var(--good);border-color:var(--good)}.chip.no{color:var(--bad);border-color:var(--bad)}.chip.part{color:var(--warn);border-color:var(--warn)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{text-align:left;font-weight:500;color:var(--muted);padding:4px 6px 4px 0;border-bottom:1px solid var(--line)}
+.tbl td{padding:5px 6px 5px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl td.n{font-family:var(--mono);overflow-wrap:anywhere}
+.tbl td:first-child{width:34%}
+.tblwrap{overflow-x:auto}
+ul.plain{margin:6px 0 0;padding-left:18px;display:grid;gap:4px}
+footer{padding:8px 0 28px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);max-width:90ch}
+.loading{padding:40px 0;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.fl{transition:width .2s}}
+</style>
+
+<div class="wrap">
+<header>
+  <div>
+    <h1 data-i="title">Moon–Mars Analog Finder</h1>
+    <p data-i="sub">Where on Earth are the conditions of a lunar or Martian site closest? Pick a target and a task, weigh the criteria, and see which 55 km cells of the Earth match, and what they cannot reproduce.</p>
+  </div>
+  <div class="seg" role="group" aria-label="Language"><button id="l-en" aria-pressed="true">EN</button><button id="l-uk" aria-pressed="false">УК</button></div>
+</header>
+
+<div class="layout">
+  <div id="ctrl">
+    <div class="world seg" role="group" aria-label="World"><button id="w-moon" aria-pressed="true" data-i="moon">Moon</button><button id="w-mars" aria-pressed="false" data-i="mars">Mars</button></div>
+    <div class="field"><label for="target" data-i="target">Target to reproduce</label><select id="target"></select></div>
+    <div class="field"><label for="task" data-i="task">Test task</label><select id="task"></select></div>
+    <div class="row"><h3 data-i="weights">Criteria weights</h3><button class="btn" id="reset" data-i="reset">Reset</button></div>
+    <div class="sliders" id="sliders"></div>
+    <h3 data-i="filters">Hard filters</h3>
+    <div class="checks" id="checks"></div>
+    <p class="sub" id="unchecked"></p>
+  </div>
+
+  <div id="mapbox">
+    <div id="canvaswrap">
+      <canvas id="map" role="img" aria-label="Map of Earth cells coloured by similarity score"></canvas>
+      <div class="zoom"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="zreset" aria-label="Reset view" style="font-size:12px">⌂</button></div>
+      <div class="tip" id="tip"></div>
+      <div class="empty" id="empty"><div id="emptytxt"></div></div>
+    </div>
+    <div class="legend">
+      <span><span data-i="lo">lower</span><span class="ramp" id="ramp"></span><span data-i="hi">higher similarity</span></span>
+      <span><span class="dot" style="background:var(--accent)"></span><span data-i="a_ok">known analog</span></span>
+      <label style="display:inline-flex;gap:6px;align-items:center"><input type="checkbox" id="showan" checked style="accent-color:var(--accent)"><span data-i="show_an">show known analogs</span></label>
+      <span id="count"></span>
+    </div>
+  </div>
+
+  <div id="res">
+    <div class="loading" id="loading" data-i="loading">Loading the grid of 88,883 land cells…</div>
+    <div id="results" hidden>
+      <div class="row" style="justify-content:space-between"><h2 data-i="cands">Best regions</h2><button class="btn" id="copy" data-i="copy">Copy list</button></div>
+      <p class="sub" data-i="cands_sub">Best cell of each region (regions at least 600 km apart).</p>
+      <ol class="cands" id="cands"></ol>
+      <textarea id="copybox" readonly hidden style="width:100%;height:120px;margin-top:8px;font-family:var(--mono);font-size:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px"></textarea>
+
+      <section class="blk" id="card"></section>
+      <section class="blk" id="gaps"></section>
+      <section class="blk" id="rel"></section>
+    </div>
+  </div>
+</div>
+
+<footer id="foot"></footer>
+</div>
+
+<script>
+const META=/*META*/null;
+const BLOB_B64=/*BLOB*/"";
+</script>
+<script>
+"use strict";
+const M = META;
+const I18N = {
+  en:{title:"Moon–Mars Analog Finder",sub:"Where on Earth are the conditions of a lunar or Martian site closest? Pick a target and a task, weigh the criteria, and see which 55 km cells of the Earth match, and what they cannot reproduce.",
+    moon:"Moon",mars:"Mars",target:"Target to reproduce",task:"Test task",weights:"Criteria weights",reset:"Reset",filters:"Hard filters",lo:"lower",hi:"higher similarity",a_ok:"known analog",show_an:"show known analogs",
+    loading:"Loading the grid of 88,883 land cells…",cands:"Best regions",copy:"Copy list",cands_sub:"Best cell of each region (regions at least 600 km apart).",nodata:"no data yet",unchecked:"Not checked (no data): ",
+    score:"Similarity",top:"Top",of_ranked:"of ranked cells",coverage:"Data coverage",cell:"Cell",facts:"What this cell is like",crit:"How the score is made",filt:"Filters",pass:"passes",fail:"fails",
+    near:"Known analogs within 1,000 km",none:"none",gaps:"What Earth cannot reproduce",gaps_sub:"Shown next to every candidate, never mixed into the score.",q:"Quantity",earth:"Earth",not_rep:"not reproducible",partly:"partly",workaround:"Workaround",
+    rel:"How far to trust this",rel_a:"Checked on known analog sites: a random site would score a median percentile of 0.5 and fall in the top 20 % one time in five.",
+    sites:"scored site–task pairs",median:"median percentile",top20:"in the top 20 %",weights_not_tuned:"Weights are set by hand from the task, not tuned on the known analogs.",
+    lim1:"A cell is about 55 km across; real analog sites are far smaller.",lim2:"Cold, thermal range and low Sun are ranked in the useful direction only; Earth cannot reach lunar or Martian values.",lim3:"No volcanic, impact or dryness layer yet: geology tasks lean on terrain, and caves cannot be ranked.",lim4:"Ground ice is a proxy from annual surface temperature and glaciers. Minerals exist only for bare ground between 55°N and 54.5°S.",
+    nocell:"No cell has enough data for this task yet: ",ranked:"cells ranked",pct:"percentile",lat:"lat",lon:"lon",reg:"Region around",
+    elev:"Mean elevation",relief:"Relief P5–P95",slope:"Mean slope",flat:"Share under 8° slope",tday:"Daytime surface, annual mean",tnight:"Coldest night month",swing:"Day–night swing",ndvi:"NDVI (greenness)",snow:"Snow-free months",lowsun:"Low-Sun hours per day (best month)",ice:"Glacier share",
+    foot:"Data: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Natural Earth. Pipeline and page were built with Claude (Anthropic) from the team’s plan; every number comes from the files in the repository. Check validation.md before quoting a figure.",
+    crit_names:{slope_hist:"Slope distribution",relief:"Relief",roughness:"Roughness",cold:"Cold",thermal_range:"Day–night swing",ground_ice:"Ground ice (proxy)",bare_ground:"Bare ground",composition:"Altered minerals",low_sun:"Low Sun",snow_free:"Snow-free months",dryness:"Dryness",volcanic:"Volcanic fields",impact:"Impact structures"},
+    crit_tip:{slope_hist:"Match of the slope-class shares at a 1 km step with the target",relief:"Match of the 5–95 % elevation range",roughness:"Match of the median local roughness",cold:"Colder annual mean surface temperature ranks higher",thermal_range:"Larger day–night swing ranks higher",ground_ice:"Permafrost proxy (mean surface temperature under 0 °C) or glaciers",bare_ground:"Low NDVI: ground visible",composition:"Clays, sulfates, carbonates and iron oxides (EMIT); Mars only",low_sun:"Hours per day with the Sun 0–5° above the horizon",snow_free:"Months with a snow decision and under 10 % snow"},
+    cons:{bare_ground_min:"Enough bare ground (NDVI ≤ 0.25)",flat_patch_exists:"A flat patch exists (≥ 5 % under 8°)",ground_ice_present:"Ground ice or glacier present",snow_free_window:"At least one snow-free month"},
+    nr:{road_access:"road access",safe_access:"safe access",protected_ecosystem_flag:"protected areas"},
+    role:{base_site:"base site"}},
+  uk:{title:"Пошук земних аналогів Місяця та Марса",sub:"Де на Землі умови найближчі до місця на Місяці чи Марсі? Оберіть ціль і задачу, налаштуйте ваги критеріїв і побачте, які клітинки 55 км збігаються і чого вони не відтворюють.",
+    moon:"Місяць",mars:"Марс",target:"Що відтворюємо",task:"Тестова задача",weights:"Ваги критеріїв",reset:"Скинути",filters:"Жорсткі фільтри",lo:"менше",hi:"більша схожість",a_ok:"відомий аналог",show_an:"показати відомі аналоги",
+    loading:"Завантажую сітку з 88 883 клітинок суходолу…",cands:"Найкращі регіони",copy:"Копіювати список",cands_sub:"Найкраща клітинка кожного регіону (регіони щонайменше за 600 км один від одного).",nodata:"даних ще немає",unchecked:"Не перевіряється (немає даних): ",
+    score:"Схожість",top:"Топ",of_ranked:"ранжованих клітинок",coverage:"Покриття даними",cell:"Клітинка",facts:"Яка ця клітинка",crit:"З чого складається оцінка",filt:"Фільтри",pass:"проходить",fail:"не проходить",
+    near:"Відомі аналоги за 1000 км",none:"немає",gaps:"Чого Земля не відтворює",gaps_sub:"Показано біля кожного кандидата й не змішується з оцінкою.",q:"Величина",earth:"Земля",not_rep:"не відтворюється",partly:"частково",workaround:"Обхід",
+    rel:"Наскільки цьому довіряти",rel_a:"Перевірено на відомих аналогах: випадкове місце мало б медіану перцентиля 0,5 і потрапляло б у топ-20 % раз із п’яти.",
+    sites:"оцінених пар місце–задача",median:"медіана перцентиля",top20:"у топ-20 %",weights_not_tuned:"Ваги задані вручну з опису задачі, а не підібрані за відомими аналогами.",
+    lim1:"Клітинка має близько 55 км, а справжні майданчики набагато менші.",lim2:"Холод, добовий діапазон і низьке Сонце ранжуються лише в потрібному напрямку: Земля не досягає місячних чи марсіанських значень.",lim3:"Шарів вулканів, імпактних структур і посушливості ще немає: геологічні задачі спираються на рельєф, а печери не ранжуються.",lim4:"Ґрунтовий лід — наближення за річною температурою поверхні та льодовиками. Мінерали є лише для голого ґрунту між 55° пн.ш. і 54,5° пд.ш.",
+    nocell:"Для цієї задачі ще немає клітинок з достатніми даними: ",ranked:"клітинок ранжовано",pct:"перцентиль",lat:"шир.",lon:"довг.",reg:"Регіон навколо",
+    elev:"Середня висота",relief:"Рельєф P5–P95",slope:"Середній схил",flat:"Частка зі схилом до 8°",tday:"Денна поверхня, річне середнє",tnight:"Найхолодніший нічний місяць",swing:"Різниця день–ніч",ndvi:"NDVI (зелень)",snow:"Місяців без снігу",lowsun:"Годин низького Сонця на добу (найкращий місяць)",ice:"Частка льодовиків",
+    foot:"Дані: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Natural Earth. Конвеєр і сторінку створено з Claude (Anthropic) за планом команди; кожне число береться з файлів репозиторію. Перед цитуванням цифр перегляньте validation.md.",
+    crit_names:{slope_hist:"Розподіл схилів",relief:"Рельєф",roughness:"Шорсткість",cold:"Холод",thermal_range:"Різниця день–ніч",ground_ice:"Ґрунтовий лід (наближення)",bare_ground:"Голий ґрунт",composition:"Змінені мінерали",low_sun:"Низьке Сонце",snow_free:"Місяці без снігу",dryness:"Посушливість",volcanic:"Вулканічні поля",impact:"Імпактні структури"},
+    crit_tip:{slope_hist:"Збіг часток класів схилу на кроці 1 км із ціллю",relief:"Збіг діапазону висот 5–95 %",roughness:"Збіг медіанної локальної шорсткості",cold:"Холодніша річна температура поверхні — вищий ранг",thermal_range:"Більша різниця день–ніч — вищий ранг",ground_ice:"Наближення мерзлоти (середня температура поверхні нижче 0 °C) або льодовики",bare_ground:"Низький NDVI: ґрунт видно",composition:"Глини, сульфати, карбонати й оксиди заліза (EMIT); лише Марс",low_sun:"Годин на добу із Сонцем 0–5° над горизонтом",snow_free:"Місяці зі снігом нижче 10 %"},
+    cons:{bare_ground_min:"Достатньо голого ґрунту (NDVI ≤ 0,25)",flat_patch_exists:"Є рівний майданчик (≥ 5 % зі схилом до 8°)",ground_ice_present:"Є ґрунтовий лід або льодовик",snow_free_window:"Принаймні один місяць без снігу"},
+    nr:{road_access:"доступ дорогами",safe_access:"безпечний доступ",protected_ecosystem_flag:"охоронні території"},
+    role:{base_site:"місце бази"}}
+};
+let lang="en";
+const T=k=>I18N[lang][k]??I18N.en[k]??k;
+const TN=(grp,k)=>(I18N[lang][grp]||{})[k]??(I18N.en[grp]||{})[k]??k;
+
+/* ---------- state ---------- */
+const S={world:"moon",target:null,task:"landing",weights:{},on:{},sel:-1,showAn:true,view:{cx:10,cy:20,s:1},fit:1};
+let D=null, ROWS=null, COLS=null, LUT=null;
+let SC=null, CV=null, SORTED=null, CANDS=[], RANGE=[0,1], NRANKED=0, CRIT={}, USED=[];
+const $=id=>document.getElementById(id);
+const taskById=id=>M.tasks.find(t=>t.id===id);
+const tname=t=>lang==="uk"?t.name_uk:t.name;
+const targName=t=>lang==="uk"?t.name_uk:t.name;
+
+/* ---------- data ---------- */
+async function load(){
+  const bin=atob(BLOB_B64), u8=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i);
+  const stream=new Blob([u8]).stream().pipeThrough(new DecompressionStream("gzip"));
+  D=new Uint8Array(await new Response(stream).arrayBuffer());
+  const n=M.n;
+  ROWS=new Uint16Array(D.slice(M.rc_offset,M.rc_offset+2*n).buffer);
+  COLS=new Uint16Array(D.slice(M.rc_offset+2*n,M.rc_offset+4*n).buffer);
+  LUT=new Int32Array(M.grid.n_lat*M.grid.n_lon).fill(-1);
+  for(let i=0;i<n;i++) LUT[ROWS[i]*M.grid.n_lon+COLS[i]]=i;
+  for(const c of M.criteria) CRIT[c.name+"|"+(c.target||"")]=c.offset;
+}
+const cellLat=i=>90-ROWS[i]*0.5-0.25, cellLon=i=>-180+COLS[i]*0.5+0.25;
+function raw(name,i){const r=M.raw.find(x=>x.name===name); const q=D[r.offset+i]; return q===255?NaN:r.min+q/254*(r.max-r.min)}
+
+/* ---------- scoring ---------- */
+function critOffset(name){
+  const o=CRIT[name+"|"+S.target]; if(o!==undefined) return o;
+  return CRIT[name+"|"]; // shared criteria
+}
+function available(name){
+  if(S.world==="moon"&&name==="composition") return false;
+  return critOffset(name)!==undefined;
+}
+function compute(){
+  const task=taskById(S.task), n=M.n;
+  const items=[]; let total=0;
+  for(const name of Object.keys(task.weights)){
+    const w=S.weights[name]??0; total+=w;
+    if(available(name)&&w>0) items.push({name,w,off:critOffset(name)});
+  }
+  USED=items.map(x=>x.name);
+  SC=new Float32Array(n).fill(NaN); CV=new Float32Array(n);
+  let mask=0;
+  for(const c of task.constraints||[]) if(S.on[c]&&M.constraint_bits[c]!==undefined) mask|=1<<M.constraint_bits[c];
+  const cOff=M.constraint_offset, minCov=M.min_coverage;
+  if(total>0) for(let i=0;i<n;i++){
+    let num=0,den=0;
+    for(let k=0;k<items.length;k++){const q=D[items[k].off+i]; if(q!==255){num+=items[k].w*q;den+=items[k].w}}
+    CV[i]=den/total;
+    if(den>0&&CV[i]>=minCov&&(D[cOff+i]&mask)===mask) SC[i]=num/den/254;
+  }
+  const ok=[]; for(let i=0;i<n;i++) if(SC[i]===SC[i]) ok.push(SC[i]);
+  SORTED=Float32Array.from(ok).sort(); NRANKED=SORTED.length;
+  RANGE=NRANKED?[SORTED[Math.floor(NRANKED*0.05)],SORTED[NRANKED-1]]:[0,1];
+  if(RANGE[1]-RANGE[0]<1e-6) RANGE[0]=RANGE[1]-1e-6;
+  pickCandidates();
+}
+function pctOf(v){ // share of ranked cells below v (ties count half)
+  if(!NRANKED) return NaN;
+  let lo=0,hi=NRANKED; while(lo<hi){const m=(lo+hi)>>1; if(SORTED[m]<v) lo=m+1; else hi=m;}
+  let a=lo; hi=NRANKED; while(a<hi){const m=(a+hi)>>1; if(SORTED[m]<=v) a=m+1; else hi=m;}
+  return (lo+a)/2/NRANKED;
+}
+function km(la1,lo1,la2,lo2){const r=Math.PI/180,dl=(lo2-lo1)*r,p1=la1*r,p2=la2*r;
+  const a=Math.sin((p2-p1)/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2; return 12742*Math.asin(Math.sqrt(a))}
+function pickCandidates(){
+  CANDS=[]; if(!NRANKED) return;
+  const idx=[]; for(let i=0;i<M.n;i++) if(SC[i]===SC[i]) idx.push(i);
+  idx.sort((a,b)=>SC[b]-SC[a]);
+  for(const i of idx){
+    const la=cellLat(i),lo=cellLon(i);
+    if(CANDS.every(j=>km(la,lo,cellLat(j),cellLon(j))>=600)) CANDS.push(i);
+    if(CANDS.length>=10) break;
+  }
+}
+
+/* ---------- colour ---------- */
+const STOPS=[[68,1,84],[59,82,139],[33,145,140],[94,201,98],[253,231,37]];
+const RAMP=new Array(256);
+for(let k=0;k<256;k++){const t=k/255*(STOPS.length-1),a=Math.min(Math.floor(t),STOPS.length-2),f=t-a;
+  RAMP[k]="rgb("+STOPS[a].map((v,j)=>Math.round(v+(STOPS[a+1][j]-v)*f)).join(",")+")"}
+let CSSV={};
+function readCss(){const cs=getComputedStyle(document.documentElement);
+  for(const k of ["--sea","--land","--ink","--accent","--pick","--surface","--line"]) CSSV[k]=cs.getPropertyValue(k).trim();}
+
+/* ---------- map ---------- */
+const cv=$("map"), ctx=cv.getContext("2d");
+let W=0,H=0,DPR=1;
+function resize(){
+  DPR=window.devicePixelRatio||1; const r=cv.getBoundingClientRect(); W=r.width; H=r.height;
+  cv.width=Math.max(1,Math.round(W*DPR)); cv.height=Math.max(1,Math.round(H*DPR));
+  S.fit=(window.innerWidth<1000)?W/360:Math.max(W/360,H/170); if(!S.view.touched){S.view.s=S.fit;S.view.cx=0;S.view.cy=18}
+  draw();
+}
+const X=lo=>(lo-S.view.cx)*S.view.s+W/2, Y=la=>(S.view.cy-la)*S.view.s+H/2;
+function clampView(){const v=S.view; v.s=Math.min(60,Math.max(S.fit,v.s));
+  const hw=W/2/v.s,hh=H/2/v.s; v.cx=Math.max(-180+Math.min(hw,180),Math.min(180-Math.min(hw,180),v.cx)); v.cy=Math.max(-90+Math.min(hh,90),Math.min(90-Math.min(hh,90),v.cy));}
+function draw(){
+  if(!D||!W) return; readCss();
+  ctx.setTransform(DPR,0,0,DPR,0,0); ctx.fillStyle=CSSV["--sea"]; ctx.fillRect(0,0,W,H);
+  const s=S.view.s, cw=0.5*s, pad=cw<1?0.6:0;
+  // graticule
+  ctx.strokeStyle=CSSV["--line"]; ctx.lineWidth=1; ctx.globalAlpha=.5; ctx.beginPath();
+  for(let lo=-180;lo<=180;lo+=30){const x=Math.round(X(lo))+.5; ctx.moveTo(x,0);ctx.lineTo(x,H)}
+  for(let la=-60;la<=60;la+=30){const y=Math.round(Y(la))+.5; ctx.moveTo(0,y);ctx.lineTo(W,y)}
+  ctx.stroke(); ctx.globalAlpha=1;
+  const inv=1/(RANGE[1]-RANGE[0]);
+  for(let i=0;i<M.n;i++){
+    const x=X(-180+COLS[i]*0.5), y=Y(90-ROWS[i]*0.5);
+    if(x<-cw||y<-cw||x>W||y>H+cw) continue;
+    const v=SC?SC[i]:NaN;
+    ctx.fillStyle=(v===v)?RAMP[Math.max(0,Math.min(255,Math.round((v-RANGE[0])*inv*255)))]:CSSV["--land"];
+    ctx.fillRect(x,y,cw+pad,cw+pad);
+  }
+  if(S.showAn){
+    for(const a of M.analogs){
+      const x=X(a.lon),y=Y(a.lat); if(x<0||y<0||x>W||y>H) continue;
+      ctx.save(); ctx.translate(x,y); ctx.rotate(Math.PI/4);
+      ctx.fillStyle=a.validate?CSSV["--accent"]:CSSV["--surface"]; ctx.strokeStyle=CSSV["--ink"]; ctx.lineWidth=1.5;
+      ctx.fillRect(-4,-4,8,8); ctx.strokeRect(-4,-4,8,8); ctx.restore();
+    }
+  }
+  CANDS.forEach((i,k)=>{const x=X(cellLon(i)),y=Y(cellLat(i)); ctx.beginPath(); ctx.arc(x,y,9,0,7); ctx.fillStyle=CSSV["--surface"]; ctx.fill();
+    ctx.strokeStyle=CSSV["--ink"]; ctx.lineWidth=1.5; ctx.stroke(); ctx.fillStyle=CSSV["--ink"]; ctx.font="600 10px "+getComputedStyle(document.body).fontFamily;
+    ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(String(k+1),x,y+.5)});
+  if(S.sel>=0){const x=X(-180+COLS[S.sel]*0.5),y=Y(90-ROWS[S.sel]*0.5); ctx.strokeStyle=CSSV["--pick"]; ctx.lineWidth=2.5; ctx.strokeRect(x-1,y-1,cw+2,cw+2)}
+}
+function cellAt(px,py){
+  const lo=S.view.cx+(px-W/2)/S.view.s, la=S.view.cy-(py-H/2)/S.view.s;
+  const r=Math.floor((90-la)/0.5), c=Math.floor((lo+180)/0.5);
+  if(r<0||r>=M.grid.n_lat||c<0||c>=M.grid.n_lon) return -1; return LUT[r*M.grid.n_lon+c];
+}
+function nearAnalog(px,py){let best=null,bd=100;
+  for(const a of M.analogs){const d=(X(a.lon)-px)**2+(Y(a.lat)-py)**2; if(d<bd){bd=d;best=a}} return best}
+const ptrs=new Map(); let moved=false,pinch0=0,down=null;
+cv.addEventListener("pointerdown",e=>{cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.offsetX,y:e.offsetY}); moved=false; down={x:e.offsetX,y:e.offsetY};
+  if(ptrs.size===2){const [a,b]=[...ptrs.values()]; pinch0=Math.hypot(a.x-b.x,a.y-b.y)}});
+cv.addEventListener("pointermove",e=>{
+  const p=ptrs.get(e.pointerId);
+  if(p){
+    if(ptrs.size===2){const q=ptrs.get(e.pointerId); q.x=e.offsetX;q.y=e.offsetY; const [a,b]=[...ptrs.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(pinch0>0){zoomAt((a.x+b.x)/2,(a.y+b.y)/2,d/pinch0); pinch0=d} moved=true; return}
+    const dx=e.offsetX-p.x, dy=e.offsetY-p.y; if(Math.abs(dx)+Math.abs(dy)>0){ if(Math.hypot(e.offsetX-down.x,e.offsetY-down.y)>4) moved=true;
+      if(moved){S.view.touched=true; S.view.cx-=dx/S.view.s; S.view.cy+=dy/S.view.s; clampView(); draw()} p.x=e.offsetX;p.y=e.offsetY}
+    $("tip").style.display="none"; return}
+  hover(e.offsetX,e.offsetY);
+});
+cv.addEventListener("pointerup",e=>{ptrs.delete(e.pointerId); if(!moved&&down){const a=S.showAn?nearAnalog(e.offsetX,e.offsetY):null; const i=cellAt(e.offsetX,e.offsetY);
+  if(i>=0||a){ if(i>=0) select(i);} } down=null; pinch0=0});
+cv.addEventListener("pointerleave",()=>{$("tip").style.display="none"});
+cv.addEventListener("wheel",e=>{e.preventDefault(); zoomAt(e.offsetX,e.offsetY,Math.exp(-e.deltaY*0.0015))},{passive:false});
+function zoomAt(px,py,f){const v=S.view; const lo=v.cx+(px-W/2)/v.s, la=v.cy-(py-H/2)/v.s; v.s=Math.min(60,Math.max(S.fit,v.s*f)); v.touched=true;
+  v.cx=lo-(px-W/2)/v.s; v.cy=la+(py-H/2)/v.s; clampView(); draw()}
+$("zin").onclick=()=>zoomAt(W/2,H/2,1.6); $("zout").onclick=()=>zoomAt(W/2,H/2,1/1.6);
+$("zreset").onclick=()=>{S.view.touched=false; resize()};
+function hover(px,py){
+  const tip=$("tip"), a=S.showAn?nearAnalog(px,py):null, i=cellAt(px,py);
+  let html="";
+  if(a){html="<b>"+(lang==="uk"?a.name_uk:a.name)+"</b> · "+a.country}
+  else if(i>=0){const v=SC[i]; html=T("lat")+" "+cellLat(i).toFixed(2)+", "+T("lon")+" "+cellLon(i).toFixed(2)+(v===v?" · "+(v*100).toFixed(0)+"%":"")}
+  if(!html){tip.style.display="none";return}
+  tip.innerHTML=html; tip.style.display="block";
+  const w=tip.offsetWidth; tip.style.left=Math.min(Math.max(4,px+12),W-w-4)+"px"; tip.style.top=Math.max(4,py-30)+"px";
+}
+
+/* ---------- UI: controls ---------- */
+function fillTargets(){
+  const sel=$("target"); sel.innerHTML="";
+  M.targets.filter(t=>t.world===S.world).sort((a,b)=>b.mvp-a.mvp).forEach(t=>{
+    const o=document.createElement("option"); o.value=t.id; o.textContent=targName(t)+(t.mvp?" ★":""); sel.appendChild(o)});
+  if(!M.targets.some(t=>t.id===S.target&&t.world===S.world)) S.target=sel.options[0].value; sel.value=S.target;
+}
+function fillTasks(){
+  const sel=$("task"); sel.innerHTML="";
+  M.tasks.filter(t=>t.worlds.includes(S.world)).forEach(t=>{const o=document.createElement("option"); o.value=t.id; o.textContent=tname(t); sel.appendChild(o)});
+  if(!M.tasks.some(t=>t.id===S.task&&t.worlds.includes(S.world))) S.task=sel.options[0].value; sel.value=S.task;
+}
+function resetWeights(){const t=taskById(S.task); S.weights={...t.weights}; S.on={}; for(const c of t.constraints||[]) S.on[c]=true}
+function fillSliders(){
+  const t=taskById(S.task), box=$("sliders"); box.innerHTML="";
+  for(const name of Object.keys(t.weights)){
+    const ok=available(name), d=document.createElement("div"); d.className="sl"+(ok?"":" off");
+    d.innerHTML='<span class="nm" title="'+(TN("crit_tip",name)===name?"":TN("crit_tip",name))+'">'+TN("crit_names",name)+(ok?"":' <span class="tag">'+T("nodata")+'</span>')+'</span><output id="o-'+name+'">'+Math.round((S.weights[name]??0)*100)+'</output>'+
+      '<input type="range" min="0" max="1" step="0.05" value="'+(S.weights[name]??0)+'" id="s-'+name+'" aria-label="'+TN("crit_names",name)+'" '+(ok?"":"disabled")+'>';
+    box.appendChild(d);
+    d.querySelector("input").addEventListener("input",e=>{S.weights[name]=+e.target.value; $("o-"+name).textContent=Math.round(S.weights[name]*100); refresh(false)});
+  }
+  const cb=$("checks"); cb.innerHTML=""; const nc=[];
+  for(const c of t.constraints||[]){
+    if(M.constraint_bits[c]===undefined){nc.push(TN("nr",c)); continue}
+    const l=document.createElement("label"); l.innerHTML='<input type="checkbox" id="c-'+c+'" '+(S.on[c]?"checked":"")+'><span>'+TN("cons",c)+'</span>'; cb.appendChild(l);
+    l.querySelector("input").addEventListener("change",e=>{S.on[c]=e.target.checked; refresh(false)});
+  }
+  $("unchecked").textContent=nc.length?T("unchecked")+nc.join(", "):"";
+}
+
+/* ---------- UI: results ---------- */
+function fmt(v){ if(typeof v!=="number") return String(v); const a=Math.abs(v); if(a!==0&&a<0.01) return v.toExponential(1); return v.toLocaleString(lang==="uk"?"uk-UA":"en-US",{maximumSignificantDigits:4}) }
+function nearbyAnalogs(i){const la=cellLat(i),lo=cellLon(i);
+  return M.analogs.map(a=>({a,d:km(la,lo,a.lat,a.lon)})).filter(x=>x.d<1000).sort((p,q)=>p.d-q.d).slice(0,4)}
+function renderCands(){
+  const ol=$("cands"); ol.innerHTML=""; const task=taskById(S.task);
+  $("count").textContent=NRANKED.toLocaleString()+" "+T("ranked");
+  const empty=$("empty");
+  if(!NRANKED){
+    const miss=Object.keys(task.weights).filter(n=>!available(n)).map(n=>TN("crit_names",n)).join(", ");
+    $("emptytxt").textContent=T("nocell")+miss; empty.style.display="flex";
+  } else empty.style.display="none";
+  CANDS.forEach((i,k)=>{
+    const li=document.createElement("li"), b=document.createElement("button"); b.setAttribute("aria-current",i===S.sel?"true":"false");
+    const near=nearbyAnalogs(i)[0];
+    b.innerHTML='<span class="rk">'+(k+1)+'</span><span>'+Math.abs(cellLat(i)).toFixed(1)+(cellLat(i)<0?"°S":"°N")+", "+Math.abs(cellLon(i)).toFixed(1)+(cellLon(i)<0?"°W":"°E")+
+      (near?'<br><span class="nr">'+(lang==="uk"?near.a.name_uk:near.a.name)+" · "+Math.round(near.d)+" km</span>":"")+'</span><span class="sc">'+(SC[i]*100).toFixed(0)+"%</span>";
+    b.onclick=()=>{select(i,true)}; li.appendChild(b); ol.appendChild(li);
+  });
+}
+function renderCard(){
+  const box=$("card"); const i=S.sel; if(i<0){box.innerHTML='<h2>'+T("cell")+'</h2><p class="sub">'+(lang==="uk"?"Клацніть клітинку на мапі або регіон у списку.":"Click a cell on the map or a region in the list.")+"</p>"; return}
+  const task=taskById(S.task), v=SC[i], la=cellLat(i), lo=cellLon(i);
+  const used=Object.keys(task.weights);
+  let h='<h2>'+T("cell")+" "+Math.abs(la).toFixed(2)+(la<0?"°S":"°N")+", "+Math.abs(lo).toFixed(2)+(lo<0?"°W":"°E")+'</h2>';
+  if(v===v){h+='<div class="row" style="margin:8px 0;gap:16px"><div><div class="label">'+T("score")+'</div><div class="big">'+(v*100).toFixed(0)+'%</div></div>'+
+    '<div><div class="label">'+T("top")+'</div><div class="big">'+Math.max(0.1,(1-pctOf(v))*100).toFixed(1)+'%</div><div class="sub">'+T("of_ranked")+'</div></div>'+
+    '<div><div class="label">'+T("coverage")+'</div><div class="big">'+Math.round(CV[i]*100)+'%</div></div></div>'}
+  else{h+='<p class="sub" style="margin:8px 0">'+(lang==="uk"?"Ця клітинка не ранжується: мало даних або не проходить фільтр.":"This cell is not ranked: too little data or a filter removes it.")+"</p>"}
+  h+='<h3 style="margin-top:12px">'+T("crit")+'</h3>';
+  for(const name of used){
+    const w=S.weights[name]??0, off=available(name)?critOffset(name):undefined, q=off!==undefined?D[off+i]:255;
+    h+='<div class="bar'+(q===255?" na":"")+'"><span class="nm">'+TN("crit_names",name)+' <span class="sub">'+Math.round(w*100)+'</span></span><span class="tr"><span class="fl" style="display:block;width:'+(q===255?0:q/254*100)+'%"></span></span><span class="vl">'+(q===255?"–":Math.round(q/254*100))+"</span></div>";
+  }
+  const bits=D[M.constraint_offset+i]; const chips=(task.constraints||[]).filter(c=>M.constraint_bits[c]!==undefined).map(c=>{const ok=(bits>>M.constraint_bits[c])&1;
+    return '<span class="chip '+(ok?"ok":"no")+'">'+TN("cons",c)+": "+(ok?T("pass"):T("fail"))+"</span>"});
+  if(chips.length) h+='<p style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">'+chips.join("")+"</p>";
+  const f=(n,d)=>{const x=raw(n,i); return x===x?x.toFixed(d):"–"};
+  h+='<h3 style="margin-top:14px">'+T("facts")+'</h3><div class="kv">'+
+    "<span>"+T("elev")+"</span><span>"+f("elev_mean_m",0)+" m</span>"+"<span>"+T("relief")+"</span><span>"+f("relief_m",0)+" m</span>"+
+    "<span>"+T("slope")+"</span><span>"+f("slope_mean_deg",1)+"°</span>"+"<span>"+T("flat")+"</span><span>"+(raw("slope_lt8",i)===raw("slope_lt8",i)?(raw("slope_lt8",i)*100).toFixed(0)+" %":"–")+"</span>"+
+    "<span>"+T("tday")+"</span><span>"+f("lst_day_mean_k",0)+" K</span>"+"<span>"+T("tnight")+"</span><span>"+f("lst_night_min_k",0)+" K</span>"+
+    "<span>"+T("swing")+"</span><span>"+f("lst_diurnal_k",0)+" K</span>"+"<span>"+T("ndvi")+"</span><span>"+f("ndvi_mean",2)+"</span>"+
+    "<span>"+T("snow")+"</span><span>"+f("snow_free_months",0)+" / 12</span>"+"<span>"+T("lowsun")+"</span><span>"+f("lowsun_best_h",1)+" h</span>"+
+    "<span>"+T("ice")+"</span><span>"+(raw("ice_frac",i)===raw("ice_frac",i)?(raw("ice_frac",i)*100).toFixed(0)+" %":"–")+"</span></div>";
+  const near=nearbyAnalogs(i);
+  h+='<h3 style="margin-top:14px">'+T("near")+'</h3>'+(near.length?'<ul class="plain">'+near.map(x=>"<li><b>"+(lang==="uk"?x.a.name_uk:x.a.name)+"</b>, "+x.a.country+" · "+Math.round(x.d)+" km"+(x.a.validate?"":' <span class="chip">approx.</span>')+"</li>").join("")+"</ul>":'<p class="sub">'+T("none")+"</p>");
+  box.innerHTML=h;
+}
+function renderGaps(){
+  const w=S.world; let h='<h2>'+T("gaps")+"</h2><p class=\"sub\">"+T("gaps_sub")+"</p>";
+  h+='<div class="tblwrap"><table class="tbl"><thead><tr><th>'+T("q")+"</th><th>"+T("earth")+"</th><th>"+(w==="moon"?T("moon"):T("mars"))+"</th><th></th></tr></thead><tbody>";
+  for(const q of M.gaps){
+    const r=q.reproducible; const chip=r===false?'<span class="chip no">'+T("not_rep")+"</span>":'<span class="chip part">'+T("partly")+"</span>";
+    h+="<tr><td>"+(lang==="uk"?q.name_uk:q.name)+(q.unit?' <span class="sub">'+q.unit+"</span>":"")+'</td><td class="n">'+fmt(q.values.earth)+'</td><td class="n">'+fmt(q.values[w])+"</td><td>"+chip+"</td></tr>";
+    if(q.workaround) h+='<tr><td colspan="4" class="sub" style="padding-top:0">'+T("workaround")+": "+q.workaround+"</td></tr>";
+  }
+  $("gaps").innerHTML=h+"</tbody></table></div>";
+}
+function renderRel(){
+  const v=M.validation.all.scores_only, bt=M.validation.by_task[S.task];
+  let h='<h2>'+T("rel")+'</h2><p class="sub" style="margin:4px 0 8px">'+T("rel_a")+'</p><div class="kv">'+
+   "<span>"+T("sites")+"</span><span>"+v.scored+" / "+v.pairs+"</span><span>"+T("median")+"</span><span>"+v.median_percentile.toFixed(2)+"</span><span>"+T("top20")+"</span><span>"+Math.round(v.share_top20*100)+" %</span></div>";
+  if(bt) h+='<p class="sub" style="margin-top:8px">'+tname(taskById(S.task))+": "+bt.scores_only.scored+" "+T("sites")+", "+T("median")+" "+bt.scores_only.median_percentile.toFixed(2)+", "+T("top20")+" "+Math.round(bt.scores_only.share_top20*100)+" %.</p>";
+  h+='<ul class="plain sub"><li>'+T("weights_not_tuned")+"</li><li>"+T("lim1")+"</li><li>"+T("lim2")+"</li><li>"+T("lim3")+"</li><li>"+T("lim4")+"</li></ul>";
+  $("rel").innerHTML=h;
+}
+function select(i,center){
+  S.sel=i;
+  if(center){S.view.touched=true; S.view.s=Math.max(S.view.s,Math.min(S.fit*4,12)); S.view.cx=cellLon(i); S.view.cy=cellLat(i); clampView()}
+  renderCard(); renderCands(); draw();
+}
+function applyStatic(){
+  document.querySelectorAll("[data-i]").forEach(e=>{e.textContent=T(e.dataset.i)});
+  document.documentElement.lang=lang; $("foot").textContent=T("foot");
+  $("l-en").setAttribute("aria-pressed",lang==="en"); $("l-uk").setAttribute("aria-pressed",lang==="uk");
+  $("w-moon").setAttribute("aria-pressed",S.world==="moon"); $("w-mars").setAttribute("aria-pressed",S.world==="mars");
+  document.title=T("title");
+}
+function refresh(rebuildControls){
+  if(rebuildControls){fillTargets();fillTasks();fillSliders()}
+  compute(); renderCands(); renderCard(); renderGaps(); renderRel(); draw();
+}
+function legend(){ $("ramp").style.background="linear-gradient(90deg,"+STOPS.map(s=>"rgb("+s.join(",")+")").join(",")+")" }
+
+$("w-moon").onclick=()=>setWorld("moon"); $("w-mars").onclick=()=>setWorld("mars");
+function setWorld(w){S.world=w; S.sel=-1; fillTargets(); fillTasks(); resetWeights(); fillSliders(); applyStatic(); refresh(false)}
+$("target").onchange=e=>{S.target=e.target.value; S.sel=-1; fillSliders(); refresh(false)};
+$("task").onchange=e=>{S.task=e.target.value; S.sel=-1; resetWeights(); fillSliders(); refresh(false)};
+$("reset").onclick=()=>{resetWeights(); fillSliders(); refresh(false)};
+$("showan").onchange=e=>{S.showAn=e.target.checked; draw()};
+$("l-en").onclick=()=>{lang="en"; applyStatic(); refresh(true)}; $("l-uk").onclick=()=>{lang="uk"; applyStatic(); refresh(true)};
+$("copy").onclick=async()=>{
+  const lines=["rank,lat,lon,score_pct,nearest_known_analog"]; CANDS.forEach((i,k)=>{const n=nearbyAnalogs(i)[0]; lines.push([k+1,cellLat(i).toFixed(2),cellLon(i).toFixed(2),(SC[i]*100).toFixed(0),n?'"'+n.a.name+" ("+Math.round(n.d)+' km)"':""].join(","))});
+  const text=lines.join("\n"), box=$("copybox");
+  try{await navigator.clipboard.writeText(text)}catch(e){box.hidden=false; box.value=text; box.select()}
+};
+window.addEventListener("resize",resize);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>draw());
+new MutationObserver(()=>draw()).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+
+(async function init(){
+  legend(); applyStatic();
+  try{ await load(); }catch(e){ $("loading").textContent="Could not read the embedded data: "+e.message; return }
+  $("loading").hidden=true; $("results").hidden=false;
+  S.world="moon"; S.target=(M.targets.find(t=>t.world==="moon"&&t.mvp)||M.targets[0]).id; S.task="landing";
+  fillTargets(); fillTasks(); resetWeights(); fillSliders(); resize(); refresh(false);
+  if(CANDS.length) select(CANDS[0]);
+})();
+</script>

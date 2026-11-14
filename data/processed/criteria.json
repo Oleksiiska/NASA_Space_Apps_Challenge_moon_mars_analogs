@@ -1,0 +1,378 @@
+{
+ "schema": 1,
+ "n_cells": 88883,
+ "scale": "uint8 0..254 -> 0..1, 255 no data",
+ "criteria": [
+  {
+   "name": "cold",
+   "target": null,
+   "offset": 0
+  },
+  {
+   "name": "thermal_range",
+   "target": null,
+   "offset": 88883
+  },
+  {
+   "name": "ground_ice",
+   "target": null,
+   "offset": 177766
+  },
+  {
+   "name": "bare_ground",
+   "target": null,
+   "offset": 266649
+  },
+  {
+   "name": "low_sun",
+   "target": null,
+   "offset": 355532
+  },
+  {
+   "name": "snow_free",
+   "target": null,
+   "offset": 444415
+  },
+  {
+   "name": "composition",
+   "target": null,
+   "offset": 533298
+  },
+  {
+   "name": "slope_hist",
+   "target": "shackleton_ridge",
+   "offset": 622181
+  },
+  {
+   "name": "relief",
+   "target": "shackleton_ridge",
+   "offset": 711064
+  },
+  {
+   "name": "roughness",
+   "target": "shackleton_ridge",
+   "offset": 799947
+  },
+  {
+   "name": "slope_hist",
+   "target": "shackleton_crater",
+   "offset": 888830
+  },
+  {
+   "name": "relief",
+   "target": "shackleton_crater",
+   "offset": 977713
+  },
+  {
+   "name": "roughness",
+   "target": "shackleton_crater",
+   "offset": 1066596
+  },
+  {
+   "name": "slope_hist",
+   "target": "de_gerlache_crater",
+   "offset": 1155479
+  },
+  {
+   "name": "relief",
+   "target": "de_gerlache_crater",
+   "offset": 1244362
+  },
+  {
+   "name": "roughness",
+   "target": "de_gerlache_crater",
+   "offset": 1333245
+  },
+  {
+   "name": "slope_hist",
+   "target": "mons_mouton",
+   "offset": 1422128
+  },
+  {
+   "name": "relief",
+   "target": "mons_mouton",
+   "offset": 1511011
+  },
+  {
+   "name": "roughness",
+   "target": "mons_mouton",
+   "offset": 1599894
+  },
+  {
+   "name": "slope_hist",
+   "target": "malapert",
+   "offset": 1688777
+  },
+  {
+   "name": "relief",
+   "target": "malapert",
+   "offset": 1777660
+  },
+  {
+   "name": "roughness",
+   "target": "malapert",
+   "offset": 1866543
+  },
+  {
+   "name": "slope_hist",
+   "target": "jezero",
+   "offset": 1955426
+  },
+  {
+   "name": "relief",
+   "target": "jezero",
+   "offset": 2044309
+  },
+  {
+   "name": "roughness",
+   "target": "jezero",
+   "offset": 2133192
+  },
+  {
+   "name": "slope_hist",
+   "target": "arcadia_planitia",
+   "offset": 2222075
+  },
+  {
+   "name": "relief",
+   "target": "arcadia_planitia",
+   "offset": 2310958
+  },
+  {
+   "name": "roughness",
+   "target": "arcadia_planitia",
+   "offset": 2399841
+  },
+  {
+   "name": "slope_hist",
+   "target": "gale",
+   "offset": 2488724
+  },
+  {
+   "name": "relief",
+   "target": "gale",
+   "offset": 2577607
+  },
+  {
+   "name": "roughness",
+   "target": "gale",
+   "offset": 2666490
+  },
+  {
+   "name": "slope_hist",
+   "target": "phoenix",
+   "offset": 2755373
+  },
+  {
+   "name": "relief",
+   "target": "phoenix",
+   "offset": 2844256
+  },
+  {
+   "name": "roughness",
+   "target": "phoenix",
+   "offset": 2933139
+  },
+  {
+   "name": "slope_hist",
+   "target": "viking2_utopia",
+   "offset": 3022022
+  },
+  {
+   "name": "relief",
+   "target": "viking2_utopia",
+   "offset": 3110905
+  },
+  {
+   "name": "roughness",
+   "target": "viking2_utopia",
+   "offset": 3199788
+  },
+  {
+   "name": "slope_hist",
+   "target": "meridiani",
+   "offset": 3288671
+  },
+  {
+   "name": "relief",
+   "target": "meridiani",
+   "offset": 3377554
+  },
+  {
+   "name": "roughness",
+   "target": "meridiani",
+   "offset": 3466437
+  },
+  {
+   "name": "slope_hist",
+   "target": "mawrth_vallis",
+   "offset": 3555320
+  },
+  {
+   "name": "relief",
+   "target": "mawrth_vallis",
+   "offset": 3644203
+  },
+  {
+   "name": "roughness",
+   "target": "mawrth_vallis",
+   "offset": 3733086
+  }
+ ],
+ "constraint_bits": {
+  "bare_ground_min": 0,
+  "flat_patch_exists": 1,
+  "ground_ice_present": 2,
+  "snow_free_window": 3
+ },
+ "constraints_not_checked": [
+  "road_access",
+  "safe_access",
+  "protected_ecosystem_flag"
+ ],
+ "constraint_offset": 3821969,
+ "min_coverage": 0.5,
+ "no_data_yet": [
+  "dryness",
+  "volcanic",
+  "impact"
+ ],
+ "composition_worlds": [
+  "mars"
+ ],
+ "tasks": [
+  {
+   "id": "landing",
+   "name": "Landing and descent navigation",
+   "name_uk": "Посадка і навігація при посадці",
+   "worlds": [
+    "moon",
+    "mars"
+   ],
+   "weights": {
+    "slope_hist": 0.35,
+    "roughness": 0.3,
+    "relief": 0.1,
+    "low_sun": 0.15,
+    "bare_ground": 0.1
+   },
+   "constraints": [
+    "bare_ground_min",
+    "flat_patch_exists"
+   ]
+  },
+  {
+   "id": "mobility",
+   "name": "Rover mobility",
+   "name_uk": "Мобільність роверів",
+   "worlds": [
+    "moon",
+    "mars"
+   ],
+   "weights": {
+    "slope_hist": 0.4,
+    "roughness": 0.3,
+    "relief": 0.1,
+    "bare_ground": 0.1,
+    "composition": 0.1
+   },
+   "constraints": [
+    "bare_ground_min",
+    "road_access"
+   ]
+  },
+  {
+   "id": "eva_geology",
+   "name": "Surface EVA and field geology",
+   "name_uk": "Виходи на поверхню та польова геологія",
+   "worlds": [
+    "moon"
+   ],
+   "weights": {
+    "relief": 0.25,
+    "slope_hist": 0.2,
+    "volcanic": 0.2,
+    "impact": 0.15,
+    "composition": 0.1,
+    "low_sun": 0.1
+   },
+   "constraints": [
+    "bare_ground_min",
+    "safe_access"
+   ]
+  },
+  {
+   "id": "isru_ice",
+   "name": "Ice mining and processing (ISRU)",
+   "name_uk": "Видобуток і переробка льоду",
+   "worlds": [
+    "moon",
+    "mars"
+   ],
+   "weights": {
+    "ground_ice": 0.4,
+    "cold": 0.3,
+    "bare_ground": 0.1,
+    "composition": 0.1,
+    "slope_hist": 0.1
+   },
+   "constraints": [
+    "ground_ice_present"
+   ]
+  },
+  {
+   "id": "low_sun_ops",
+   "name": "Operations under a low Sun",
+   "name_uk": "Робота при низькому Сонці",
+   "worlds": [
+    "moon"
+   ],
+   "weights": {
+    "low_sun": 0.45,
+    "relief": 0.2,
+    "snow_free": 0.2,
+    "bare_ground": 0.15
+   },
+   "constraints": [
+    "snow_free_window",
+    "bare_ground_min"
+   ]
+  },
+  {
+   "id": "caves",
+   "name": "Caves and shelters",
+   "name_uk": "Печери та укриття",
+   "worlds": [
+    "moon",
+    "mars"
+   ],
+   "weights": {
+    "volcanic": 0.6,
+    "bare_ground": 0.2,
+    "relief": 0.2
+   },
+   "constraints": [
+    "safe_access"
+   ]
+  },
+  {
+   "id": "biosignatures",
+   "name": "Search for biosignatures",
+   "name_uk": "Пошук біосигнатур",
+   "worlds": [
+    "mars"
+   ],
+   "weights": {
+    "dryness": 0.35,
+    "composition": 0.3,
+    "bare_ground": 0.15,
+    "thermal_range": 0.1,
+    "cold": 0.1
+   },
+   "constraints": [
+    "bare_ground_min",
+    "protected_ecosystem_flag"
+   ]
+  }
+ ]
+}

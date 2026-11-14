@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "analog-finder"
+version = "0.1.0"
+description = "Data layer for the Moon/Mars terrestrial analog finder (NASA Space Apps 2026)"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.26",
+    "pyyaml>=6",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+# Land grid from the Natural Earth polygons (`python -m analog_finder grid`)
+geo = ["shapely>=2.0"]
+# Downloads behind Earthdata Login (`python -m analog_finder fetch earth`)
+earth = ["earthaccess>=0.9"]
+# Readers for the downloaded Earth products, for the next step of the pipeline:
+# MODIS HDF4 (pyhdf; the rasterio wheel for Windows has no HDF4 driver), EMIT NetCDF, GeoTIFF
+formats = ["pyhdf>=0.11", "xarray", "netCDF4", "h5py", "rasterio"]
+dev = ["pytest>=8", "pvlib", "pandas"]
+
+[project.scripts]
+analog-finder = "analog_finder.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["analog_finder*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

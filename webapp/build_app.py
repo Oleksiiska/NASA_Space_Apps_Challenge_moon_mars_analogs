@@ -1,0 +1,86 @@
+"""Build webapp/index.html: one self-contained page with the scores of data/processed embedded.
+
+Run from the pipeline folder:  python ../webapp/build_app.py [processed_dir] [out.html]
+"""
+import base64, gzip, json, sys
+from pathlib import Path
+import numpy as np
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent / "pipeline"))
+from analog_finder import config  # noqa: E402
+from analog_finder.prep import reference  # noqa: E402
+
+RAW = ["elev_mean_m", "relief_m", "slope_mean_deg", "slope_lt8", "lst_day_mean_k", "lst_night_min_k", "lst_diurnal_k",
+       "ndvi_mean", "snow_free_months", "lowsun_best_h", "ice_frac"]
+
+
+def fmt_temp(d):
+    if "mean" in d and "record_low" in d:
+        return f"mean {d['mean']} K, record low {d['record_low']} K"
+    if "equator_range" in d:
+        return f"{d['equator_range'][0]}-{d['equator_range'][1]} K at the equator, polar cold traps {d['polar_cold_traps']} K"
+    return f"mean {d['mean']} K, daily range {d['typical_diurnal_range'][0]}-{d['typical_diurnal_range'][1]} K"
+
+
+def build(pdir: Path, out: Path):
+    crit = json.loads((pdir / "criteria.json").read_text(encoding="utf-8"))
+    grid = json.loads((pdir / "grid.json").read_text(encoding="utf-8"))
+    val = json.loads((pdir / "validation.json").read_text(encoding="utf-8"))
+    prof = json.loads((pdir / "target_profiles.json").read_text(encoding="utf-8"))["targets"]
+    n = crit["n_cells"]
+    cbytes = np.fromfile(pdir / "criteria.bin", dtype=np.uint8)
+    gbytes = np.fromfile(pdir / "grid.bin", dtype=np.uint8)
+    index = np.fromfile(pdir / "grid_index.bin", dtype="<u4").astype(np.int64)
+    blocks = [cbytes]
+    raw_meta = []
+    off = cbytes.size
+    for name in RAW:
+        f = next(x for x in grid["features"] if x["name"] == name)
+        blocks.append(gbytes[f["offset"]: f["offset"] + n])
+        raw_meta.append({"name": name, "offset": off, "min": f["min"], "max": f["max"], "unit": f.get("unit", "")})
+        off += n
+    rows = (index // grid["grid"]["n_lon"]).astype("<u2")
+    cols = (index % grid["grid"]["n_lon"]).astype("<u2")
+    rc_off = off
+    blocks += [np.frombuffer(rows.tobytes(), np.uint8), np.frombuffer(cols.tobytes(), np.uint8)]
+    blob = gzip.compress(np.concatenate(blocks).tobytes(), 9)
+
+    tg = config.targets()["targets"]
+    targets = []
+    for t in tg:
+        lon = t["lon_e"] if t["lon_e"] <= 180 else t["lon_e"] - 360
+        targets.append({"id": t["id"], "world": t["world"], "name": t["name"], "name_uk": t.get("name_uk", t["name"]),
+                        "lat": t["lat"], "lon": lon, "mvp": bool(t.get("mvp")), "role": t.get("role", ""),
+                        "has_profile": t["id"] in prof})
+    analogs = []
+    for a in reference.read_analogs():
+        analogs.append({k: a[k] for k in ("id", "name", "name_uk", "country", "lat", "lon", "world", "tasks", "kind", "coord_quality")}
+                       | {"validate": bool(a["validate"]), "notes": (a.get("notes") or "")[:260]})
+    gaps = json.loads((HERE.parent / "data" / "reference" / "environment_gaps.json").read_text(encoding="utf-8"))
+    quant = []
+    for q in gaps["quantities"]:
+        vals = {}
+        for w in ("earth", "moon", "mars"):
+            v = q[w]
+            vals[w] = fmt_temp(v) if isinstance(v, dict) else v
+        quant.append({"id": q["id"], "name": q["name"], "name_uk": q.get("name_uk", q["name"]), "unit": q.get("unit", ""),
+                      "values": vals, "reproducible": q["reproducible_on_earth"], "workaround": q.get("workaround", ""),
+                      "note": q.get("note", "")})
+    meta = {"n": n, "grid": grid["grid"], "criteria": crit["criteria"], "constraint_bits": crit["constraint_bits"],
+            "constraint_offset": crit["constraint_offset"], "constraints_not_checked": crit["constraints_not_checked"],
+            "min_coverage": crit["min_coverage"], "no_data_yet": crit["no_data_yet"], "tasks": crit["tasks"],
+            "constraints_doc": config.tasks().get("constraints", {}), "raw": raw_meta, "rc_offset": rc_off,
+            "targets": [t for t in targets if t["has_profile"]], "analogs": analogs, "gaps": quant,
+            "validation": val["summary"], "validation_skipped": val["skipped_tasks"]}
+    html = (HERE / "template.html").read_text(encoding="utf-8")
+    html = html.replace("/*META*/null", json.dumps(meta, ensure_ascii=False, separators=(",", ":")))
+    html = html.replace("/*BLOB*/\"\"", '"' + base64.b64encode(blob).decode() + '"')
+    out.write_text(html, encoding="utf-8")
+    print(f"{out}: {out.stat().st_size / 1e6:.2f} MB (blob {len(blob) / 1e6:.2f} MB gzip)")
+
+
+if __name__ == "__main__":
+    p = Path(sys.argv[1]) if len(sys.argv) > 1 else config.processed_dir()
+    o = Path(sys.argv[2]) if len(sys.argv) > 2 else HERE / "index.html"
+    build(p, o)

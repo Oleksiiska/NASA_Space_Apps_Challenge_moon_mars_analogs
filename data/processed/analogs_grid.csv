@@ -1,0 +1,40 @@
+id,name,world,validate,lat,lon,cell_row,cell_col,cell_index,in_grid,land_frac,ice_frac,lowsun_best_h,lowsun_mean_h,lowsun_best_month
+sp_crater,"S P Crater, San Francisco Volcanic Field",moon,yes,35.5822,-111.6318,108,136,34929,yes,1.0,0.0,0.945,0.85,12
+kilbourne_hole,"Kilbourne Hole, Potrillo Volcanic Field",moon,yes,31.97194,-106.96472,116,146,37384,yes,1.0,0.0,0.945,0.85,12
+sw_nevada_vf,Southwestern Nevada Volcanic Field,moon,yes,37.06,-116.47,105,127,33966,yes,1.0,0.0,0.945,0.945,12
+askja,"Askja, Icelandic highlands",moon,yes,65.033,-16.783,49,326,10822,yes,1.0,0.0,3.874,2.457,1
+meteor_crater,Meteor (Barringer) Crater,both,yes,35.0275,-111.02278,109,137,35234,yes,1.0,0.0,0.945,0.85,12
+rio_grande_del_norte,Rio Grande del Norte (Rio Grande Gorge),moon,yes,36.6,-105.7,106,148,34304,yes,1.0,0.0,0.945,0.85,12
+grand_canyon,Grand Canyon,moon,no,36.1,-112.1,107,135,34618,yes,1.0,0.0,0.945,0.85,12
+ries,Noerdlinger Ries,moon,yes,48.883,10.567,82,381,25754,yes,1.0,0.0,1.323,1.134,12
+mistastin,Mistastin (Kamestastin) impact structure,moon,yes,55.883,-63.3,68,233,19701,yes,1.0,0.0,1.795,1.417,12
+sudbury,Sudbury Basin,both,yes,46.6,-81.183333,86,197,27355,yes,1.0,0.0,1.228,1.039,12
+haughton,"Haughton impact structure, Devon Island",both,yes,75.383333,-89.666667,29,180,2766,yes,1.0,0.0,4.346,1.984,8
+mcmurdo_dry_valleys,McMurdo Dry Valleys,both,yes,-77.466667,162.516667,334,685,72400,yes,1.0,1.0,4.63,1.89,2
+concordia,"Concordia Station, Dome C",both,yes,-75.1,123.558,330,607,70135,yes,1.0,1.0,4.252,1.984,2
+svalbard,Svalbard (AMASE sites),both,yes,78.0,16.0,24,392,1926,yes,0.748,0.189,4.63,1.89,4
+kangerlussuaq,Kangerlussuaq,mars,yes,67.01,-50.71,45,258,8496,yes,1.0,0.0,5.008,2.551,6
+chill_ice_lava_tube,CHILL-ICE lava tube site,both,yes,64.7869,-20.7144,50,318,11379,yes,1.0,0.0,3.874,2.362,1
+hi_seas,"HI-SEAS, Mauna Loa",both,yes,19.602091,-155.487224,140,49,44214,yes,0.874,0.0,0.756,0.756,12
+kilauea,Kilauea,both,yes,19.425,-155.291944,141,49,44448,yes,0.5,0.0,0.756,0.756,12
+craters_of_the_moon,Craters of the Moon,both,yes,43.42,-113.52,93,132,29976,yes,1.0,0.0,1.134,1.039,12
+lanzarote_timanfaya,"Timanfaya, Lanzarote",both,yes,28.99417,-13.79333,122,332,39322,yes,0.252,0.0,0.85,0.85,12
+teide,"Teide National Park, Tenerife",both,yes,28.263,-16.616,123,326,39621,yes,0.5,0.0,0.85,0.756,12
+etna,Mount Etna,both,yes,37.745,15.0,104,390,33757,yes,0.5,0.0,1.039,0.945,12
+gros_morne,Gros Morne National Park,both,yes,49.621667,-57.752778,80,244,24878,yes,0.689,0.0,1.417,1.134,12
+lmas_reunion,"LMAS Sainte-Rose, Reunion",moon,yes,-21.243622,55.713751,222,471,58858,yes,0.437,0.0,0.756,0.756,6
+atacama,Atacama Desert,mars,yes,-24.5,-69.25,229,221,60018,yes,1.0,0.0,0.85,0.756,6
+death_valley,Death Valley,mars,yes,36.24,-116.82,107,126,34609,yes,1.0,0.0,0.945,0.85,12
+mdrs,"Mars Desert Research Station, Utah",mars,yes,38.406458,-110.791903,103,138,33352,yes,1.0,0.0,1.039,0.945,12
+rio_tinto,Rio Tinto (headwaters),mars,yes,37.72,-6.55,104,346,33739,yes,1.0,0.0,1.039,0.945,12
+tirez,Tirez lagoon,mars,yes,39.538238,-3.357825,100,353,32482,yes,1.0,0.0,1.039,0.945,12
+dallol,"Dallol, Danakil Depression",mars,yes,14.2384,40.2983,151,440,46696,yes,1.0,0.0,0.756,0.756,12
+makgadikgadi,Makgadikgadi salt pans,mars,yes,-20.7,25.3,221,410,58646,yes,1.0,0.0,0.756,0.756,6
+qaidam,Qaidam Basin (Dalangtan),mars,yes,38.45,91.45,103,542,33575,yes,1.0,0.0,1.039,0.945,12
+pilbara,Pilbara (Dresser Formation area),mars,yes,-21.15,119.43,222,598,58866,yes,1.0,0.0,0.756,0.756,6
+ibn_battuta,"Ibn Battuta Centre, Marrakech",mars,no,31.63,-8.0,116,344,37440,yes,1.0,0.0,0.945,0.85,12
+pavilion_lake,Pavilion Lake,mars,no,50.86502,-121.737442,78,116,23905,yes,1.0,0.0,1.417,1.228,12
+sam_biosphere2,"SAM at Biosphere 2, Oracle",both,no,32.57949,-110.848042,114,138,36764,yes,1.0,0.0,0.945,0.85,12
+neemo,"NEEMO (Aquarius), Key Largo",moon,no,24.95,-80.453611,130,199,,no,,,,,
+lunares,LunAres Research Station,both,no,53.1745,16.7261,73,393,21854,yes,1.0,0.0,1.606,1.323,12
+marseille_bay,Marseille Bay (COMEX),both,no,43.263956,5.330772,93,370,30089,yes,0.311,0.0,1.134,1.039,12

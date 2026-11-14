@@ -1,0 +1,677 @@
+{
+ "schema": 1,
+ "records": [
+  {
+   "analog": "sp_crater",
+   "task": "mobility",
+   "target": "shackleton_ridge",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.9,
+   "percentile": 0.673,
+   "percentile_filtered": 0.55,
+   "failed_filters": []
+  },
+  {
+   "analog": "askja",
+   "task": "mobility",
+   "target": "shackleton_ridge",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.9,
+   "percentile": 0.844,
+   "percentile_filtered": 0.808,
+   "failed_filters": []
+  },
+  {
+   "analog": "lmas_reunion",
+   "task": "mobility",
+   "target": "shackleton_ridge",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.9,
+   "percentile": 0.841,
+   "percentile_filtered": null,
+   "failed_filters": [
+    "bare_ground_min"
+   ]
+  },
+  {
+   "analog": "sp_crater",
+   "task": "mobility",
+   "target": "mons_mouton",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.9,
+   "percentile": 0.674,
+   "percentile_filtered": 0.597,
+   "failed_filters": []
+  },
+  {
+   "analog": "askja",
+   "task": "mobility",
+   "target": "mons_mouton",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.9,
+   "percentile": 0.829,
+   "percentile_filtered": 0.802,
+   "failed_filters": []
+  },
+  {
+   "analog": "lmas_reunion",
+   "task": "mobility",
+   "target": "mons_mouton",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.9,
+   "percentile": 0.785,
+   "percentile_filtered": null,
+   "failed_filters": [
+    "bare_ground_min"
+   ]
+  },
+  {
+   "analog": "atacama",
+   "task": "mobility",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 1.0,
+   "percentile": 0.775,
+   "percentile_filtered": 0.751,
+   "failed_filters": []
+  },
+  {
+   "analog": "death_valley",
+   "task": "mobility",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 1.0,
+   "percentile": 0.736,
+   "percentile_filtered": 0.713,
+   "failed_filters": []
+  },
+  {
+   "analog": "mdrs",
+   "task": "mobility",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 1.0,
+   "percentile": 0.986,
+   "percentile_filtered": 0.961,
+   "failed_filters": []
+  },
+  {
+   "analog": "makgadikgadi",
+   "task": "mobility",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 1.0,
+   "percentile": 0.162,
+   "percentile_filtered": 0.072,
+   "failed_filters": []
+  },
+  {
+   "analog": "qaidam",
+   "task": "mobility",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 1.0,
+   "percentile": 0.998,
+   "percentile_filtered": 0.994,
+   "failed_filters": []
+  },
+  {
+   "analog": "atacama",
+   "task": "mobility",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 1.0,
+   "percentile": 0.17,
+   "percentile_filtered": 0.13,
+   "failed_filters": []
+  },
+  {
+   "analog": "death_valley",
+   "task": "mobility",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 1.0,
+   "percentile": 0.173,
+   "percentile_filtered": 0.133,
+   "failed_filters": []
+  },
+  {
+   "analog": "mdrs",
+   "task": "mobility",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 1.0,
+   "percentile": 0.262,
+   "percentile_filtered": 0.224,
+   "failed_filters": []
+  },
+  {
+   "analog": "makgadikgadi",
+   "task": "mobility",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 1.0,
+   "percentile": 0.614,
+   "percentile_filtered": 0.508,
+   "failed_filters": []
+  },
+  {
+   "analog": "qaidam",
+   "task": "mobility",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 1.0,
+   "percentile": 0.31,
+   "percentile_filtered": 0.269,
+   "failed_filters": []
+  },
+  {
+   "analog": "sp_crater",
+   "task": "eva_geology",
+   "target": "shackleton_ridge",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.617,
+   "percentile_filtered": 0.56,
+   "failed_filters": []
+  },
+  {
+   "analog": "kilbourne_hole",
+   "task": "eva_geology",
+   "target": "shackleton_ridge",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.409,
+   "percentile_filtered": 0.372,
+   "failed_filters": []
+  },
+  {
+   "analog": "sw_nevada_vf",
+   "task": "eva_geology",
+   "target": "shackleton_ridge",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.799,
+   "percentile_filtered": 0.76,
+   "failed_filters": []
+  },
+  {
+   "analog": "askja",
+   "task": "eva_geology",
+   "target": "shackleton_ridge",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.829,
+   "percentile_filtered": 0.79,
+   "failed_filters": []
+  },
+  {
+   "analog": "rio_grande_del_norte",
+   "task": "eva_geology",
+   "target": "shackleton_ridge",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.763,
+   "percentile_filtered": 0.724,
+   "failed_filters": []
+  },
+  {
+   "analog": "ries",
+   "task": "eva_geology",
+   "target": "shackleton_ridge",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.54,
+   "percentile_filtered": null,
+   "failed_filters": [
+    "bare_ground_min"
+   ]
+  },
+  {
+   "analog": "mistastin",
+   "task": "eva_geology",
+   "target": "shackleton_ridge",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.611,
+   "percentile_filtered": null,
+   "failed_filters": [
+    "bare_ground_min"
+   ]
+  },
+  {
+   "analog": "lmas_reunion",
+   "task": "eva_geology",
+   "target": "shackleton_ridge",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.945,
+   "percentile_filtered": null,
+   "failed_filters": [
+    "bare_ground_min"
+   ]
+  },
+  {
+   "analog": "sp_crater",
+   "task": "eva_geology",
+   "target": "mons_mouton",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.622,
+   "percentile_filtered": 0.585,
+   "failed_filters": []
+  },
+  {
+   "analog": "kilbourne_hole",
+   "task": "eva_geology",
+   "target": "mons_mouton",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.392,
+   "percentile_filtered": 0.366,
+   "failed_filters": []
+  },
+  {
+   "analog": "sw_nevada_vf",
+   "task": "eva_geology",
+   "target": "mons_mouton",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.791,
+   "percentile_filtered": 0.757,
+   "failed_filters": []
+  },
+  {
+   "analog": "askja",
+   "task": "eva_geology",
+   "target": "mons_mouton",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.83,
+   "percentile_filtered": 0.793,
+   "failed_filters": []
+  },
+  {
+   "analog": "rio_grande_del_norte",
+   "task": "eva_geology",
+   "target": "mons_mouton",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.76,
+   "percentile_filtered": 0.726,
+   "failed_filters": []
+  },
+  {
+   "analog": "ries",
+   "task": "eva_geology",
+   "target": "mons_mouton",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.539,
+   "percentile_filtered": null,
+   "failed_filters": [
+    "bare_ground_min"
+   ]
+  },
+  {
+   "analog": "mistastin",
+   "task": "eva_geology",
+   "target": "mons_mouton",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.672,
+   "percentile_filtered": null,
+   "failed_filters": [
+    "bare_ground_min"
+   ]
+  },
+  {
+   "analog": "lmas_reunion",
+   "task": "eva_geology",
+   "target": "mons_mouton",
+   "world": "moon",
+   "in_grid": true,
+   "coverage": 0.55,
+   "percentile": 0.92,
+   "percentile_filtered": null,
+   "failed_filters": [
+    "bare_ground_min"
+   ]
+  },
+  {
+   "analog": "kangerlussuaq",
+   "task": "isru_ice",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.9,
+   "percentile": 0.62,
+   "percentile_filtered": 0.265,
+   "failed_filters": []
+  },
+  {
+   "analog": "kangerlussuaq",
+   "task": "isru_ice",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.9,
+   "percentile": 0.61,
+   "percentile_filtered": 0.245,
+   "failed_filters": []
+  },
+  {
+   "analog": "kangerlussuaq",
+   "task": "biosignatures",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.35,
+   "percentile": null,
+   "percentile_filtered": null,
+   "failed_filters": []
+  },
+  {
+   "analog": "atacama",
+   "task": "biosignatures",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.481,
+   "percentile_filtered": 0.393,
+   "failed_filters": []
+  },
+  {
+   "analog": "rio_tinto",
+   "task": "biosignatures",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.23,
+   "percentile_filtered": null,
+   "failed_filters": [
+    "bare_ground_min"
+   ]
+  },
+  {
+   "analog": "tirez",
+   "task": "biosignatures",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.574,
+   "percentile_filtered": 0.482,
+   "failed_filters": []
+  },
+  {
+   "analog": "dallol",
+   "task": "biosignatures",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.708,
+   "percentile_filtered": 0.617,
+   "failed_filters": []
+  },
+  {
+   "analog": "makgadikgadi",
+   "task": "biosignatures",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.381,
+   "percentile_filtered": 0.295,
+   "failed_filters": []
+  },
+  {
+   "analog": "qaidam",
+   "task": "biosignatures",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.878,
+   "percentile_filtered": 0.829,
+   "failed_filters": []
+  },
+  {
+   "analog": "pilbara",
+   "task": "biosignatures",
+   "target": "jezero",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.35,
+   "percentile": null,
+   "percentile_filtered": null,
+   "failed_filters": []
+  },
+  {
+   "analog": "kangerlussuaq",
+   "task": "biosignatures",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.35,
+   "percentile": null,
+   "percentile_filtered": null,
+   "failed_filters": []
+  },
+  {
+   "analog": "atacama",
+   "task": "biosignatures",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.481,
+   "percentile_filtered": 0.393,
+   "failed_filters": []
+  },
+  {
+   "analog": "rio_tinto",
+   "task": "biosignatures",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.23,
+   "percentile_filtered": null,
+   "failed_filters": [
+    "bare_ground_min"
+   ]
+  },
+  {
+   "analog": "tirez",
+   "task": "biosignatures",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.574,
+   "percentile_filtered": 0.482,
+   "failed_filters": []
+  },
+  {
+   "analog": "dallol",
+   "task": "biosignatures",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.708,
+   "percentile_filtered": 0.617,
+   "failed_filters": []
+  },
+  {
+   "analog": "makgadikgadi",
+   "task": "biosignatures",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.381,
+   "percentile_filtered": 0.295,
+   "failed_filters": []
+  },
+  {
+   "analog": "qaidam",
+   "task": "biosignatures",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.65,
+   "percentile": 0.878,
+   "percentile_filtered": 0.829,
+   "failed_filters": []
+  },
+  {
+   "analog": "pilbara",
+   "task": "biosignatures",
+   "target": "arcadia_planitia",
+   "world": "mars",
+   "in_grid": true,
+   "coverage": 0.35,
+   "percentile": null,
+   "percentile_filtered": null,
+   "failed_filters": []
+  }
+ ],
+ "skipped_tasks": {
+  "caves": "no cell has enough data (missing: volcanic)"
+ },
+ "summary": {
+  "random_expectation": {
+   "median_percentile": 0.5,
+   "share_top20": 0.2,
+   "share_top10": 0.1
+  },
+  "all": {
+   "scores_only": {
+    "pairs": 50,
+    "scored": 46,
+    "median_percentile": 0.647,
+    "share_top20": 0.239,
+    "share_top10": 0.087,
+    "share_above_median": 0.717
+   },
+   "with_filters": {
+    "pairs": 50,
+    "scored": 36,
+    "median_percentile": 0.573,
+    "share_top20": 0.167,
+    "share_top10": 0.056,
+    "share_above_median": 0.583
+   }
+  },
+  "by_task": {
+   "biosignatures": {
+    "scores_only": {
+     "pairs": 16,
+     "scored": 12,
+     "median_percentile": 0.527,
+     "share_top20": 0.167,
+     "share_top10": 0.0,
+     "share_above_median": 0.5
+    },
+    "with_filters": {
+     "pairs": 16,
+     "scored": 10,
+     "median_percentile": 0.482,
+     "share_top20": 0.2,
+     "share_top10": 0.0,
+     "share_above_median": 0.4
+    }
+   },
+   "eva_geology": {
+    "scores_only": {
+     "pairs": 16,
+     "scored": 16,
+     "median_percentile": 0.716,
+     "share_top20": 0.25,
+     "share_top10": 0.125,
+     "share_above_median": 0.875
+    },
+    "with_filters": {
+     "pairs": 16,
+     "scored": 10,
+     "median_percentile": 0.725,
+     "share_top20": 0.0,
+     "share_top10": 0.0,
+     "share_above_median": 0.8
+    }
+   },
+   "isru_ice": {
+    "scores_only": {
+     "pairs": 2,
+     "scored": 2,
+     "median_percentile": 0.615,
+     "share_top20": 0.0,
+     "share_top10": 0.0,
+     "share_above_median": 1.0
+    },
+    "with_filters": {
+     "pairs": 2,
+     "scored": 2,
+     "median_percentile": 0.255,
+     "share_top20": 0.0,
+     "share_top10": 0.0,
+     "share_above_median": 0.0
+    }
+   },
+   "mobility": {
+    "scores_only": {
+     "pairs": 16,
+     "scored": 16,
+     "median_percentile": 0.705,
+     "share_top20": 0.312,
+     "share_top10": 0.125,
+     "share_above_median": 0.688
+    },
+    "with_filters": {
+     "pairs": 16,
+     "scored": 14,
+     "median_percentile": 0.574,
+     "share_top20": 0.286,
+     "share_top10": 0.143,
+     "share_above_median": 0.643
+    }
+   }
+  }
+ }
+}

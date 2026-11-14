@@ -1,0 +1,297 @@
+# Data manifest: which files come from which official challenge resource.
+# File names and byte sizes of the PDS files were read from the PDS directory
+# listings on 2026-11-13. `dest` is relative to the project root.
+#
+# access:   open | earthdata_login | account
+# provider: pds | http | earthaccess | power_api | copdem_aws
+version: 1
+checked: "2026-11-13"
+
+datasets:
+
+  # ------------------------------------------------------------------ Moon
+  - id: moon_lola_polar_dem
+    world: moon
+    title: LRO LOLA GDR, south polar elevation (240 m, 80 m, 20 m)
+    official_resource: NASA Lunar Reconnaissance Orbiter (PDS Geosciences)
+    agency: NASA
+    access: open
+    provider: pds
+    base_url: https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/
+    dest: data/raw/moon/lola
+    format: pds3_img   # int16 little-endian; height_m = DN * 0.5 above a 1737.4 km sphere
+    projection: south polar stereographic, pole at the image centre, longitude 0 up
+    used_for: [terrain]
+    files:
+      - {name: ldem_75s_240m.img, bytes: 29062688, label: ldem_75s_240m.lbl}    # 75S..pole, 3812 x 3812
+      - {name: ldem_80s_80m.img, bytes: 115520000, label: ldem_80s_80m.lbl}     # 80S..pole
+      - {name: ldem_875s_20m.img, bytes: 115034112, label: ldem_875s_20m.lbl}   # 87.5S..pole
+    citation: >-
+      Smith, D. E., et al. (2017). Summary of the results from the Lunar Orbiter Laser
+      Altimeter after seven years in lunar orbit. Icarus, 283, 70-91. Data set
+      LRO-L-LOLA-4-GDR-V1.0, NASA Planetary Data System.
+    license: NASA PDS, public
+
+  - id: moon_lola_polar_slope_roughness
+    world: moon
+    title: LRO LOLA GDR, south polar slope and roughness maps
+    official_resource: NASA Lunar Reconnaissance Orbiter (PDS Geosciences)
+    agency: NASA
+    access: open
+    provider: pds
+    base_url: https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/
+    dest: data/raw/moon/lola
+    format: pds3_img
+    used_for: [terrain_crosscheck]
+    files:
+      - {name: ldsm_75s_240m.img, bytes: 29062688, label: ldsm_75s_240m.lbl}
+      - {name: ldsm_85s_40m.img, bytes: 115034112, label: ldsm_85s_40m.lbl}
+      - {name: ldrm_75s_240m.img, bytes: 29062688, label: ldrm_75s_240m.lbl}
+    citation: Same as moon_lola_polar_dem.
+    license: NASA PDS, public
+
+  - id: moon_diviner_prp
+    world: moon
+    title: LRO Diviner Polar Resource Product, south pole
+    official_resource: NASA LRO Diviner Lunar Data (PDS Geosciences)
+    agency: NASA
+    access: open
+    provider: pds
+    base_url: https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_prp/
+    dest: data/raw/moon/diviner
+    format: pds_fixed_table   # 210-byte records, first record is the header, 2,880,000 rows
+    used_for: [thermal, ice]
+    files:
+      - {name: dlre_prp_south.tab, bytes: 604800210, label: dlre_prp_south.lbl}
+    columns:   # 1-based byte offsets from the PDS4 label dlre_prp_south.xml
+      tri_clon: {start: 127, length: 15, unit: degree}
+      tri_clat: {start: 144, length: 15, unit: degree}
+      tri_calt: {start: 161, length: 15, unit: km}
+      temp_avg: {start: 178, length: 8, unit: K}     # annual mean at 2 cm depth
+      temp_max: {start: 188, length: 8, unit: K}     # annual maximum surface temperature
+      ice_depth: {start: 198, length: 11, unit: m}   # 0 = ice stable at the surface, -999 = deeper than 2.87 m
+    citation: >-
+      Paige, D. A., et al. (2010). Diviner Lunar Radiometer observations of cold traps in
+      the Moon's south polar region. Science, 330, 479-482. Diviner derived products,
+      NASA Planetary Data System.
+    license: NASA PDS, public
+
+  # ------------------------------------------------------------------ Mars
+  - id: mars_mola_megdr_64
+    world: mars
+    title: MGS MOLA MEGDR topography, 64 pixels per degree (926 m)
+    official_resource: NASA Planetary Data System (PDS)
+    agency: NASA
+    access: open
+    provider: pds
+    base_url: https://pds-geosciences.wustl.edu/mgs/urn-nasa-pds-mgs_mola_topography_derived/meg064/
+    dest: data/raw/mars/mola
+    format: pds3_img   # int16 big-endian, metres above the areoid, simple cylindrical
+    used_for: [terrain]
+    files:   # name = top latitude + left longitude of the tile; each tile is 90 x 180 degrees
+      - {name: megt90n000gb.img, bytes: 132710400, label: megt90n000gb.lbl}
+      - {name: megt90n180gb.img, bytes: 132710400, label: megt90n180gb.lbl}
+      - {name: megt00n000gb.img, bytes: 132710400, label: megt00n000gb.lbl}
+      - {name: megt00n180gb.img, bytes: 132710400, label: megt00n180gb.lbl}
+    citation: >-
+      Smith, D., Neumann, G., Arvidson, R. E., Guinness, E. A., and Slavney, S. (2003).
+      Mars Global Surveyor Laser Altimeter Mission Experiment Gridded Data Record,
+      MGS-M-MOLA-5-MEGDR-L3-V1.0, NASA Planetary Data System.
+    license: NASA PDS, public
+
+  - id: mars_mola_megdr_16
+    world: mars
+    title: MGS MOLA MEGDR topography, 16 pixels per degree (3.7 km), global quick-look
+    official_resource: NASA Planetary Data System (PDS)
+    agency: NASA
+    access: open
+    provider: pds
+    base_url: https://pds-geosciences.wustl.edu/mgs/urn-nasa-pds-mgs_mola_topography_derived/meg016/
+    dest: data/raw/mars/mola
+    format: pds3_img
+    used_for: [terrain_quicklook]
+    files:
+      - {name: megt90n000eb.img, bytes: 33177600, label: megt90n000eb.lbl}   # 5760 x 2880
+    citation: Same as mars_mola_megdr_64.
+    license: NASA PDS, public
+
+  - id: mars_grs_h2o
+    world: mars
+    title: Mars Odyssey GRS element concentration map, H2O (5 degree bins, smoothed)
+    official_resource: NASA Planetary Data System (PDS)
+    agency: NASA
+    access: open
+    provider: pds
+    base_url: https://pds-geosciences.wustl.edu/ody/ody-m-grs-5-elements-v1/odgm_xxxx/data/smoothed/
+    dest: data/raw/mars/grs
+    format: pds_ascii_table   # 2592 rows: latitude, longitude, weight percent, sigma; 9999.999 = no data
+    used_for: [ice]
+    files:
+      - {name: h2o_sr_5x5.tab, bytes: 186624, label: h2o_sr_5x5.lbl}
+    # Fe, Si, K, Th and Cl maps sit in the same folder (fe_, si_, k_, th_, cl_ prefixes).
+    citation: >-
+      Boynton, W. V., et al. (2007). Concentration of H, Si, Cl, K, Fe, and Th in the low-
+      and mid-latitude regions of Mars. J. Geophys. Res., 112, E12S99. Data set
+      ODY-M-GRS-5-ELEMENTS-V1.0, NASA Planetary Data System.
+    license: NASA PDS, public
+
+  # ----------------------------------------------------------------- Earth
+  - id: earth_naturalearth_land
+    world: earth
+    title: Natural Earth 1:50m land and glaciated areas (land mask of the grid)
+    official_resource: none (auxiliary, public domain)
+    agency: Natural Earth
+    access: open
+    provider: http
+    base_url: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/
+    dest: data/raw/earth/naturalearth
+    format: geojson
+    used_for: [land_mask]
+    files:
+      - {name: ne_50m_land.geojson, bytes: 1636166}
+      - {name: ne_50m_glaciated_areas.geojson, bytes: 512453}
+    citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
+    license: Public domain
+
+  - id: earth_srtmgl30
+    world: earth
+    title: NASA SRTM Global 30 arc second (about 926 m), 90N to 60S
+    official_resource: NASA Earthdata Search
+    agency: NASA
+    access: earthdata_login
+    provider: earthaccess
+    short_name: SRTMGL30
+    version: "002"
+    temporal: none
+    dest: data/raw/earth/srtmgl30
+    format: zip of int16 big-endian .dem tiles
+    used_for: [terrain]
+    citation: >-
+      NASA JPL (2013). NASA Shuttle Radar Topography Mission Global 30 arc second.
+      NASA EOSDIS Land Processes DAAC. doi:10.5067/MEaSUREs/SRTM/SRTMGL30.002
+    license: NASA EOSDIS open data policy
+
+  - id: earth_mod11c3
+    world: earth
+    title: MODIS/Terra Land Surface Temperature, monthly, 0.05 degree (MOD11C3)
+    official_resource: NASA Earthdata Search
+    agency: NASA
+    access: earthdata_login
+    provider: earthaccess
+    short_name: MOD11C3
+    version: "061"
+    temporal: year      # 12 monthly granules of the chosen year
+    dest: data/raw/earth/modis_lst
+    format: hdf4        # read with pyhdf; the rasterio wheel for Windows has no HDF4 driver
+    used_for: [thermal]
+    citation: >-
+      Wan, Z., Hook, S., and Hulley, G. (2021). MODIS/Terra Land Surface Temperature/Emissivity
+      Monthly L3 Global 0.05Deg CMG V061. NASA EOSDIS LP DAAC. doi:10.5067/MODIS/MOD11C3.061
+    license: NASA EOSDIS open data policy
+
+  - id: earth_mod13c2
+    world: earth
+    title: MODIS/Terra Vegetation Indices (NDVI), monthly, 0.05 degree (MOD13C2)
+    official_resource: NASA Earthdata Search
+    agency: NASA
+    access: earthdata_login
+    provider: earthaccess
+    short_name: MOD13C2
+    version: "061"
+    temporal: year
+    dest: data/raw/earth/modis_ndvi
+    format: hdf4
+    used_for: [bare_ground]
+    citation: >-
+      Didan, K. (2021). MODIS/Terra Vegetation Indices Monthly L3 Global 0.05Deg CMG V061.
+      NASA EOSDIS LP DAAC. doi:10.5067/MODIS/MOD13C2.061
+    license: NASA EOSDIS open data policy
+
+  - id: earth_mod10cm
+    world: earth
+    title: MODIS/Terra Snow Cover, monthly, 0.05 degree (MOD10CM)
+    official_resource: NASA Earthdata Search
+    agency: NASA
+    access: earthdata_login
+    provider: earthaccess
+    short_name: MOD10CM
+    version: "61"       # NSIDC writes the version without the leading zero
+    temporal: year
+    dest: data/raw/earth/modis_snow
+    format: hdf4
+    used_for: [snow_free_months]
+    citation: >-
+      Hall, D. K. and Riggs, G. A. (2021). MODIS/Terra Snow Cover Monthly L3 Global 0.05Deg
+      CMG, Version 61. NASA NSIDC DAAC. doi:10.5067/MODIS/MOD10CM.061
+    license: NASA EOSDIS open data policy
+
+  - id: earth_mcd12c1
+    world: earth
+    title: MODIS Land Cover Type, yearly, 0.05 degree (MCD12C1)
+    official_resource: NASA Earthdata Search
+    agency: NASA
+    access: earthdata_login
+    provider: earthaccess
+    short_name: MCD12C1
+    version: "061"
+    temporal: latest    # one granule: the most recent year available
+    dest: data/raw/earth/modis_lc
+    format: hdf4
+    used_for: [land_cover_mask]
+    citation: >-
+      Friedl, M. and Sulla-Menashe, D. (2022). MODIS/Terra+Aqua Land Cover Type Yearly L3
+      Global 0.05Deg CMG V061. NASA EOSDIS LP DAAC. doi:10.5067/MODIS/MCD12C1.061
+    license: NASA EOSDIS open data policy
+
+  - id: earth_emit_l3asa
+    world: earth
+    title: EMIT L3 Aggregated Mineral Spectral Abundance, 0.5 degree, 52N to 52S
+    official_resource: NASA Earthdata Search
+    agency: NASA
+    access: earthdata_login
+    provider: earthaccess
+    short_name: EMITL3ASA
+    version: "002"
+    temporal: none
+    dest: data/raw/earth/emit
+    format: netcdf4
+    used_for: [composition]
+    citation: >-
+      NASA EMIT L3 Aggregated Mineral Spectral Abundance and Uncertainty 0.5 Deg (EMITL3ASA).
+      NASA EOSDIS LP DAAC. Take the DOI and citation text from the product page.
+    license: NASA EOSDIS open data policy
+
+  - id: earth_power_climatology
+    world: earth
+    title: NASA POWER climatology at points (air temperature, precipitation, humidity, sun)
+    official_resource: none (NASA, outside the challenge list)
+    agency: NASA
+    access: open
+    provider: power_api
+    base_url: https://power.larc.nasa.gov/api/temporal/climatology/point
+    parameters: [T2M, T2M_MAX, T2M_MIN, T2M_RANGE, TS, PRECTOTCORR, RH2M, ALLSKY_SFC_SW_DWN, WS10M, PS]
+    community: AG
+    dest: data/raw/earth/power
+    format: json
+    used_for: [climate_of_sites]
+    citation: >-
+      NASA Langley Research Center (LaRC) POWER Project, funded through the NASA Earth
+      Science/Applied Science Program.
+    license: NASA open data
+
+  - id: earth_copdem_glo90
+    world: earth
+    title: Copernicus DEM GLO-90 tiles (terrain of Antarctic sites and detail views)
+    official_resource: Copernicus Data Space Ecosystem (ESA)
+    agency: ESA / Copernicus
+    access: open
+    provider: copdem_aws
+    base_url: https://copernicus-dem-90m.s3.amazonaws.com/
+    dest: data/raw/earth/copdem
+    format: cloud optimized geotiff, 1 x 1 degree tiles
+    used_for: [terrain_polar]
+    citation: >-
+      Copernicus DEM GLO-90. Produced using Copernicus WorldDEM-90 (c) DLR e.V. 2010-2014 and
+      (c) Airbus Defence and Space GmbH 2014-2018 provided under COPERNICUS by the European
+      Union and ESA; all rights reserved. Check the licence text on the Copernicus page.
+    license: Copernicus DEM licence (free for the general public)

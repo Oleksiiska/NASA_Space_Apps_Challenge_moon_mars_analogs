@@ -1,0 +1,295 @@
+{
+ "type": "FeatureCollection",
+ "name": "targets",
+ "note": "Generated from pipeline/config/targets.yaml; edit the YAML, not this file. Coordinates are on the Moon or Mars (see properties.world), longitude east, -180..180.",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -163.261,
+     -89.684
+    ]
+   },
+   "properties": {
+    "id": "shackleton_ridge",
+    "world": "moon",
+    "name": "Shackleton - de Gerlache connecting ridge",
+    "name_uk": "Хребет Шеклтон - де Жерлаш",
+    "role": "base_site",
+    "mvp": true,
+    "lat": -89.684,
+    "lon_e": 196.739,
+    "radius_km": 15.0,
+    "coord_quality": "verified",
+    "note": "Junction of the ridge with the Shackleton rim; the ridge is about 14 km long.",
+    "source": "https://lroc.im-ldi.com/images/1247"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     129.78,
+     -89.67
+    ]
+   },
+   "properties": {
+    "id": "shackleton_crater",
+    "world": "moon",
+    "name": "Shackleton crater",
+    "name_uk": "Кратер Шеклтон",
+    "role": "cold_trap_reference",
+    "mvp": false,
+    "lat": -89.67,
+    "lon_e": 129.78,
+    "radius_km": 10.0,
+    "coord_quality": "verified",
+    "note": "Diameter 20.9 km.",
+    "source": "https://planetarynames.wr.usgs.gov/Feature/5450"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -87.1,
+     -88.5
+    ]
+   },
+   "properties": {
+    "id": "de_gerlache_crater",
+    "world": "moon",
+    "name": "de Gerlache crater",
+    "name_uk": "Кратер де Жерлаш",
+    "role": "landing_region_context",
+    "mvp": false,
+    "lat": -88.5,
+    "lon_e": 272.9,
+    "radius_km": 16.0,
+    "coord_quality": "verified",
+    "note": "Diameter 32.4 km. The Artemis III region \"de Gerlache Rim 2\" lies on its rim.",
+    "source": "https://en.wikipedia.org/wiki/De_Gerlache_(crater)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     31.0,
+     -84.6
+    ]
+   },
+   "properties": {
+    "id": "mons_mouton",
+    "world": "moon",
+    "name": "Mons Mouton",
+    "name_uk": "Гора Мутон",
+    "role": "landing_region",
+    "mvp": true,
+    "lat": -84.6,
+    "lon_e": 31.0,
+    "radius_km": 40.0,
+    "coord_quality": "verified",
+    "note": "About 100 km wide, 6 km from base to peak.",
+    "source": "https://en.wikipedia.org/wiki/Mons_Mouton"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     12.9,
+     -84.9
+    ]
+   },
+   "properties": {
+    "id": "malapert",
+    "world": "moon",
+    "name": "Malapert crater and massif",
+    "name_uk": "Кратер і масив Малаперт",
+    "role": "landing_region",
+    "mvp": false,
+    "lat": -84.9,
+    "lon_e": 12.9,
+    "radius_km": 35.0,
+    "coord_quality": "approx",
+    "note": "Coordinates are of the crater (diameter 69 km). The massif is on its south-western rim, peak near longitude 0, about 5 km high. Refine with the NASA region map.",
+    "source": "https://en.wikipedia.org/wiki/Malapert_(crater)"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     77.45,
+     18.44
+    ]
+   },
+   "properties": {
+    "id": "jezero",
+    "world": "mars",
+    "name": "Jezero crater (Perseverance landing site)",
+    "name_uk": "Кратер Єзеро",
+    "role": "landing_site",
+    "mvp": true,
+    "lat": 18.44,
+    "lon_e": 77.45,
+    "radius_km": 40.0,
+    "coord_quality": "verified",
+    "note": "Crater diameter 45 km; ancient lake and river delta.",
+    "source": "https://wiki.riteme.site/wiki/Octavia_E._Butler_Landing"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -175.7,
+     47.2
+    ]
+   },
+   "properties": {
+    "id": "arcadia_planitia",
+    "world": "mars",
+    "name": "Arcadia Planitia (mid-latitude ground ice)",
+    "name_uk": "Рівнина Аркадія",
+    "role": "ice_region",
+    "mvp": true,
+    "lat": 47.2,
+    "lon_e": 184.3,
+    "radius_km": 100.0,
+    "coord_quality": "verified",
+    "note": "Centre of a plain that spans 33.9N to 64.2N; widespread excess ground ice.",
+    "source": "https://wiki.riteme.site/wiki/Arcadia_Planitia"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     137.44,
+     -4.59
+    ]
+   },
+   "properties": {
+    "id": "gale",
+    "world": "mars",
+    "name": "Gale crater (Curiosity landing site)",
+    "name_uk": "Кратер Гейл",
+    "role": "landing_site",
+    "mvp": false,
+    "lat": -4.59,
+    "lon_e": 137.44,
+    "radius_km": 50.0,
+    "coord_quality": "verified",
+    "note": "",
+    "source": "https://ode.rsl.wustl.edu/mars/pagehelp/Content/Missions_Instruments/Landing_Sites.htm"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -125.75,
+     68.22
+    ]
+   },
+   "properties": {
+    "id": "phoenix",
+    "world": "mars",
+    "name": "Phoenix landing site (northern plains, ground ice)",
+    "name_uk": "Місце посадки Phoenix",
+    "role": "ice_region",
+    "mvp": false,
+    "lat": 68.22,
+    "lon_e": 234.25,
+    "radius_km": 50.0,
+    "coord_quality": "verified",
+    "note": "",
+    "source": "https://ode.rsl.wustl.edu/mars/pagehelp/Content/Missions_Instruments/Landing_Sites.htm"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     134.28,
+     47.668
+    ]
+   },
+   "properties": {
+    "id": "viking2_utopia",
+    "world": "mars",
+    "name": "Viking 2 landing site, Utopia Planitia",
+    "name_uk": "Місце посадки Viking 2, рівнина Утопія",
+    "role": "landing_site",
+    "mvp": false,
+    "lat": 47.668,
+    "lon_e": 134.28,
+    "radius_km": 50.0,
+    "coord_quality": "verified",
+    "note": "",
+    "source": "https://ode.rsl.wustl.edu/mars/pagehelp/Content/Missions_Instruments/Landing_Sites.htm"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -5.5266,
+     -1.9462
+    ]
+   },
+   "properties": {
+    "id": "meridiani",
+    "world": "mars",
+    "name": "Meridiani Planum (Opportunity landing site)",
+    "name_uk": "Плато Меридіана",
+    "role": "landing_site",
+    "mvp": false,
+    "lat": -1.9462,
+    "lon_e": 354.4734,
+    "radius_km": 50.0,
+    "coord_quality": "verified",
+    "note": "",
+    "source": "https://ode.rsl.wustl.edu/mars/pagehelp/Content/Missions_Instruments/Landing_Sites.htm"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -18.96,
+     23.99
+    ]
+   },
+   "properties": {
+    "id": "mawrth_vallis",
+    "world": "mars",
+    "name": "Mawrth Vallis (candidate landing site)",
+    "name_uk": "Долина Маурт",
+    "role": "landing_site",
+    "mvp": false,
+    "lat": 23.99,
+    "lon_e": 341.04,
+    "radius_km": 50.0,
+    "coord_quality": "verified",
+    "note": "",
+    "source": "https://ode.rsl.wustl.edu/mars/pagehelp/Content/Missions_Instruments/Landing_Sites.htm"
+   }
+  }
+ ]
+}
