@@ -12,7 +12,7 @@ Government sources the data-use terms of that source apply.
 
 | Official resource | What the project takes from it | Role |
 | --- | --- | --- |
-| NASA Earthdata Search | SRTMGL30 (terrain), MOD11C3 (surface temperature), MOD13C2 (NDVI), MOD10CM (snow), MCD12C1 (land cover), EMIT L3ASA (minerals) | Core: features of every Earth cell |
+| NASA Earthdata Search | SRTMGL30 (terrain), MOD11C3 (surface temperature), MOD13C2 (NDVI), MOD10CM (snow), EMIT L3ASA (minerals); MCD12C1 (land cover) is downloaded but not used | Core: features of every Earth cell |
 | NASA Worldview | GIBS imagery layers: true colour, temperature, snow | Map background and visual check of the top candidates; nothing is downloaded into the pipeline |
 | NASA Planetary Data System (PDS) | Mars: MOLA MEGDR topography, Odyssey GRS water map | Core: fingerprints of the Martian targets |
 | NASA Lunar Reconnaissance Orbiter (PDS Geosciences) | LOLA gridded data: south polar elevation, slope and roughness maps | Core: terrain of the lunar targets |
@@ -147,6 +147,30 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 - Citation: NASA Langley Research Center (LaRC) POWER Project, funded through the NASA Earth Science/Applied Science Program.
 - Licence: NASA open data.
 
+**NASA POWER precipitation climatology on the whole land grid (dryness criterion)** (`earth_power_precip_grid`)
+
+- Official resource: none (NASA, outside the challenge list). Agency: NASA. Access: `open`.
+- Source: https://power.larc.nasa.gov/api/temporal/climatology/regional
+- Size: chosen at download time. Saved to `data/raw/earth/power_grid`. Used for: dryness.
+- Citation: NASA Langley Research Center (LaRC) POWER Project, funded through the NASA Earth Science/Applied Science Program. Precipitation from MERRA-2 (corrected), long-term climatology.
+- Licence: NASA open data.
+
+**Holocene volcanoes of the world (location and type), Smithsonian Global Volcanism Program** (`earth_volcanoes`)
+
+- Official resource: none (geological context, outside the challenge list). Agency: Smithsonian Institution. Access: `open`.
+- Source: https://raw.githubusercontent.com/plotly/datasets/master/
+- Size: 1 file(s), 0.1 MB. Saved to `data/raw/earth/context`. Used for: volcanic.
+- Citation: Global Volcanism Program, Smithsonian Institution. Volcanoes of the World, list of Holocene volcanoes (an earlier version of the database, 1,571 volcanoes, as copied in the plotly/datasets repository on GitHub). Current version: https://volcano.si.edu
+- Licence: Free use with citation of the Global Volcanism Program (check the terms on volcano.si.edu).
+
+**Confirmed impact structures (Earth Impact Database, 189 structures)** (`earth_impacts`)
+
+- Official resource: none (geological context, outside the challenge list). Agency: Planetary and Space Science Centre, University of New Brunswick. Access: `open`.
+- Source: https://raw.githubusercontent.com/cjwinchester/earth-impact-data/main/
+- Size: 1 file(s), 0.0 MB. Saved to `data/raw/earth/context`. Used for: impact.
+- Citation: Earth Impact Database, Planetary and Space Science Centre, University of New Brunswick (http://www.passc.net/EarthImpactDatabase), table as compiled in the cjwinchester/earth-impact-data repository on GitHub.
+- Licence: Terms of the Earth Impact Database apply; cite PASSC.
+
 **Copernicus DEM GLO-90 tiles (terrain of Antarctic sites and detail views)** (`earth_copdem_glo90`)
 
 - Official resource: Copernicus Data Space Ecosystem (ESA). Agency: ESA / Copernicus. Access: `open`.
@@ -185,7 +209,10 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 
 - The Natural Earth ice mask (1:50 million) is too coarse for small ice-free areas: the cell of the McMurdo Dry Valleys comes out as fully ice-covered. Use the MODIS snow and land-cover products for such places.
 - SRTMGL30 covers 90 N to 60 S. North of 60 N, where real SRTM ends, the values come from a coarser source (GTOPO30, to be confirmed), so Arctic terrain is smoother than elsewhere. Antarctica (south of 60 S) has no terrain: use Copernicus DEM for single sites such as the McMurdo Dry Valleys.
-- EMIT L3ASA covers about 52 N to 52 S and concentrates on arid regions.
+- EMIT L3ASA: the file covers 55 N to 54.5 S and only bare, dust-source surfaces; elsewhere the mineral features are empty. Its cell centres sit a quarter cell away from the project grid and are averaged 2 x 2.
+- The volcano list is an earlier version of the Global Volcanism Program database (1,571 volcanoes, 1,420 on land). A volcanic field is one point, so distance to it is only a proxy for volcanic terrain nearby.
+- The impact table lists 189 confirmed structures; the distance is measured to a circular rim of the listed diameter.
+- NASA POWER precipitation comes from the MERRA-2 reanalysis on a 0.5 x 0.625 degree grid and is least reliable in mountains and over small deserts.
 - The GRS water map has 5 degree bins, about 300 km on Mars: it describes a region, not a landing site.
 - The LOLA files of the manifest cover 75 S to the pole, which is enough for the lunar targets of `targets.yaml` and nothing else.
 - Sun elevations assume a flat horizon. Real horizons at the lunar pole and in mountains change the lighting a lot.
@@ -193,6 +220,6 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 ## Short form for the submission
 
 Data: NASA PDS (LRO LOLA, LRO Diviner, MGS MOLA, Mars Odyssey GRS); NASA EOSDIS LP DAAC
-and NSIDC DAAC through Earthdata (SRTMGL30, MOD11C3, MOD13C2, MOD10CM, MCD12C1, EMIT
-L3ASA); NASA POWER; Copernicus DEM GLO-90 (European Union and ESA); Natural Earth. List
-only the datasets the final project really uses.
+and NSIDC DAAC through Earthdata (SRTMGL30, MOD11C3, MOD13C2, MOD10CM, EMIT L3ASA); NASA
+POWER (precipitation, if the dryness layer was built); Smithsonian Global Volcanism
+Program; Earth Impact Database (PASSC, University of New Brunswick); Natural Earth.

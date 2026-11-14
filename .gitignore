@@ -5,9 +5,11 @@ data/raw/**
 !data/raw/**/
 !data/raw/**/.gitkeep
 !data/raw/earth/naturalearth/*.geojson
+!data/raw/earth/context/*.csv
 data/interim/**
 !data/interim/.gitkeep
 *.part
+.dodsrc
 
 # Python
 __pycache__/
@@ -31,4 +33,3 @@ dist/
 .idea/
 .DS_Store
 Thumbs.db
-.dodsrc

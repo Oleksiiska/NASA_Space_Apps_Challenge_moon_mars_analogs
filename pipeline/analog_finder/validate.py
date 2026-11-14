@@ -19,6 +19,7 @@ from . import config, scoring
 from .export import to_binary
 
 SCHEMA = 1
+CONTEXT_CRITERIA = ("volcanic", "impact")     # built from point lists that include many analog sites themselves
 
 
 def _targets(profiles: dict, world: str, mvp_only: bool = True) -> list[str]:
@@ -54,7 +55,7 @@ def validate(cells: scoring.Cells, profiles: dict, analogs: list[dict], tasks: O
                 sc_filt, _, _ = scoring.task_score(task, crit, world, cells, check_constraints=True)
                 p_free, p_filt = _percentiles(sc_free), _percentiles(sc_filt)
                 for a in analogs:
-                    if a["world"] != world or tid not in a["tasks"]:
+                    if a["world"] not in (world, "both") or tid not in a["tasks"]:
                         continue
                     k = cells.position(a["lat"], a["lon"])
                     rec = {"analog": a["id"], "task": tid, "target": tg, "world": world, "in_grid": k >= 0,
@@ -63,7 +64,8 @@ def validate(cells: scoring.Cells, profiles: dict, analogs: list[dict], tasks: O
                         rec[tag] = round(float(p[k]), 3) if k >= 0 and np.isfinite(p[k]) else None
                     rec["failed_filters"] = [c for c in task.get("constraints", []) if c in cons and k >= 0 and not cons[c][k]]
                     records.append(rec)
-    return {"schema": SCHEMA, "records": records, "skipped_tasks": skipped, "summary": summarize(records)}
+    ctx = sorted(t for t, d in tasks.items() if any(d["weights"].get(c, 0) > 0 for c in CONTEXT_CRITERIA))
+    return {"schema": SCHEMA, "records": records, "skipped_tasks": skipped, "summary": summarize(records, ctx)}
 
 
 def sensitivity(cells: scoring.Cells, profiles: dict, tasks: Optional[dict] = None, n_draws: int = 30,
@@ -106,7 +108,7 @@ def sensitivity(cells: scoring.Cells, profiles: dict, tasks: Optional[dict] = No
     return {"spread": spread, "draws": n_draws, "top_fraction": top_frac, "rows": rows, "by_task": by_task}
 
 
-def summarize(records: list[dict]) -> dict:
+def summarize(records: list[dict], context_tasks: Optional[list[str]] = None) -> dict:
     def stats(key: str, rows: list[dict]) -> dict:
         v = np.array([r[key] for r in rows if r[key] is not None], dtype=float)
         return {"pairs": len(rows), "scored": int(v.size),
@@ -116,7 +118,10 @@ def summarize(records: list[dict]) -> dict:
                 "share_above_median": round(float((v > 0.5).mean()), 3) if v.size else None}
     out = {"random_expectation": {"median_percentile": 0.5, "share_top20": 0.2, "share_top10": 0.1},
            "all": {"scores_only": stats("percentile", records), "with_filters": stats("percentile_filtered", records)},
+           "context_tasks": list(context_tasks or []),
            "by_task": {}}
+    indep = [r for r in records if r["task"] not in set(context_tasks or [])]
+    out["independent"] = {"scores_only": stats("percentile", indep), "with_filters": stats("percentile_filtered", indep)}
     for t in sorted({r["task"] for r in records}):
         rows = [r for r in records if r["task"] == t]
         out["by_task"][t] = {"scores_only": stats("percentile", rows), "with_filters": stats("percentile_filtered", rows)}
@@ -134,7 +139,11 @@ def report_markdown(result: dict) -> str:
              f"- Scores only: {a['scored']} of {a['pairs']} site-task-target pairs scored, median percentile {a['median_percentile']}, "
              f"top 20 % in {a['share_top20']:.0%}, top 10 % in {a['share_top10']:.0%}.",
              f"- With the hard filters of each task: {f['scored']} pairs left, median {f['median_percentile']}, top 20 % in {f['share_top20']:.0%}. "
-             "Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands).", "",
+             "Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands).",
+             f"- Independent part: the tasks {', '.join(s.get('context_tasks', [])) or '(none)'} use the volcano and impact lists, and those lists contain many "
+             "of the analog sites themselves, so their high percentiles show that the layers work, not that the method finds analogs on its own. "
+             f"Without them: {s['independent']['scores_only']['scored']} pairs, median percentile {s['independent']['scores_only']['median_percentile']}, "
+             f"top 20 % in {s['independent']['scores_only']['share_top20']:.0%}, top 10 % in {s['independent']['scores_only']['share_top10']:.0%}.", "",
              "| Task | pairs | median percentile | top 20 % | top 10 % |", "|---|---|---|---|---|"]
     for t, d in s["by_task"].items():
         x = d["scores_only"]
@@ -157,7 +166,7 @@ def report_markdown(result: dict) -> str:
     lines += ["", "## How to read this", "",
               "- A cell is about 55 km across; a site is much smaller. A flat Martian plain (Arcadia) is rarely matched by a whole cell.",
               "- Earth cannot reach lunar or Martian cold, vacuum or radiation. Cold, thermal range and low Sun are ranked in the useful direction only.",
-              "- Volcanic, impact and dryness layers are not in the data yet, so geology tasks lean on terrain; the caves task cannot be ranked.",
+              "- Volcanic fields and impact structures enter as distance to the nearest listed point or rim; dryness comes from NASA POWER precipitation when its layer was built.",
               ""]
     return "\n".join(lines)
 
@@ -180,7 +189,8 @@ def export_scores(cells: scoring.Cells, profiles: dict, out_dir: Optional[Path] 
         blocks.append(q)
 
     for name in scoring.SHARED:
-        add(name, shared[name])
+        if name in shared:
+            add(name, shared[name])
     for tg, prof in profiles.items():
         for name, v in scoring.matched_criteria(cells, prof["terrain_1km"]).items():
             add(name, v, tg)
@@ -193,7 +203,7 @@ def export_scores(cells: scoring.Cells, profiles: dict, out_dir: Optional[Path] 
     doc = {"schema": SCHEMA, "n_cells": cells.n, "scale": "uint8 0..254 -> 0..1, 255 no data", "criteria": meta,
            "constraint_bits": {c: i for i, c in enumerate(names)}, "constraints_not_checked": list(scoring.NOT_CHECKED),
            "constraint_offset": len(meta) * cells.n, "min_coverage": scoring.MIN_COVERAGE,
-           "no_data_yet": list(scoring.NO_DATA_YET), "composition_worlds": ["mars"],
+           "no_data_yet": scoring.no_data_yet(shared), "composition_worlds": ["mars"],
            "tasks": config.tasks()["tasks"]}
     np.concatenate(blocks).tofile(out_dir / "criteria.bin")
     with open(out_dir / "criteria.json", "w", encoding="utf-8", newline="\n") as f:
@@ -222,6 +232,9 @@ def run(processed_dir: Optional[Path] = None, log=print) -> dict:
     s = result["summary"]["all"]
     log(f"Validation: {s['scores_only']['scored']} of {s['scores_only']['pairs']} pairs scored, "
         f"median percentile {s['scores_only']['median_percentile']} (random 0.5), top 20 %: {s['scores_only']['share_top20']:.0%} (random 20 %)")
+    ind = result["summary"]["independent"]["scores_only"]
+    log(f"  without the tasks that use the volcano and impact lists: {ind['scored']} pairs, median {ind['median_percentile']}, "
+        f"top 20 %: {ind['share_top20']:.0%}")
     for t, why in result["skipped_tasks"].items():
         log(f"  task {t} cannot be ranked: {why}")
     for t, d in result["sensitivity"]["by_task"].items():

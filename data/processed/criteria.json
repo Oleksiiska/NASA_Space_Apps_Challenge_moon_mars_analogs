@@ -39,184 +39,194 @@
    "offset": 533298
   },
   {
-   "name": "slope_hist",
-   "target": "shackleton_ridge",
+   "name": "volcanic",
+   "target": null,
    "offset": 622181
   },
   {
-   "name": "relief",
-   "target": "shackleton_ridge",
+   "name": "impact",
+   "target": null,
    "offset": 711064
   },
   {
-   "name": "roughness",
+   "name": "slope_hist",
    "target": "shackleton_ridge",
    "offset": 799947
   },
   {
-   "name": "slope_hist",
-   "target": "shackleton_crater",
+   "name": "relief",
+   "target": "shackleton_ridge",
    "offset": 888830
   },
   {
-   "name": "relief",
-   "target": "shackleton_crater",
+   "name": "roughness",
+   "target": "shackleton_ridge",
    "offset": 977713
   },
   {
-   "name": "roughness",
+   "name": "slope_hist",
    "target": "shackleton_crater",
    "offset": 1066596
   },
   {
-   "name": "slope_hist",
-   "target": "de_gerlache_crater",
+   "name": "relief",
+   "target": "shackleton_crater",
    "offset": 1155479
   },
   {
-   "name": "relief",
-   "target": "de_gerlache_crater",
+   "name": "roughness",
+   "target": "shackleton_crater",
    "offset": 1244362
   },
   {
-   "name": "roughness",
+   "name": "slope_hist",
    "target": "de_gerlache_crater",
    "offset": 1333245
   },
   {
-   "name": "slope_hist",
-   "target": "mons_mouton",
+   "name": "relief",
+   "target": "de_gerlache_crater",
    "offset": 1422128
   },
   {
-   "name": "relief",
-   "target": "mons_mouton",
+   "name": "roughness",
+   "target": "de_gerlache_crater",
    "offset": 1511011
   },
   {
-   "name": "roughness",
+   "name": "slope_hist",
    "target": "mons_mouton",
    "offset": 1599894
   },
   {
-   "name": "slope_hist",
-   "target": "malapert",
+   "name": "relief",
+   "target": "mons_mouton",
    "offset": 1688777
   },
   {
-   "name": "relief",
-   "target": "malapert",
+   "name": "roughness",
+   "target": "mons_mouton",
    "offset": 1777660
   },
   {
-   "name": "roughness",
+   "name": "slope_hist",
    "target": "malapert",
    "offset": 1866543
   },
   {
-   "name": "slope_hist",
-   "target": "jezero",
+   "name": "relief",
+   "target": "malapert",
    "offset": 1955426
   },
   {
-   "name": "relief",
-   "target": "jezero",
+   "name": "roughness",
+   "target": "malapert",
    "offset": 2044309
   },
   {
-   "name": "roughness",
+   "name": "slope_hist",
    "target": "jezero",
    "offset": 2133192
   },
   {
-   "name": "slope_hist",
-   "target": "arcadia_planitia",
+   "name": "relief",
+   "target": "jezero",
    "offset": 2222075
   },
   {
-   "name": "relief",
-   "target": "arcadia_planitia",
+   "name": "roughness",
+   "target": "jezero",
    "offset": 2310958
   },
   {
-   "name": "roughness",
+   "name": "slope_hist",
    "target": "arcadia_planitia",
    "offset": 2399841
   },
   {
-   "name": "slope_hist",
-   "target": "gale",
+   "name": "relief",
+   "target": "arcadia_planitia",
    "offset": 2488724
   },
   {
-   "name": "relief",
-   "target": "gale",
+   "name": "roughness",
+   "target": "arcadia_planitia",
    "offset": 2577607
   },
   {
-   "name": "roughness",
+   "name": "slope_hist",
    "target": "gale",
    "offset": 2666490
   },
   {
-   "name": "slope_hist",
-   "target": "phoenix",
+   "name": "relief",
+   "target": "gale",
    "offset": 2755373
   },
   {
-   "name": "relief",
-   "target": "phoenix",
+   "name": "roughness",
+   "target": "gale",
    "offset": 2844256
   },
   {
-   "name": "roughness",
+   "name": "slope_hist",
    "target": "phoenix",
    "offset": 2933139
   },
   {
-   "name": "slope_hist",
-   "target": "viking2_utopia",
+   "name": "relief",
+   "target": "phoenix",
    "offset": 3022022
   },
   {
-   "name": "relief",
-   "target": "viking2_utopia",
+   "name": "roughness",
+   "target": "phoenix",
    "offset": 3110905
   },
   {
-   "name": "roughness",
+   "name": "slope_hist",
    "target": "viking2_utopia",
    "offset": 3199788
   },
   {
-   "name": "slope_hist",
-   "target": "meridiani",
+   "name": "relief",
+   "target": "viking2_utopia",
    "offset": 3288671
   },
   {
-   "name": "relief",
-   "target": "meridiani",
+   "name": "roughness",
+   "target": "viking2_utopia",
    "offset": 3377554
   },
   {
-   "name": "roughness",
+   "name": "slope_hist",
    "target": "meridiani",
    "offset": 3466437
   },
   {
+   "name": "relief",
+   "target": "meridiani",
+   "offset": 3555320
+  },
+  {
+   "name": "roughness",
+   "target": "meridiani",
+   "offset": 3644203
+  },
+  {
    "name": "slope_hist",
    "target": "mawrth_vallis",
-   "offset": 3555320
+   "offset": 3733086
   },
   {
    "name": "relief",
    "target": "mawrth_vallis",
-   "offset": 3644203
+   "offset": 3821969
   },
   {
    "name": "roughness",
    "target": "mawrth_vallis",
-   "offset": 3733086
+   "offset": 3910852
   }
  ],
  "constraint_bits": {
@@ -230,12 +240,10 @@
   "safe_access",
   "protected_ecosystem_flag"
  ],
- "constraint_offset": 3821969,
+ "constraint_offset": 3999735,
  "min_coverage": 0.5,
  "no_data_yet": [
-  "dryness",
-  "volcanic",
-  "impact"
+  "dryness"
  ],
  "composition_worlds": [
   "mars"

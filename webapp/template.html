@@ -143,6 +143,7 @@ footer{padding:8px 0 28px;color:var(--muted);font-size:12px;border-top:1px solid
       <textarea id="copybox" readonly hidden style="width:100%;height:120px;margin-top:8px;font-family:var(--mono);font-size:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px"></textarea>
 
       <section class="blk" id="card"></section>
+      <section class="blk" id="val"></section>
       <section class="blk" id="gaps"></section>
       <section class="blk" id="rel"></section>
     </div>
@@ -175,11 +176,11 @@ const I18N = {
     how2:"Each test task has hand-set weights (sliders) and hard filters. A cell’s score is the weighted mean of the criteria that have data; cells with under half of the weight in data get no score.",
     how3:"Terrain criteria compare the cell with the target. Cold, day–night swing, low Sun, ground ice and minerals rank Earth cells in the useful direction, because Earth cannot reach lunar or Martian values.",
     how4:"The known analog sites are only used to check the ranking, never to tune it. What Earth cannot reproduce is shown next to every candidate, not inside the score.",
-    srcs:"Data and sources",src1:"Earth: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) and MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth land.",src2:"Moon: LRO LOLA and Diviner polar resource product (NASA PDS Geosciences). Mars: MGS MOLA MEGDR and Mars Odyssey GRS (NASA PDS).",
-    lim1:"A cell is about 55 km across; real analog sites are far smaller.",lim2:"Cold, thermal range and low Sun are ranked in the useful direction only; Earth cannot reach lunar or Martian values.",lim3:"No volcanic, impact or dryness layer yet: geology tasks lean on terrain, and caves cannot be ranked.",lim4:"Ground ice is a proxy from annual surface temperature and glaciers. Minerals exist only for bare ground between 55°N and 54.5°S.",
+    srcs:"Data and sources",src1:"Earth: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) and MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth land; volcanoes: Smithsonian Global Volcanism Program; impact structures: Earth Impact Database (PASSC, University of New Brunswick); precipitation: NASA POWER when built.",src2:"Moon: LRO LOLA and Diviner polar resource product (NASA PDS Geosciences). Mars: MGS MOLA MEGDR and Mars Odyssey GRS (NASA PDS).",
+    lim1:"A cell is about 55 km across; real analog sites are far smaller.",lim2:"Cold, thermal range and low Sun are ranked in the useful direction only; Earth cannot reach lunar or Martian values.",lim3:"Volcanoes and impact structures enter as distance to the nearest listed point. The caves and EVA geology tasks rank known sites high partly because those lists contain the sites themselves.",lim_dry:"Dryness has no data yet: it needs the NASA POWER precipitation layer.",indep:"Without the tasks that use the volcano and impact lists",val_t:"Where the known analogs land",val_sub:"Percentile of each known site’s cell for this task and target, recomputed as you move the sliders. 1.00 = best cell on Earth, 0.50 = what a random place gets.",val_none:"No known site is listed for this task and world.",val_ns:"not ranked",val_other:"Other known sites of this world",val_med:"Median of the listed sites",f_volc:"Nearest basaltic volcano",f_volc_any:"Nearest Holocene volcano",f_imp:"Nearest impact structure (to its rim)",f_precip:"Annual precipitation",lim4:"Ground ice is a proxy from annual surface temperature and glaciers. Minerals exist only for bare ground between 55°N and 54.5°S.",
     nocell:"No cell has enough data for this task yet: ",ranked:"cells ranked",pct:"percentile",lat:"lat",lon:"lon",reg:"Region around",
     elev:"Mean elevation",relief:"Relief P5–P95",slope:"Mean slope",flat:"Share under 8° slope",tday:"Daytime surface, annual mean",tnight:"Coldest night month",swing:"Day–night swing",ndvi:"NDVI (greenness)",snow:"Snow-free months",lowsun:"Low-Sun hours per day (best month)",ice:"Glacier share",
-    foot:"Data: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Natural Earth. Pipeline and page were built with Claude (Anthropic) from the team’s plan; every number comes from the files in the repository. Check validation.md before quoting a figure.",
+    foot:"Data: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Smithsonian Global Volcanism Program; Earth Impact Database (PASSC); Natural Earth. Pipeline and page were built with Claude (Anthropic) from the team’s plan; every number comes from the files in the repository. Check validation.md before quoting a figure.",
     crit_names:{slope_hist:"Slope distribution",relief:"Relief",roughness:"Roughness",cold:"Cold",thermal_range:"Day–night swing",ground_ice:"Ground ice (proxy)",bare_ground:"Bare ground",composition:"Altered minerals",low_sun:"Low Sun",snow_free:"Snow-free months",dryness:"Dryness",volcanic:"Volcanic fields",impact:"Impact structures"},
     crit_tip:{slope_hist:"Match of the slope-class shares at a 1 km step with the target",relief:"Match of the 5–95 % elevation range",roughness:"Match of the median local roughness",cold:"Colder annual mean surface temperature ranks higher",thermal_range:"Larger day–night swing ranks higher",ground_ice:"Permafrost proxy (mean surface temperature under 0 °C) or glaciers",bare_ground:"Low NDVI: ground visible",composition:"Clays, sulfates, carbonates and iron oxides (EMIT); Mars only",low_sun:"Hours per day with the Sun 0–5° above the horizon",snow_free:"Months with a snow decision and under 10 % snow"},
     cons:{bare_ground_min:"Enough bare ground (NDVI ≤ 0.25)",flat_patch_exists:"A flat patch exists (≥ 5 % under 8°)",ground_ice_present:"Ground ice or glacier present",snow_free_window:"At least one snow-free month"},
@@ -200,11 +201,11 @@ const I18N = {
     how2:"Кожна тестова задача має задані вручну ваги (повзунки) і жорсткі фільтри. Оцінка клітинки — зважене середнє критеріїв, для яких є дані; клітинки, де даних менше ніж на половину ваги, оцінки не мають.",
     how3:"Критерії рельєфу порівнюють клітинку з ціллю. Холод, різниця день–ніч, низьке Сонце, ґрунтовий лід і мінерали ранжують клітинки Землі в потрібному напрямку, бо Земля не досягає місячних чи марсіанських значень.",
     how4:"Відомі аналоги лише перевіряють рейтинг і ніколи його не налаштовують. Те, чого Земля не відтворює, показано біля кандидата, а не всередині оцінки.",
-    srcs:"Дані та джерела",src1:"Земля: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) і MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth.",src2:"Місяць: LRO LOLA і полярний ресурсний продукт Diviner (NASA PDS Geosciences). Марс: MGS MOLA MEGDR і Mars Odyssey GRS (NASA PDS).",
-    lim1:"Клітинка має близько 55 км, а справжні майданчики набагато менші.",lim2:"Холод, добовий діапазон і низьке Сонце ранжуються лише в потрібному напрямку: Земля не досягає місячних чи марсіанських значень.",lim3:"Шарів вулканів, імпактних структур і посушливості ще немає: геологічні задачі спираються на рельєф, а печери не ранжуються.",lim4:"Ґрунтовий лід — наближення за річною температурою поверхні та льодовиками. Мінерали є лише для голого ґрунту між 55° пн.ш. і 54,5° пд.ш.",
+    srcs:"Дані та джерела",src1:"Земля: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) і MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth; вулкани: Smithsonian Global Volcanism Program; імпактні структури: Earth Impact Database (PASSC); опади: NASA POWER, якщо шар збудовано.",src2:"Місяць: LRO LOLA і полярний ресурсний продукт Diviner (NASA PDS Geosciences). Марс: MGS MOLA MEGDR і Mars Odyssey GRS (NASA PDS).",
+    lim1:"Клітинка має близько 55 км, а справжні майданчики набагато менші.",lim2:"Холод, добовий діапазон і низьке Сонце ранжуються лише в потрібному напрямку: Земля не досягає місячних чи марсіанських значень.",lim3:"Вулкани й імпактні структури входять як відстань до найближчої точки зі списку. Задачі «печери» й «геологічні виходи» ставлять відомі місця високо частково тому, що ці списки містять самі ці місця.",lim_dry:"Посушливості ще немає: потрібен шар опадів NASA POWER.",indep:"Без задач, що використовують списки вулканів і кратерів",val_t:"Де опинилися відомі аналоги",val_sub:"Перцентиль клітинки кожного відомого місця для цієї задачі й цілі; перераховується, коли рухаєте повзунки. 1,00 — найкраща клітинка Землі, 0,50 — випадкове місце.",val_none:"Для цієї задачі й світу відомих місць немає.",val_ns:"не ранжується",val_other:"Інші відомі місця цього світу",val_med:"Медіана наведених місць",f_volc:"Найближчий базальтовий вулкан",f_volc_any:"Найближчий голоценовий вулкан",f_imp:"Найближча імпактна структура (до краю)",f_precip:"Опади за рік",lim4:"Ґрунтовий лід — наближення за річною температурою поверхні та льодовиками. Мінерали є лише для голого ґрунту між 55° пн.ш. і 54,5° пд.ш.",
     nocell:"Для цієї задачі ще немає клітинок з достатніми даними: ",ranked:"клітинок ранжовано",pct:"перцентиль",lat:"шир.",lon:"довг.",reg:"Регіон навколо",
     elev:"Середня висота",relief:"Рельєф P5–P95",slope:"Середній схил",flat:"Частка зі схилом до 8°",tday:"Денна поверхня, річне середнє",tnight:"Найхолодніший нічний місяць",swing:"Різниця день–ніч",ndvi:"NDVI (зелень)",snow:"Місяців без снігу",lowsun:"Годин низького Сонця на добу (найкращий місяць)",ice:"Частка льодовиків",
-    foot:"Дані: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Natural Earth. Конвеєр і сторінку створено з Claude (Anthropic) за планом команди; кожне число береться з файлів репозиторію. Перед цитуванням цифр перегляньте validation.md.",
+    foot:"Дані: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Smithsonian Global Volcanism Program; Earth Impact Database (PASSC); Natural Earth. Конвеєр і сторінку створено з Claude (Anthropic) за планом команди; кожне число береться з файлів репозиторію. Перед цитуванням цифр перегляньте validation.md.",
     crit_names:{slope_hist:"Розподіл схилів",relief:"Рельєф",roughness:"Шорсткість",cold:"Холод",thermal_range:"Різниця день–ніч",ground_ice:"Ґрунтовий лід (наближення)",bare_ground:"Голий ґрунт",composition:"Змінені мінерали",low_sun:"Низьке Сонце",snow_free:"Місяці без снігу",dryness:"Посушливість",volcanic:"Вулканічні поля",impact:"Імпактні структури"},
     crit_tip:{slope_hist:"Збіг часток класів схилу на кроці 1 км із ціллю",relief:"Збіг діапазону висот 5–95 %",roughness:"Збіг медіанної локальної шорсткості",cold:"Холодніша річна температура поверхні — вищий ранг",thermal_range:"Більша різниця день–ніч — вищий ранг",ground_ice:"Наближення мерзлоти (середня температура поверхні нижче 0 °C) або льодовики",bare_ground:"Низький NDVI: ґрунт видно",composition:"Глини, сульфати, карбонати й оксиди заліза (EMIT); лише Марс",low_sun:"Годин на добу із Сонцем 0–5° над горизонтом",snow_free:"Місяці зі снігом нижче 10 %"},
     cons:{bare_ground_min:"Достатньо голого ґрунту (NDVI ≤ 0,25)",flat_patch_exists:"Є рівний майданчик (≥ 5 % зі схилом до 8°)",ground_ice_present:"Є ґрунтовий лід або льодовик",snow_free_window:"Принаймні один місяць без снігу"},
@@ -486,6 +487,10 @@ function renderCard(){
     "<tr><td>"+T("f_flat")+'</td><td class="n">'+(fl===fl?(fl*100).toFixed(0)+" %":"–")+'</td><td class="n">'+(tf.flat!==undefined&&tf.flat!==null?(tf.flat*100).toFixed(0)+" %":"–")+"</td></tr></tbody></table>"+
     '<div class="kv" style="margin-top:8px">'+
     "<span>"+T("elev")+"</span><span>"+f("elev_mean_m",0)+" m</span>"+
+    (hasRaw("volc_basalt_dist_km")?"<span>"+T("f_volc")+"</span><span>"+distTxt(raw("volc_basalt_dist_km",i))+"</span>":"")+
+    (hasRaw("volc_dist_km")?"<span>"+T("f_volc_any")+"</span><span>"+distTxt(raw("volc_dist_km",i))+"</span>":"")+
+    (hasRaw("impact_dist_km")?"<span>"+T("f_imp")+"</span><span>"+distTxt(raw("impact_dist_km",i))+impDiam(i)+"</span>":"")+
+    (hasRaw("precip_mm_yr")?"<span>"+T("f_precip")+"</span><span>"+f("precip_mm_yr",0)+" mm</span>":"")+
     "<span>"+T("tday")+"</span><span>"+f("lst_day_mean_k",0)+" K</span>"+"<span>"+T("tnight")+"</span><span>"+f("lst_night_min_k",0)+" K</span>"+
     "<span>"+T("swing")+"</span><span>"+f("lst_diurnal_k",0)+" K</span>"+"<span>"+T("ndvi")+"</span><span>"+f("ndvi_mean",2)+"</span>"+
     "<span>"+T("snow")+"</span><span>"+f("snow_free_months",0)+" / 12</span>"+"<span>"+T("lowsun")+"</span><span>"+f("lowsun_best_h",1)+" h</span>"+
@@ -500,6 +505,28 @@ function renderCard(){
   const isNew=!nearbyAnalogs(i).length;
   h=h.replace('<h3 style="margin-top:12px">'+T("crit")+'</h3>','<p style="margin:8px 0 0"><span class="chip '+(isNew?"ok":"part")+'">'+(isNew?T("newc"):T("knownc"))+'</span></p><p class="sub" id="stab" style="margin-top:6px"></p><h3 style="margin-top:12px">'+T("crit")+'</h3>');
   box.innerHTML=h; scheduleStability();
+}
+function hasRaw(n){return M.raw.some(r=>r.name===n)}
+function distTxt(v){return v===v?(v>=299?"> 300 km":Math.round(v)+" km"):"–"}
+function impDiam(i){const d=hasRaw("impact_diam_km")?raw("impact_diam_km",i):NaN; return d===d&&d>0?" (⌀ "+(d<10?d.toFixed(1):Math.round(d))+" km)":""}
+function analogPos(a){const r=Math.floor((90-a.lat)/0.5), c=Math.floor((a.lon+180)/0.5); return (r<0||r>=M.grid.n_lat||c<0||c>=M.grid.n_lon)?-1:LUT[r*M.grid.n_lon+c]}
+function renderVal(){
+  const box=$("val"); const mine=[], other=[];
+  for(const a of M.analogs){
+    if(a.world!==S.world&&a.world!=="both") continue;
+    const k=analogPos(a), v=k>=0?SC[k]:NaN, p=v===v?pctOf(v):NaN;
+    (a.tasks.includes(S.task)&&a.validate?mine:other).push({a,p});
+  }
+  const row=x=>'<tr><td>'+(lang==="uk"?x.a.name_uk:x.a.name)+' <span class="sub">'+x.a.country+'</span></td><td class="n">'+(x.p===x.p?x.p.toFixed(2):'<span class="sub">'+T("val_ns")+'</span>')+'</td><td>'+
+    (x.p===x.p?'<span class="chip '+(x.p>=0.8?"ok":x.p>=0.5?"part":"no")+'">'+(x.p>=0.8?"top 20 %":x.p>=0.5?"> 0.50":"< 0.50")+'</span>':"")+'</td></tr>';
+  mine.sort((a,b)=>(b.p===b.p?b.p:-1)-(a.p===a.p?a.p:-1)); other.sort((a,b)=>(b.p===b.p?b.p:-1)-(a.p===a.p?a.p:-1));
+  let h='<h2>'+T("val_t")+'</h2><p class="sub" style="margin:4px 0 8px">'+T("val_sub")+'</p>';
+  if(mine.length){
+    const ps=mine.map(x=>x.p).filter(p=>p===p).sort((a,b)=>a-b); const med=ps.length?(ps.length%2?ps[(ps.length-1)/2]:(ps[ps.length/2-1]+ps[ps.length/2])/2):NaN;
+    h+='<div class="tblwrap"><table class="tbl"><tbody>'+mine.map(row).join("")+'</tbody></table></div>'+(med===med?'<p class="sub" style="margin-top:6px">'+T("val_med")+": "+med.toFixed(2)+"</p>":"");
+  } else h+='<p class="sub">'+T("val_none")+"</p>";
+  if(other.length) h+='<details><summary>'+T("val_other")+" ("+other.length+')</summary><div class="tblwrap"><table class="tbl"><tbody>'+other.map(row).join("")+"</tbody></table></div></details>";
+  box.innerHTML=h;
 }
 function renderGaps(){
   const w=S.world; let h='<h2>'+T("gaps")+"</h2><p class=\"sub\">"+T("gaps_sub")+"</p>";
@@ -516,7 +543,9 @@ function renderRel(){
   let h='<h2>'+T("rel")+'</h2><p class="sub" style="margin:4px 0 8px">'+T("rel_a")+'</p><div class="kv">'+
    "<span>"+T("sites")+"</span><span>"+v.scored+" / "+v.pairs+"</span><span>"+T("median")+"</span><span>"+v.median_percentile.toFixed(2)+"</span><span>"+T("top20")+"</span><span>"+Math.round(v.share_top20*100)+" %</span></div>";
   if(bt) h+='<p class="sub" style="margin-top:8px">'+tname(taskById(S.task))+": "+bt.scores_only.scored+" "+T("sites")+", "+T("median")+" "+bt.scores_only.median_percentile.toFixed(2)+", "+T("top20")+" "+Math.round(bt.scores_only.share_top20*100)+" %.</p>";
-  h+='<ul class="plain sub"><li>'+T("weights_not_tuned")+"</li><li>"+T("lim1")+"</li><li>"+T("lim2")+"</li><li>"+T("lim3")+"</li><li>"+T("lim4")+"</li></ul>";
+  const ind=M.validation.independent&&M.validation.independent.scores_only;
+  if(ind&&ind.scored) h+='<p class="sub" style="margin-top:8px">'+T("indep")+": "+ind.scored+" "+T("sites")+", "+T("median")+" "+ind.median_percentile.toFixed(2)+", "+T("top20")+" "+Math.round(ind.share_top20*100)+" %.</p>";
+  h+='<ul class="plain sub"><li>'+T("weights_not_tuned")+"</li><li>"+T("lim1")+"</li><li>"+T("lim2")+"</li><li>"+T("lim3")+"</li>"+((M.no_data_yet||[]).includes("dryness")?"<li>"+T("lim_dry")+"</li>":"")+"<li>"+T("lim4")+"</li></ul>";
   const se=M.sensitivity&&M.sensitivity[S.task];
   if(se) h+='<p class="sub" style="margin-top:8px">'+T("stab")+": "+Math.round(se.mean_overlap*100)+" % "+(lang==="uk"?"верхніх 5 % клітинок лишаються при зміні ваг на ±25 %.":"of the top 5 % cells stay when the weights change by 25 %.")+"</p>";
   h+='<details><summary>'+T("how")+'</summary><p>'+T("how1")+"</p><p>"+T("how2")+"</p><p>"+T("how3")+"</p><p>"+T("how4")+"</p></details>";
@@ -537,7 +566,7 @@ function applyStatic(){
 }
 function refresh(rebuildControls){
   if(rebuildControls){fillTargets();fillTasks();fillSliders()}
-  compute(); renderCands(); renderCard(); renderGaps(); renderRel(); draw();
+  compute(); renderCands(); renderCard(); renderVal(); renderGaps(); renderRel(); draw();
 }
 function legend(){ $("ramp").style.background="linear-gradient(90deg,"+STOPS.map(s=>"rgb("+s.join(",")+")").join(",")+")" }
 

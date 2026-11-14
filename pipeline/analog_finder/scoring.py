@@ -12,7 +12,8 @@ Two kinds of criteria:
 
 A task score is the weighted mean of the criteria that exist for the cell. ``coverage`` is the share of the task weight that
 had data; cells under ``MIN_COVERAGE`` get no score. Hard constraints are boolean masks; a cell that fails one is not ranked.
-Criteria without data yet (dryness, volcanic, impact) are reported, never guessed.
+Context criteria (volcanic, impact, dryness) exist only when their layers were built (``context`` command); a criterion
+without data is reported, never guessed.
 """
 from __future__ import annotations
 
@@ -30,7 +31,11 @@ HIST = [f"slope_h{k}" for k in range(9)]
 NO_DATA_YET = ("dryness", "volcanic", "impact")
 ALTERATION = ("min_kaolinite", "min_montmorillonite", "min_illite_muscovite", "min_vermiculite", "min_chlorite",
               "min_gypsum", "min_calcite", "min_dolomite", "min_hematite", "min_goethite")
-SHARED = ("cold", "thermal_range", "ground_ice", "bare_ground", "low_sun", "snow_free", "composition")
+SHARED = ("cold", "thermal_range", "ground_ice", "bare_ground", "low_sun", "snow_free", "composition",
+          "volcanic", "impact", "dryness")
+VOLC_SCALE_KM = 50.0      # score 1 at a volcano, 0.37 at 50 km, 0.05 at 150 km
+IMPACT_SCALE_KM = 40.0    # score 1 inside a structure, 0.37 at 40 km from its rim
+DRY_WET_MM, DRY_ARID_MM = 1000.0, 25.0     # dryness 0 at 1000 mm/year or more, 1 at 25 mm/year or less (log scale)
 MATCHED = ("slope_hist", "relief", "roughness")
 
 
@@ -111,7 +116,7 @@ def shared_criteria(cells: Cells) -> dict[str, np.ndarray]:
     for k in ALTERATION:
         alt += np.nan_to_num(f[k])
     alt[~have] = np.nan
-    return {
+    out = {
         "cold": pct_rank(-t_mean),
         "thermal_range": pct_rank(f["lst_diurnal_k"]),
         "ground_ice": ground_ice,
@@ -120,6 +125,26 @@ def shared_criteria(cells: Cells) -> dict[str, np.ndarray]:
         "snow_free": (f["snow_free_months"] / 12.0).astype(np.float32),
         "composition": pct_rank(alt),
     }
+    if "volc_dist_km" in f and "volc_basalt_dist_km" in f:
+        out["volcanic"] = np.fmax(np.exp(-f["volc_basalt_dist_km"] / VOLC_SCALE_KM),
+                                  0.6 * np.exp(-f["volc_dist_km"] / VOLC_SCALE_KM)).astype(np.float32)
+    if "impact_dist_km" in f:
+        out["impact"] = np.exp(-f["impact_dist_km"] / IMPACT_SCALE_KM).astype(np.float32)
+    if "precip_mm_yr" in f:
+        out["dryness"] = dryness_score(f["precip_mm_yr"])
+    return out
+
+
+def dryness_score(precip_mm_yr: np.ndarray) -> np.ndarray:
+    """1 for hyper-arid (25 mm/year or less), 0 for 1000 mm/year or more, log scale in between; NaN stays NaN."""
+    p = np.asarray(precip_mm_yr, dtype=np.float64)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        s = 1.0 - np.log10(np.maximum(p, 1e-6) / DRY_ARID_MM) / np.log10(DRY_WET_MM / DRY_ARID_MM)
+    return np.where(np.isfinite(p), np.clip(s, 0, 1), np.nan).astype(np.float32)
+
+
+def no_data_yet(shared: dict) -> list[str]:
+    return [c for c in NO_DATA_YET if c not in shared]
 
 
 def constraints(cells: Cells) -> dict[str, np.ndarray]:

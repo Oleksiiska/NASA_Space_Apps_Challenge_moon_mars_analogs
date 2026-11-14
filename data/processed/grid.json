@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_utc": "2026-11-14T11:33:08Z",
+  "created_utc": "2026-11-14T15:06:29Z",
   "grid": {
     "cell_deg": 0.5,
     "n_lat": 360,
@@ -383,6 +383,42 @@
       "unit": "months",
       "description": "Months with a snow decision and under 10 % snow cover (months without decision are not counted as free).",
       "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "impact_dist_km",
+      "offset": 3555320,
+      "min": 0.0,
+      "max": 300.0,
+      "unit": "km",
+      "description": "Distance to the rim of the nearest confirmed impact structure, 0 inside (capped at 300 km)",
+      "source": "Earth Impact Database (PASSC, University of New Brunswick); computed by features/earth_context.py"
+    },
+    {
+      "name": "impact_diam_km",
+      "offset": 3644203,
+      "min": 0.0,
+      "max": 300.0,
+      "unit": "km",
+      "description": "Diameter of that impact structure (0 when none within 300 km)",
+      "source": "Earth Impact Database (PASSC, University of New Brunswick); computed by features/earth_context.py"
+    },
+    {
+      "name": "volc_dist_km",
+      "offset": 3733086,
+      "min": 0.0,
+      "max": 300.0,
+      "unit": "km",
+      "description": "Distance to the nearest Holocene volcano on land (capped at 300 km)",
+      "source": "Smithsonian Global Volcanism Program, list of Holocene volcanoes; computed by features/earth_context.py"
+    },
+    {
+      "name": "volc_basalt_dist_km",
+      "offset": 3821969,
+      "min": 0.0,
+      "max": 300.0,
+      "unit": "km",
+      "description": "Distance to the nearest basaltic Holocene volcano: shield, volcanic field, fissure vent, cinder cone (capped at 300 km)",
+      "source": "Smithsonian Global Volcanism Program, list of Holocene volcanoes; computed by features/earth_context.py"
     }
   ],
   "min_land_frac": 0.2,

@@ -12,7 +12,8 @@ from analog_finder import config  # noqa: E402
 from analog_finder.prep import reference  # noqa: E402
 
 RAW = ["elev_mean_m", "relief_m", "slope_mean_deg", "slope_lt8", "rough_p50_m", "lst_day_mean_k", "lst_night_min_k", "lst_diurnal_k",
-       "ndvi_mean", "snow_free_months", "lowsun_best_h", "ice_frac"]
+       "ndvi_mean", "snow_free_months", "lowsun_best_h", "ice_frac",
+       "volc_dist_km", "volc_basalt_dist_km", "impact_dist_km", "impact_diam_km", "precip_mm_yr"]   # missing ones are skipped
 
 
 def fmt_temp(d):
@@ -36,7 +37,9 @@ def build(pdir: Path, out: Path):
     raw_meta = []
     off = cbytes.size
     for name in RAW:
-        f = next(x for x in grid["features"] if x["name"] == name)
+        f = next((x for x in grid["features"] if x["name"] == name), None)
+        if f is None:
+            continue
         blocks.append(gbytes[f["offset"]: f["offset"] + n])
         raw_meta.append({"name": name, "offset": off, "min": f["min"], "max": f["max"], "unit": f.get("unit", "")})
         off += n

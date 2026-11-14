@@ -2,7 +2,8 @@
 
   sources                 list datasets and what is already on disk
   fetch pds|moon|mars     download Moon and Mars files from NASA PDS (no login)
-  fetch aux               download the Natural Earth land mask
+  fetch aux               download the Natural Earth land mask and the volcano and impact tables
+  fetch power-grid        NASA POWER precipitation for every land box (dryness; no login, about an hour)
   fetch earth             download Earthdata products (asks for your Earthdata Login)
   fetch power             NASA POWER climatology for the points of a CSV
   fetch copdem            Copernicus DEM tiles around the points of a CSV
@@ -11,7 +12,12 @@
   profiles                compute the Moon and Mars target fingerprints
   reference               write the map layers of targets and known analogs
   terrain                 terrain features of Earth cells from the SRTMGL30 tiles
+  surface                 temperature, NDVI, snow and mineral layers from MODIS and EMIT
+  context                 volcano, impact and dryness layers
   merge                   add the computed Earth layers to data/processed/grid.bin
+  score                   validate on known analogs, export the scores for the web page
+  web                     build webapp/index.html from data/processed
+  all                     run every step that is not done yet, then score and build the page
   inspect FILE            show the variables inside an HDF4 / NetCDF file
 """
 from __future__ import annotations
@@ -49,7 +55,11 @@ def _cmd_fetch(args) -> int:
         results = pds.fetch_world(world, ids=args.only, dry_run=args.dry_run)
     elif what == "aux":
         from .fetch import pds
-        results = pds.fetch_datasets(config.datasets(ids=["earth_naturalearth_land"]), dry_run=args.dry_run)
+        results = pds.fetch_datasets(config.datasets(ids=["earth_naturalearth_land", "earth_volcanoes", "earth_impacts"]),
+                                     dry_run=args.dry_run)
+    elif what == "power-grid":
+        from .fetch import earth
+        results = earth.fetch_power_grid(dry_run=args.dry_run)
     elif what == "earth":
         from .fetch import earth
         results = earth.fetch_earthdata(ids=args.only, year=args.year, dry_run=args.dry_run)
@@ -111,6 +121,25 @@ def _cmd_surface(args) -> int:
     return 0
 
 
+def _cmd_context(args) -> int:
+    from .features import earth_context
+    paths = earth_context.build_all(args.only)
+    if paths:
+        print("Layers saved: " + ", ".join(p.name for p in paths) + "\nNext: python -m analog_finder merge")
+    return 0
+
+
+def _cmd_web(args) -> int:
+    from . import pipeline_all
+    pipeline_all.build_web()
+    return 0
+
+
+def _cmd_all(args) -> int:
+    from . import pipeline_all
+    return pipeline_all.run_all(force=args.force, fetch=args.fetch)
+
+
 def _cmd_score(args) -> int:
     from . import validate
     validate.run()
@@ -138,7 +167,7 @@ def main(argv=None) -> int:
     sub.add_parser("sources", help="list datasets and local status").set_defaults(func=_cmd_sources)
 
     f = sub.add_parser("fetch", help="download data")
-    f.add_argument("what", choices=["pds", "moon", "mars", "aux", "earth", "power", "copdem"])
+    f.add_argument("what", choices=["pds", "moon", "mars", "aux", "earth", "power", "power-grid", "copdem"])
     f.add_argument("--dry-run", action="store_true", help="show what would be downloaded")
     f.add_argument("--only", nargs="+", metavar="DATASET_ID", help="restrict to these dataset ids")
     f.add_argument("--year", type=int, default=2023, help="year of the monthly Earth products (default 2023)")
@@ -161,6 +190,14 @@ def main(argv=None) -> int:
     sf = sub.add_parser("surface", help="temperature, NDVI, snow and mineral features from MODIS and EMIT")
     sf.add_argument("--only", nargs="+", choices=["lst", "ndvi", "snow", "emit"], help="restrict to these products")
     sf.set_defaults(func=_cmd_surface)
+    cx = sub.add_parser("context", help="volcano, impact and dryness layers")
+    cx.add_argument("--only", nargs="+", choices=["volcanic", "impact", "dryness"], help="restrict to these layers")
+    cx.set_defaults(func=_cmd_context)
+    sub.add_parser("web", help="build webapp/index.html from data/processed").set_defaults(func=_cmd_web)
+    al = sub.add_parser("all", help="run every step that is not done yet, then score and build the page")
+    al.add_argument("--fetch", action="store_true", help="also download missing data (PDS, Earthdata with login, POWER)")
+    al.add_argument("--force", nargs="+", default=[], metavar="STEP", help="redo these steps even if done (or: all)")
+    al.set_defaults(func=_cmd_all)
     sub.add_parser("score", help="validate the ranking on known analogs and export scores for the web app").set_defaults(func=_cmd_score)
     sub.add_parser("merge", help="add computed Earth layers to grid.bin").set_defaults(func=_cmd_merge)
     i = sub.add_parser("inspect", help="show the variables inside an HDF4 / NetCDF file")

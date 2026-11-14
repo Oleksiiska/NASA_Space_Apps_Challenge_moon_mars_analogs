@@ -1,20 +1,32 @@
-# Moon and Mars analog finder: data layer
+# Moon–Mars Analog Finder
 
 NASA Space Apps Challenge 2026, challenge "Identify Earth Locations that Analog the
 Permanent Moon Base Locations and Mars".
 
-This repository holds the data layer of the project: a manifest of every dataset and
-the official challenge resource it comes from, download scripts, readers for the
-planetary file formats, the Earth grid, and the first computed layers. The ranking and
-the web app are built on top of it.
-
-The idea in one paragraph: the Earth's land is cut into 0.5 degree cells. Every cell and
-every Moon or Mars target gets the same set of features (terrain at a 1 km step, cold,
-ice, bare ground, low Sun and so on). A cell is a good analog *for a given test task*
-when its features are close to the target's. Sites that agencies already use as analogs
-are kept apart and serve only to check the ranking. What the Earth cannot reproduce
-(gravity, pressure, radiation) is shown next to every candidate and never mixed into
+Where on Earth can a team test what it will do at the Shackleton–de Gerlache ridge, at Mons
+Mouton, in Jezero crater or on Arcadia Planitia? The Earth's land is cut into 0.5 degree cells.
+Every cell and every Moon or Mars target gets the same measures (terrain at a 1 km step, cold,
+ice, bare ground, low Sun, minerals, volcanoes, impact structures). A cell is a good analog
+*for a given test task* when its measures are close to the target's. Sites that agencies
+already use as analogs only check the ranking. What the Earth cannot reproduce (gravity,
+pressure, radiation, cryogenic cold) is shown next to every candidate and never mixed into
 the score.
+
+This is a screening tool, not an engineering assessment or a site-selection recommendation.
+
+- Web page: `webapp/index.html` (one self-contained file; open it in a browser)
+- Method, formulas and validation: [`docs/methodology.md`](docs/methodology.md)
+- Current validation figures: [`data/processed/validation.md`](data/processed/validation.md)
+- Data sources, citations and licences: [`docs/data_sources.md`](docs/data_sources.md)
+
+## Result in short
+
+- 88,883 land cells, 12 targets (5 Moon, 7 Mars), 7 test tasks, 45 per-cell criteria.
+- Known analog sites rank well above a random place: median percentile 0.78 over all tasks
+  (random: 0.50). Without the two tasks that use the volcano and impact lists, which contain
+  many of the sites themselves, the median is 0.70 and only 20 % of the sites reach the top
+  20 %: the 55 km cell is much larger than a real site. See `docs/methodology.md`, section 6.
+- Changing every weight by up to ±25 % keeps 75–99 % of the top 5 % cells in place.
 
 ## Layout
 
@@ -22,58 +34,53 @@ the score.
 pipeline/
   config/sources.yaml    every dataset: official resource, URL, files, sizes, citation, licence
   config/targets.yaml    12 Moon and Mars targets with coordinates and sources
-  config/tasks.yaml      7 test tasks and the weight of each criterion
+  config/tasks.yaml      7 test tasks: weights of the criteria and hard filters
   analog_finder/
-    fetch/               downloads: NASA PDS, Earthdata, NASA POWER, Copernicus DEM
-    io/                  readers: PDS3 images with their labels, Diviner and GRS tables
-    prep/                Earth land grid; map layers of targets and known analogs
-    features/            terrain (slope, relief, roughness) and Sun geometry
+    fetch/               downloads: NASA PDS, Earthdata, NASA POWER, Copernicus DEM, context tables
+    io/                  readers: PDS3 images and tables, SRTM tiles, HDF4 / NetCDF inspection
+    prep/                Earth land grid, feature layers, reference layers
+    features/            terrain, Sun geometry, MODIS and EMIT surface layers, volcano / impact / dryness layers
     targets/             feature "fingerprints" of the Moon and Mars targets
-    export/              compact binary grid for the browser
-  tests/                 68 tests; they need no downloads
+    scoring.py           criteria and task scores
+    validate.py          known-analog validation, weight sensitivity, export for the web page
+    pipeline_all.py      the `all` command
+    export/              compact binary grid
+  scripts/               generator of docs/data_sources.md
+  tests/                 77 tests; they need no downloads
+webapp/
+  template.html          the page; build_app.py embeds data/processed into index.html
 data/
-  raw/                   downloads (not committed, see .gitignore)
-  interim/               scratch space
-  processed/             outputs that the web app reads
-  reference/             hand-kept tables: known analogs, targets, what Earth cannot reproduce
-docs/data_sources.md     attribution and licences
+  raw/                   downloads (not committed, except the land mask and the two context tables)
+  interim/               intermediate layers (not committed)
+  processed/             grid, target profiles, criteria and validation: everything the page reads
+  reference/             known analogs, targets, what Earth cannot reproduce
+docs/                    methodology.md, data_sources.md
 ```
 
-## Already computed
+## Quick start (Windows)
 
-These files need no downloads and are ready to use.
-
-| File | Content |
-| --- | --- |
-| `data/processed/grid.json`, `grid.bin`, `grid_index.bin` | 0.5 degree grid, 88,883 land cells, 5 features: `land_frac`, `ice_frac`, `lowsun_best_h`, `lowsun_mean_h`, `lowsun_best_month` |
-| `data/processed/lowsun_by_latitude.csv` | Hours per day with the Sun 0 to 5 degrees above the horizon, by latitude and month |
-| `data/processed/analogs_grid.csv` | Grid cell and grid features at each known analog site |
-| `data/reference/known_analogs.csv`, `.geojson` | 39 sites already used as Moon or Mars analogs; 28 with coordinates read from a source, 11 approximate |
-| `data/reference/targets.geojson` | The 12 targets as map points |
-| `data/reference/environment_gaps.json` | Gravity, pressure, day length, radiation, temperature on Earth, the Moon and Mars |
-
-The format of the binary grid is described at the top of
-`pipeline/analog_finder/export/to_binary.py` and repeated inside `grid.json`:
-`value = min + q / 254 * (max - min)`, `q = 255` means no data.
-
-## Quick start on Windows
-
-Python 3.10 or newer, 64-bit (3.11 to 3.13 have ready-made packages for everything below).
-In PowerShell, from the project folder:
+Python 3.11 to 3.13, 64-bit. In PowerShell, from the repository folder:
 
 ```powershell
-python -m venv .venv          # or: py -3 -m venv .venv
+py -3.13 -m venv .venv
 .venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -e "pipeline[geo,dev]"
+pip install -e "pipeline[geo,earth,formats,dev]"
 python -m pytest pipeline
-python -m analog_finder sources
+python -m analog_finder all
 ```
 
-If PowerShell refuses to run `Activate.ps1`, use the classic prompt (`cmd`) and
-`.venv\Scripts\activate.bat` instead.
+`all` runs every step that is not done yet. A fresh clone already has the processed grid, so
+nothing is downloaded: it builds the volcano and impact layers from the tables in the
+repository, scores every task, writes the validation and rebuilds `webapp/index.html`
+(a few seconds). If PowerShell refuses to run `Activate.ps1`, use `cmd` and
+`.venv\Scripts\activate.bat`.
 
-### 1. Moon and Mars files from NASA PDS (no login)
+## Rebuilding from the raw data
+
+Needed only to recompute the grid from the original files. `python -m analog_finder all --fetch`
+does all of it in order; the steps one by one:
+
+### 1. Moon and Mars files from NASA PDS (no login, 1.6 GB)
 
 ```powershell
 python -m analog_finder fetch pds
@@ -81,122 +88,88 @@ python -m analog_finder check
 python -m analog_finder profiles
 ```
 
-`fetch pds` downloads 13 data files and their labels, 1.6 GB in total, into
-`data/raw/moon` and `data/raw/mars`. It can be interrupted and started again: finished
-files are skipped and a partial file continues from where it stopped. `check` compares
-every file size with the manifest. `profiles` writes
-`data/processed/target_profiles.json`: terrain at a 1 km step for every target,
-temperatures and ice stability from Diviner for the lunar targets, water content from
-GRS for the Martian ones.
+`check` compares every file size with the manifest. `profiles` writes
+`data/processed/target_profiles.json` after testing the georeferencing against four landmarks
+(the floor of Shackleton and the top of Mons Mouton, Olympus Mons and Hellas).
 
-`profiles` first tests the georeferencing against four known landmarks (the floor of
-Shackleton and the top of Mons Mouton on the Moon, Olympus Mons and Hellas on Mars). If
-it reports a problem, do not use the numbers: the image is being read mirrored or
-shifted.
-
-To try the chain on a small download first (33 MB, Mars only), pick two datasets by id.
-Mars terrain then comes from the coarser 3.7 km map until the 926 m tiles arrive:
+### 2. Earth products from NASA Earthdata (free Earthdata Login, about 3.5 GB)
 
 ```powershell
-python -m analog_finder fetch pds --only mars_mola_megdr_16 mars_grs_h2o
-python -m analog_finder profiles
-```
-
-### 2. Earth products from NASA Earthdata (free Earthdata Login)
-
-```powershell
-pip install -e "pipeline[earth]"
 python -m analog_finder fetch earth --dry-run
 python -m analog_finder fetch earth --year 2023
 ```
 
-The dry run lists the granules and their size without logging in. The real run asks for
-your Earthdata Login in the terminal; the `earthaccess` library stores it in your user
-profile, not in this repository. Products: SRTMGL30 (terrain), MOD11C3 (surface
-temperature), MOD13C2 (NDVI), MOD10CM (snow), MCD12C1 (land cover), EMIT L3ASA (minerals).
+The real run asks for your Earthdata Login in the terminal; `earthaccess` stores it in your
+user profile, not in this repository. MCD12C1 (land cover, 1.2 GB) is downloaded but not used.
 
-### 2b. Earth feature layers (after step 2)
+### 3. Earth feature layers
 
 ```powershell
-pip install -e "pipeline[formats]"
 python -m analog_finder terrain
 python -m analog_finder surface
+python -m analog_finder fetch aux
+python -m analog_finder context
 python -m analog_finder merge
 ```
 
-`terrain` reads SRTMGL30 (27 tiles) and computes slope, relief and roughness for every
-0.5 degree cell. `surface` reads the monthly MODIS files and the EMIT netCDF file and
-writes surface temperature, NDVI, snow and mineral layers; each product has a
-self-check against known places (Sahara hot, Greenland snowy, Amazon green, ...) and
-stops with a message if a file is read wrongly. `merge` adds all layers to
-`data/processed/grid.bin`. `python -m analog_finder inspect FILE` shows the variables
-inside any HDF4 or NetCDF file.
+`terrain` reads the 27 SRTMGL30 tiles, `surface` the monthly MODIS files and the EMIT file,
+`context` the volcano and impact tables (and the POWER boxes, see step 4). Each product checks
+itself against known places and stops if a file is read wrongly. `merge` adds the layers to
+`data/processed/grid.bin`. `python -m analog_finder inspect FILE` lists the variables of any
+HDF4 or NetCDF file.
 
-Mineral abundances (EMIT) exist only for bare surfaces between 55 N and 54.5 S; cells
-elsewhere stay empty, and the ranking must treat an empty feature as unknown, not as zero.
+### 4. Dryness from NASA POWER (no login, about an hour)
 
-### 2c. Ranking and validation
+```powershell
+python -m analog_finder fetch power-grid --dry-run
+python -m analog_finder fetch power-grid
+python -m analog_finder context --only dryness
+python -m analog_finder merge
+```
+
+One request per 10 × 10 degree box with land; boxes already saved are skipped, so the command
+can be stopped and started again. Until this step is done, the `dryness` criterion of the
+biosignatures task is shown as "no data yet".
+
+### 5. Score, validate, build the page
 
 ```powershell
 python -m analog_finder score
+python -m analog_finder web
 ```
 
-`score` computes, for every task in `pipeline/config/tasks.yaml` and every main target, how
-close each Earth cell is (terrain is matched to the target's fingerprint; cold, thermal
-range, low Sun, ground ice, bare ground, snow-free months and minerals are ranked in the
-useful direction, because Earth cannot reach lunar or Martian values). It then looks up the
-known analog sites and writes `data/processed/validation.md` (percentile of every site; a
-random site would get a median of 0.5) and `criteria.bin` / `criteria.json`, the per-cell
-scores for the web app. The known analogs are never used to set weights.
+### Optional
 
-Tasks that need data not in the grid yet (volcanic fields and caves, impact structures,
-dryness) are scored from the criteria that exist; `caves` cannot be ranked until a volcano
-layer is added. Check `validation.md` before quoting any number.
-
-### 3. Point data for the known analog sites
-
-```powershell
-python -m analog_finder fetch power
-python -m analog_finder fetch copdem --dry-run
-```
-
-`fetch power` asks the NASA POWER service for the climate at each site of
-`data/reference/known_analogs.csv` (no login). `fetch copdem` downloads Copernicus DEM
-tiles around the same sites; it matters for high latitudes, which SRTM does not cover.
-Both accept `--points other.csv` with the columns `id`, `lat`, `lon`.
-
-### 4. Rebuild the computed layers
-
-```powershell
-python -m analog_finder grid
-python -m analog_finder reference
-```
-
-`grid` rebuilds the land grid and the low-Sun features (about 3 minutes). `reference`
-rewrites the two GeoJSON layers and `analogs_grid.csv` after you edit
-`known_analogs.csv` or `targets.yaml`.
+- `python -m analog_finder fetch power` and `fetch copdem`: climate (NASA POWER) and Copernicus DEM tiles at the known analog sites only, for site cards and Antarctic detail. Not used by the ranking.
+- `python -m analog_finder grid`: rebuilds the land grid and the low-Sun features from scratch (about 3 minutes); then rerun `merge`.
+- `python -m analog_finder reference`: rewrites the GeoJSON layers and `analogs_grid.csv` after editing `known_analogs.csv` or `targets.yaml`.
+- `python pipeline/scripts/make_sources_doc.py`: regenerates `docs/data_sources.md` after editing `sources.yaml`.
 
 ## Conventions
 
 - Earth longitudes run from -180 to 180. Moon and Mars longitudes in `targets.yaml` are east-positive, 0 to 360.
-- Grid row 0 is the northernmost row, column 0 starts at 180 W. A cell is kept when at least 20% of it is land.
-- Terrain of all three worlds is compared at the same step of about 1 km: SRTMGL30 for the Earth (926 m), MOLA MEGDR 64 pixels per degree for Mars (926 m), LOLA 240 m averaged 4 by 4 for the Moon (960 m).
-- "Low Sun" means the Sun between 0 and 5 degrees above a flat horizon. At the lunar south pole it never climbs higher than about 2 degrees.
+- Grid row 0 is the northernmost row, column 0 starts at 180 W. A cell is kept when at least 20 % of it is land.
+- Binary grids: `value = min + q / 254 * (max - min)`, `q = 255` means no data (see `export/to_binary.py`).
+- Terrain of all three worlds is compared at about 1 km: SRTMGL30 (926 m), MOLA MEGDR 64 pixels per degree (926 m), LOLA 240 m averaged 4 × 4 (960 m).
+- "Low Sun" means the Sun 0 to 5 degrees above a flat horizon. At the lunar south pole it never climbs higher than about 2 degrees.
 - Known analogs validate the ranking; they are never used to tune it.
 
 ## What is not done yet
 
-- The web app; volcanic, impact and dryness layers (the `caves` task cannot be ranked without them).
-- The code was tested on synthetic files that follow the real labels, because the build machine could not reach the NASA servers. The first run on real files is the real test: read what `check` and `profiles` print.
+- Dryness needs step 4 to be run; until then the biosignatures task works without it.
+- No detail below the 55 km cell (smaller windows, 30 m DEMs for the top candidates), no side-by-side images of Earth and target, no road access or protected-area layers.
+- No maps of the Moon and Mars on the page; targets are chosen from a list.
 
 ## Use of AI
 
-Space Apps asks every team to say where and how AI was used. For this repository: the
-data layer (download scripts, readers, feature code, tests, configuration and reference
-tables) was written with Claude (Anthropic) from the team's plan, and the coordinates
-and facts in the reference tables were collected by it from the sources listed in each
-row. Rows marked `approx` or `to confirm` were not checked against a source. Copy this
-note into the submission and extend it with whatever else the team uses AI for.
+Space Apps asks every team to say where and how AI was used. In this project Claude
+(Anthropic) wrote, from the team's plan and under the team's review: the data pipeline
+(download scripts, file readers, feature and scoring code, validation, tests), the web page,
+the documentation, and the reference tables. The coordinates and uses in the reference tables
+were collected from the sources named in each row; rows marked `approx` or `to confirm` were
+not checked against a source. Every number on the page and in the documents is computed by
+the code from the listed datasets, not written by hand. The team chose the targets,
+the test tasks and their weights, and checked the results.
 
 ## Data and licences
 
