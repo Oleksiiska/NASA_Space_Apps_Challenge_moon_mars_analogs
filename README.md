@@ -21,10 +21,10 @@ This is a screening tool, not an engineering assessment or a site-selection reco
 
 ## Result in short
 
-- 88,883 land cells, 12 targets (5 Moon, 7 Mars), 7 test tasks, 45 per-cell criteria.
-- Known analog sites rank well above a random place: median percentile 0.78 over all tasks
+- 88,883 land cells, 12 targets (5 Moon, 7 Mars), 7 test tasks, 46 per-cell criteria.
+- Known analog sites rank well above a random place: median percentile 0.77 over all tasks
   (random: 0.50). Without the two tasks that use the volcano and impact lists, which contain
-  many of the sites themselves, the median is 0.70 and only 20 % of the sites reach the top
+  many of the sites themselves, the median is 0.70 and only 21 % of the sites reach the top
   20 %: the 55 km cell is much larger than a real site. See `docs/methodology.md`, section 6.
 - Changing every weight by up to ±25 % keeps 75–99 % of the top 5 % cells in place.
 
@@ -156,7 +156,6 @@ python -m analog_finder web
 
 ## What is not done yet
 
-- Dryness needs step 4 to be run; until then the biosignatures task works without it.
 - No detail below the 55 km cell (smaller windows, 30 m DEMs for the top candidates), no side-by-side images of Earth and target, no road access or protected-area layers.
 - No maps of the Moon and Mars on the page; targets are chosen from a list.
 

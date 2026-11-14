@@ -62,6 +62,15 @@ def test_power_points_and_grid_mapping():
         ec.power_points({"messages": ["error"]})
 
 
+def test_missing_power_column_falls_back_to_the_neighbour():
+    # no point at longitude 0 (the POWER regional API leaves it out); the cell centred at 0.25 E uses 0.625 E
+    pts = [(51.5, 0.625, 2.0), (52.0, 0.625, 4.0), (51.5, -0.625, 6.0), (52.0, -0.625, 6.0)]
+    g = ec.points_to_grid(pts)
+    r = int((90 - 51.75) / 0.5)
+    assert g[r, int((0.25 + 180) / 0.5)] == pytest.approx(3.0)
+    assert g[r, int((-0.25 + 180) / 0.5)] == pytest.approx(6.0)
+
+
 def test_power_points_reads_a_saved_file(tmp_path):
     f = tmp_path / "box.json"
     f.write_text(json.dumps({"features": [{"geometry": {"coordinates": [5, 5]}, "properties": {"parameter": {"PRECTOTCORR": {"ANN": 0.1}}}}]}))

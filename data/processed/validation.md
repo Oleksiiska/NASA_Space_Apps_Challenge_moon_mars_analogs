@@ -2,13 +2,13 @@
 
 Each site is a cell of the 0.5 degree grid; its score is turned into a percentile among all ranked cells (1.0 = best cell on Earth for that task and target). A random site would get a median of 0.5 and land in the top 20 % one time in five. Known analogs were not used to set any weight or threshold.
 
-- Scores only: 124 of 136 site-task-target pairs scored, median percentile 0.782, top 20 % in 48%, top 10 % in 33%.
-- With the hard filters of each task: 80 pairs left, median 0.726, top 20 % in 42%. Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands).
-- Independent part: the tasks caves, eva_geology use the volcano and impact lists, and those lists contain many of the analog sites themselves, so their high percentiles show that the layers work, not that the method finds analogs on its own. Without them: 74 pairs, median percentile 0.704, top 20 % in 20%, top 10 % in 4%.
+- Scores only: 132 of 136 site-task-target pairs scored, median percentile 0.774, top 20 % in 46%, top 10 % in 33%.
+- With the hard filters of each task: 88 pairs left, median 0.699, top 20 % in 39%. Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands).
+- Independent part: the tasks caves, eva_geology use the volcano and impact lists, and those lists contain many of the analog sites themselves, so their high percentiles show that the layers work, not that the method finds analogs on its own. Without them: 82 pairs, median percentile 0.696, top 20 % in 21%, top 10 % in 6%.
 
 | Task | pairs | median percentile | top 20 % | top 10 % |
 |---|---|---|---|---|
-| biosignatures | 12 | 0.527 | 17% | 0% |
+| biosignatures | 20 | 0.575 | 20% | 10% |
 | caves | 12 | 0.994 | 100% | 100% |
 | eva_geology | 38 | 0.923 | 84% | 68% |
 | isru_ice | 14 | 0.694 | 0% | 0% |
@@ -19,26 +19,26 @@ Each site is a cell of the 0.5 degree grid; its score is turned into a percentil
 
 | Site | Task | Target | Percentile | With filters | Failed filters |
 |---|---|---|---|---|---|
-| atacama | biosignatures | arcadia_planitia | 0.481 | 0.393 |  |
-| atacama | biosignatures | jezero | 0.481 | 0.393 |  |
-| dallol | biosignatures | arcadia_planitia | 0.708 | 0.617 |  |
-| dallol | biosignatures | jezero | 0.708 | 0.617 |  |
-| kangerlussuaq | biosignatures | arcadia_planitia | None | None |  |
-| kangerlussuaq | biosignatures | jezero | None | None |  |
-| makgadikgadi | biosignatures | arcadia_planitia | 0.381 | 0.295 |  |
-| makgadikgadi | biosignatures | jezero | 0.381 | 0.295 |  |
-| mcmurdo_dry_valleys | biosignatures | arcadia_planitia | None | None |  |
-| mcmurdo_dry_valleys | biosignatures | jezero | None | None |  |
-| pilbara | biosignatures | arcadia_planitia | None | None |  |
-| pilbara | biosignatures | jezero | None | None |  |
-| qaidam | biosignatures | arcadia_planitia | 0.878 | 0.829 |  |
-| qaidam | biosignatures | jezero | 0.878 | 0.829 |  |
-| rio_tinto | biosignatures | arcadia_planitia | 0.23 | None | bare_ground_min |
-| rio_tinto | biosignatures | jezero | 0.23 | None | bare_ground_min |
-| svalbard | biosignatures | arcadia_planitia | None | None |  |
-| svalbard | biosignatures | jezero | None | None |  |
-| tirez | biosignatures | arcadia_planitia | 0.574 | 0.482 |  |
-| tirez | biosignatures | jezero | 0.574 | 0.482 |  |
+| atacama | biosignatures | arcadia_planitia | 0.86 | 0.742 |  |
+| atacama | biosignatures | jezero | 0.86 | 0.742 |  |
+| dallol | biosignatures | arcadia_planitia | 0.65 | 0.36 |  |
+| dallol | biosignatures | jezero | 0.65 | 0.36 |  |
+| kangerlussuaq | biosignatures | arcadia_planitia | 0.545 | 0.192 |  |
+| kangerlussuaq | biosignatures | jezero | 0.545 | 0.192 |  |
+| makgadikgadi | biosignatures | arcadia_planitia | 0.54 | 0.186 |  |
+| makgadikgadi | biosignatures | jezero | 0.54 | 0.186 |  |
+| mcmurdo_dry_valleys | biosignatures | arcadia_planitia | 0.759 | 0.556 |  |
+| mcmurdo_dry_valleys | biosignatures | jezero | 0.759 | 0.556 |  |
+| pilbara | biosignatures | arcadia_planitia | 0.473 | 0.096 |  |
+| pilbara | biosignatures | jezero | 0.473 | 0.096 |  |
+| qaidam | biosignatures | arcadia_planitia | 0.923 | 0.858 |  |
+| qaidam | biosignatures | jezero | 0.923 | 0.858 |  |
+| rio_tinto | biosignatures | arcadia_planitia | 0.48 | None | bare_ground_min |
+| rio_tinto | biosignatures | jezero | 0.48 | None | bare_ground_min |
+| svalbard | biosignatures | arcadia_planitia | 0.544 | 0.191 |  |
+| svalbard | biosignatures | jezero | 0.544 | 0.191 |  |
+| tirez | biosignatures | arcadia_planitia | 0.605 | 0.285 |  |
+| tirez | biosignatures | jezero | 0.605 | 0.285 |  |
 | chill_ice_lava_tube | caves | arcadia_planitia | 0.932 | 0.932 |  |
 | chill_ice_lava_tube | caves | jezero | 0.994 | 0.994 |  |
 | chill_ice_lava_tube | caves | mons_mouton | 0.987 | 0.987 |  |
@@ -162,7 +162,7 @@ Every weight of a task was changed at random by up to +-25 % (30 draws). Share o
 
 | Task | stays in top 5 % | dense vegetation in top |
 |---|---|---|
-| biosignatures | 92% | 0% |
+| biosignatures | 83% | 0% |
 | caves | 92% | 13% |
 | eva_geology | 95% | 0% |
 | isru_ice | 99% | 0% |

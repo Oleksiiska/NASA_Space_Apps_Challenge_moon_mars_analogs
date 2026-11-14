@@ -1367,9 +1367,9 @@
    "target": "jezero",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.2,
-   "percentile": null,
-   "percentile_filtered": null,
+   "coverage": 0.55,
+   "percentile": 0.759,
+   "percentile_filtered": 0.556,
    "failed_filters": []
   },
   {
@@ -1378,9 +1378,9 @@
    "target": "jezero",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.35,
-   "percentile": null,
-   "percentile_filtered": null,
+   "coverage": 0.7,
+   "percentile": 0.544,
+   "percentile_filtered": 0.191,
    "failed_filters": []
   },
   {
@@ -1389,9 +1389,9 @@
    "target": "jezero",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.35,
-   "percentile": null,
-   "percentile_filtered": null,
+   "coverage": 0.7,
+   "percentile": 0.545,
+   "percentile_filtered": 0.192,
    "failed_filters": []
   },
   {
@@ -1400,9 +1400,9 @@
    "target": "jezero",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.481,
-   "percentile_filtered": 0.393,
+   "coverage": 1.0,
+   "percentile": 0.86,
+   "percentile_filtered": 0.742,
    "failed_filters": []
   },
   {
@@ -1411,8 +1411,8 @@
    "target": "jezero",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.23,
+   "coverage": 1.0,
+   "percentile": 0.48,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -1424,9 +1424,9 @@
    "target": "jezero",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.574,
-   "percentile_filtered": 0.482,
+   "coverage": 1.0,
+   "percentile": 0.605,
+   "percentile_filtered": 0.285,
    "failed_filters": []
   },
   {
@@ -1435,9 +1435,9 @@
    "target": "jezero",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.708,
-   "percentile_filtered": 0.617,
+   "coverage": 1.0,
+   "percentile": 0.65,
+   "percentile_filtered": 0.36,
    "failed_filters": []
   },
   {
@@ -1446,9 +1446,9 @@
    "target": "jezero",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.381,
-   "percentile_filtered": 0.295,
+   "coverage": 1.0,
+   "percentile": 0.54,
+   "percentile_filtered": 0.186,
    "failed_filters": []
   },
   {
@@ -1457,9 +1457,9 @@
    "target": "jezero",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.878,
-   "percentile_filtered": 0.829,
+   "coverage": 1.0,
+   "percentile": 0.923,
+   "percentile_filtered": 0.858,
    "failed_filters": []
   },
   {
@@ -1468,9 +1468,9 @@
    "target": "jezero",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.35,
-   "percentile": null,
-   "percentile_filtered": null,
+   "coverage": 0.7,
+   "percentile": 0.473,
+   "percentile_filtered": 0.096,
    "failed_filters": []
   },
   {
@@ -1479,9 +1479,9 @@
    "target": "arcadia_planitia",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.2,
-   "percentile": null,
-   "percentile_filtered": null,
+   "coverage": 0.55,
+   "percentile": 0.759,
+   "percentile_filtered": 0.556,
    "failed_filters": []
   },
   {
@@ -1490,9 +1490,9 @@
    "target": "arcadia_planitia",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.35,
-   "percentile": null,
-   "percentile_filtered": null,
+   "coverage": 0.7,
+   "percentile": 0.544,
+   "percentile_filtered": 0.191,
    "failed_filters": []
   },
   {
@@ -1501,9 +1501,9 @@
    "target": "arcadia_planitia",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.35,
-   "percentile": null,
-   "percentile_filtered": null,
+   "coverage": 0.7,
+   "percentile": 0.545,
+   "percentile_filtered": 0.192,
    "failed_filters": []
   },
   {
@@ -1512,9 +1512,9 @@
    "target": "arcadia_planitia",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.481,
-   "percentile_filtered": 0.393,
+   "coverage": 1.0,
+   "percentile": 0.86,
+   "percentile_filtered": 0.742,
    "failed_filters": []
   },
   {
@@ -1523,8 +1523,8 @@
    "target": "arcadia_planitia",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.23,
+   "coverage": 1.0,
+   "percentile": 0.48,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -1536,9 +1536,9 @@
    "target": "arcadia_planitia",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.574,
-   "percentile_filtered": 0.482,
+   "coverage": 1.0,
+   "percentile": 0.605,
+   "percentile_filtered": 0.285,
    "failed_filters": []
   },
   {
@@ -1547,9 +1547,9 @@
    "target": "arcadia_planitia",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.708,
-   "percentile_filtered": 0.617,
+   "coverage": 1.0,
+   "percentile": 0.65,
+   "percentile_filtered": 0.36,
    "failed_filters": []
   },
   {
@@ -1558,9 +1558,9 @@
    "target": "arcadia_planitia",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.381,
-   "percentile_filtered": 0.295,
+   "coverage": 1.0,
+   "percentile": 0.54,
+   "percentile_filtered": 0.186,
    "failed_filters": []
   },
   {
@@ -1569,9 +1569,9 @@
    "target": "arcadia_planitia",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.878,
-   "percentile_filtered": 0.829,
+   "coverage": 1.0,
+   "percentile": 0.923,
+   "percentile_filtered": 0.858,
    "failed_filters": []
   },
   {
@@ -1580,9 +1580,9 @@
    "target": "arcadia_planitia",
    "world": "mars",
    "in_grid": true,
-   "coverage": 0.35,
-   "percentile": null,
-   "percentile_filtered": null,
+   "coverage": 0.7,
+   "percentile": 0.473,
+   "percentile_filtered": 0.096,
    "failed_filters": []
   }
  ],
@@ -1596,19 +1596,19 @@
   "all": {
    "scores_only": {
     "pairs": 136,
-    "scored": 124,
-    "median_percentile": 0.782,
-    "share_top20": 0.476,
-    "share_top10": 0.331,
-    "share_above_median": 0.855
+    "scored": 132,
+    "median_percentile": 0.774,
+    "share_top20": 0.462,
+    "share_top10": 0.326,
+    "share_above_median": 0.879
    },
    "with_filters": {
     "pairs": 136,
-    "scored": 80,
-    "median_percentile": 0.726,
-    "share_top20": 0.425,
-    "share_top10": 0.3,
-    "share_above_median": 0.65
+    "scored": 88,
+    "median_percentile": 0.699,
+    "share_top20": 0.386,
+    "share_top10": 0.273,
+    "share_above_median": 0.614
    }
   },
   "context_tasks": [
@@ -1619,19 +1619,19 @@
    "biosignatures": {
     "scores_only": {
      "pairs": 20,
-     "scored": 12,
-     "median_percentile": 0.527,
-     "share_top20": 0.167,
-     "share_top10": 0.0,
-     "share_above_median": 0.5
+     "scored": 20,
+     "median_percentile": 0.575,
+     "share_top20": 0.2,
+     "share_top10": 0.1,
+     "share_above_median": 0.8
     },
     "with_filters": {
      "pairs": 20,
-     "scored": 10,
-     "median_percentile": 0.482,
-     "share_top20": 0.2,
+     "scored": 18,
+     "median_percentile": 0.285,
+     "share_top20": 0.111,
      "share_top10": 0.0,
-     "share_above_median": 0.4
+     "share_above_median": 0.333
     }
    },
    "caves": {
@@ -1728,19 +1728,19 @@
   "independent": {
    "scores_only": {
     "pairs": 86,
-    "scored": 74,
-    "median_percentile": 0.704,
-    "share_top20": 0.203,
-    "share_top10": 0.041,
-    "share_above_median": 0.784
+    "scored": 82,
+    "median_percentile": 0.696,
+    "share_top20": 0.207,
+    "share_top10": 0.061,
+    "share_above_median": 0.829
    },
    "with_filters": {
     "pairs": 86,
-    "scored": 48,
-    "median_percentile": 0.497,
-    "share_top20": 0.167,
-    "share_top10": 0.083,
-    "share_above_median": 0.458
+    "scored": 56,
+    "median_percentile": 0.44,
+    "share_top20": 0.143,
+    "share_top10": 0.071,
+    "share_above_median": 0.429
    }
   }
  },
@@ -1912,23 +1912,23 @@
    {
     "task": "biosignatures",
     "target": "jezero",
-    "top_cells": 525,
-    "mean_overlap": 0.911,
-    "min_overlap": 0.811,
+    "top_cells": 2409,
+    "mean_overlap": 0.915,
+    "min_overlap": 0.119,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "biosignatures",
     "target": "arcadia_planitia",
-    "top_cells": 525,
-    "mean_overlap": 0.919,
-    "min_overlap": 0.84,
+    "top_cells": 2409,
+    "mean_overlap": 0.75,
+    "min_overlap": 0.119,
     "share_dense_vegetation": 0.0
    }
   ],
   "by_task": {
    "biosignatures": {
-    "mean_overlap": 0.915,
+    "mean_overlap": 0.833,
     "share_dense_vegetation": 0.0
    },
    "caves": {

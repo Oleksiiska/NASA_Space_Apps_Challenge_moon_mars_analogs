@@ -36,7 +36,7 @@ training and useless for testing ice drills.
 | Glacier share | Natural Earth glaciated areas | Share of the cell |
 | Distance to the nearest Holocene volcano, and to the nearest basaltic one | Smithsonian Global Volcanism Program list | Great-circle distance from the cell centre, capped at 300 km |
 | Distance to the rim of the nearest impact structure, its diameter | Earth Impact Database (PASSC) | Same, minus the structure radius |
-| Annual precipitation | NASA POWER (MERRA-2), when `fetch power-grid` was run | Nearest POWER point column, mean of the two rows around the cell centre |
+| Annual precipitation | NASA POWER climatology (MERRA-2), 390 boxes of 10 × 10 degrees | Nearest POWER column, mean of the two rows around the cell centre; the API leaves out longitude 0, so the cells next to it take the neighbouring column |
 
 Every product has a self-check against known places (Everest, the Dead Sea, the Sahara, Greenland,
 the Amazon, Kilauea, Meteor Crater, Vredefort, Atacama). A failed check stops the run, because it
@@ -101,23 +101,23 @@ one time in five.
 
 | Set | Pairs scored | Median percentile | In the top 20 % | In the top 10 % |
 | --- | --- | --- | --- | --- |
-| All tasks, scores only | 124 of 136 | 0.78 | 48 % | 33 % |
-| All tasks, with hard filters | 80 of 136 | 0.73 | 43 % | 30 % |
-| Without caves and EVA geology, scores only | 74 of 86 | 0.70 | 20 % | 4 % |
-| Without caves and EVA geology, with hard filters | 48 of 86 | 0.50 | 17 % | 8 % |
+| All tasks, scores only | 132 of 136 | 0.77 | 46 % | 33 % |
+| All tasks, with hard filters | 88 of 136 | 0.70 | 39 % | 27 % |
+| Without caves and EVA geology, scores only | 82 of 86 | 0.70 | 21 % | 6 % |
+| Without caves and EVA geology, with hard filters | 56 of 86 | 0.44 | 14 % | 7 % |
 
 By task (scores only): caves 0.99, EVA geology 0.92, low-Sun operations 0.76, mobility 0.75,
-ice mining 0.69, biosignatures 0.53 (dryness not yet in the data).
+ice mining 0.69, biosignatures 0.58.
 
 How to read this:
 
 - **Caves and EVA geology** use the volcano and impact lists, and those lists contain many of the analog sites themselves (Craters of the Moon, Meteor Crater, Haughton). Their high percentiles show that the context layers work; they are not independent evidence that the method finds analogs.
-- **The other tasks** put known sites clearly above a random place (median 0.70 against 0.50), but not into the very top: only 20 % are in the top 20 %, the rate of chance. The main reason is scale: a site is a few hundred metres to a few kilometres across, while a cell is 55 km and mixes the site with its surroundings. Flat targets such as Arcadia Planitia are rarely matched by a whole Earth cell.
-- **Hard filters** remove sites whose cell is mostly vegetated although the site itself is bare (Ries, Mistastin, Réunion). With filters the independent median falls to 0.50.
+- **The other tasks** put known sites clearly above a random place (median 0.70 against 0.50), but not into the very top: only 21 % are in the top 20 %, about the rate of chance. The main reason is scale: a site is a few hundred metres to a few kilometres across, while a cell is 55 km and mixes the site with its surroundings. Flat targets such as Arcadia Planitia are rarely matched by a whole Earth cell.
+- **Hard filters** remove sites whose cell is mostly vegetated although the site itself is bare (Ries, Mistastin, Réunion). With filters the independent median falls to 0.44, below a random place.
 
 **Stability.** Every weight of a task was changed at random by up to ±25 % (30 draws). The share of
 the baseline top 5 % cells that stays in the top 5 %: ice mining 99 %, landing 96 %, EVA geology
-95 %, mobility 95 %, caves 92 %, biosignatures 92 %, low-Sun operations 75 %. The page shows the
+95 %, mobility 95 %, caves 92 %, biosignatures 83 %, low-Sun operations 75 %. The page shows the
 same test for the selected cell (20 draws, top 10 %).
 
 **Sanity.** Share of the top 5 % cells under dense vegetation (NDVI over 0.4): 0 % for every task

@@ -214,11 +214,18 @@ def points_to_grid(points: Iterable[tuple[float, float, float]], lat_step: float
     fi = (clat + 90.0) / lat_step
     i0 = np.clip(np.floor(fi).astype(int), 0, nla - 1)
     i1 = np.clip(np.ceil(fi).astype(int), 0, nla - 1)
-    j = np.rint((clon + 180.0) / lon_step).astype(int) % nlo
-    a, b = g[i0][:, j], g[i1][:, j]
-    with np.errstate(invalid="ignore"):
-        out = np.where(np.isfinite(a) & np.isfinite(b), (a + b) / 2, np.where(np.isfinite(a), a, b))
-    return out.astype(np.float32)
+    x = (clon + 180.0) / lon_step
+    j1 = np.rint(x).astype(int)
+    j2 = np.where(j1 == np.floor(x).astype(int), np.ceil(x).astype(int), np.floor(x).astype(int))
+
+    def rows_mean(j: np.ndarray) -> np.ndarray:
+        a, b = g[i0][:, j % nlo], g[i1][:, j % nlo]
+        with np.errstate(invalid="ignore"):
+            return np.where(np.isfinite(a) & np.isfinite(b), (a + b) / 2, np.where(np.isfinite(a), a, b))
+
+    near, other = rows_mean(j1), rows_mean(j2)
+    # the POWER regional API leaves out the column at longitude 0: fall back to the other neighbouring column
+    return np.where(np.isfinite(near), near, other).astype(np.float32)
 
 
 def build_dryness(src_dir: Optional[Path] = None, log: Callable[[str], None] = print) -> Path:

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_utc": "2026-11-14T15:06:29Z",
+  "created_utc": "2026-11-14T15:44:09Z",
   "grid": {
     "cell_deg": 0.5,
     "n_lat": 360,
@@ -419,6 +419,15 @@
       "unit": "km",
       "description": "Distance to the nearest basaltic Holocene volcano: shield, volcanic field, fissure vent, cinder cone (capped at 300 km)",
       "source": "Smithsonian Global Volcanism Program, list of Holocene volcanoes; computed by features/earth_context.py"
+    },
+    {
+      "name": "precip_mm_yr",
+      "offset": 3910852,
+      "min": 0.0,
+      "max": 4000.0,
+      "unit": "mm/year",
+      "description": "Mean annual precipitation, NASA POWER (MERRA-2 corrected), 0.5 x 0.625 degree points",
+      "source": "NASA POWER climatology (PRECTOTCORR, MERRA-2); computed by features/earth_context.py"
     }
   ],
   "min_land_frac": 0.2,
