@@ -14,7 +14,7 @@ from analog_finder.prep import reference  # noqa: E402
 RAW = ["elev_mean_m", "relief_m", "slope_mean_deg", "slope_lt8", "rough_p50_m", "lst_day_mean_k", "lst_night_min_k", "lst_diurnal_k",
        "ndvi_mean", "snow_free_months", "lowsun_best_h", "ice_frac",
        "volc_dist_km", "volc_basalt_dist_km", "impact_dist_km", "impact_diam_km", "precip_mm_yr",
-       "lst_night_mean_k", "lowsun_best_month", "road_dist_km"] + [f"slope_h{k}" for k in range(9)] + [f"snow_m{m:02d}" for m in range(1, 13)]
+       "lst_night_mean_k", "lowsun_best_month", "road_dist_km", "ml_moon", "ml_mars"] + [f"slope_h{k}" for k in range(9)] + [f"snow_m{m:02d}" for m in range(1, 13)]
 # features missing from grid.json are skipped
 
 
@@ -94,6 +94,11 @@ def build(pdir: Path, out: Path):
     if cp.exists():
         with open(cp, encoding="utf-8") as f:
             cities = [[r["name"], r["name_uk"], r["country"], float(r["lat"]), float(r["lon"]), int(r["pop"])] for r in csv.DictReader(f)]
+    ml_report = {}
+    mp = pdir / "ml_report.json"
+    if mp.exists():
+        mr = json.loads(mp.read_text(encoding="utf-8"))
+        ml_report = {w: {"ml": d["ml"], "formula_same_sites": d["formula_same_sites"]} for w, d in mr.get("worlds", {}).items()}
     gaps = json.loads((HERE.parent / "data" / "reference" / "environment_gaps.json").read_text(encoding="utf-8"))
     quant = []
     for q in gaps["quantities"]:
@@ -109,7 +114,7 @@ def build(pdir: Path, out: Path):
             "min_coverage": crit["min_coverage"], "no_data_yet": crit["no_data_yet"], "tasks": crit["tasks"],
             "constraints_doc": config.tasks().get("constraints", {}), "raw": raw_meta, "rc_offset": rc_off,
             "targets": [t for t in targets if t["has_profile"]], "analogs": analogs, "gaps": quant,
-            "tfacts": tfacts, "lowsun": lowsun, "spotlights": spots, "cities": cities, "road_max_km": crit.get("road_max_km", 50), "sensitivity": val.get("sensitivity", {}).get("by_task", {}), "validation": val["summary"], "validation_skipped": val["skipped_tasks"]}
+            "tfacts": tfacts, "lowsun": lowsun, "spotlights": spots, "cities": cities, "ml_report": ml_report, "road_max_km": crit.get("road_max_km", 50), "sensitivity": val.get("sensitivity", {}).get("by_task", {}), "validation": val["summary"], "validation_skipped": val["skipped_tasks"]}
     html = (HERE / "template.html").read_text(encoding="utf-8")
     html = html.replace("/*META*/null", json.dumps(meta, ensure_ascii=False, separators=(",", ":")))
     html = html.replace("/*BLOB*/\"\"", '"' + base64.b64encode(blob).decode() + '"')

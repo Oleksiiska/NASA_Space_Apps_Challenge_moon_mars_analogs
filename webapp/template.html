@@ -8,17 +8,17 @@
 :root{
   --bg:#f3f5f8; --surface:#ffffff; --ink:#141a22; --muted:#566170; --line:#d8dde5; --accent:#0a6a86; --accent-ink:#ffffff;
   --accent-soft:#dff0f5; --sea:#eef2f6; --land:#a3adba; --good:#17743a; --warn:#a8530a; --bad:#a8261d; --pick:#141a22;
-  --s1:#2a78d6; --s2:#eb6834; --seq-lo:#a9cdf0; --seq-hi:#08306b; --spot:#c2410c;
+  --s1:#2a78d6; --s2:#eb6834; --seq-lo:#a9cdf0; --seq-hi:#08306b; --spot:#c2410c; --ml-lo:#fde2cf; --ml-hi:#9a3412;
   --display:"Space Grotesk","Segoe UI",system-ui,sans-serif; --text:"IBM Plex Sans","Segoe UI",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0d1117; --surface:#151b24; --ink:#e5e9ef; --muted:#93a0b0; --line:#273040; --accent:#52c3e0; --accent-ink:#06222b;
   --accent-soft:#12303a; --sea:#0a0e14; --land:#3a4555; --good:#5ccf84; --warn:#f0a35c; --bad:#f08a80; --pick:#ffffff;
-  --s1:#3987e5; --s2:#d95926; --seq-lo:#1f4f7d; --seq-hi:#bfe0ff; --spot:#fb923c; color-scheme:dark}}
+  --s1:#3987e5; --s2:#d95926; --seq-lo:#1f4f7d; --seq-hi:#bfe0ff; --spot:#fb923c; --ml-lo:#4a2312; --ml-hi:#fdba74; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0d1117; --surface:#151b24; --ink:#e5e9ef; --muted:#93a0b0; --line:#273040; --accent:#52c3e0; --accent-ink:#06222b;
   --accent-soft:#12303a; --sea:#0a0e14; --land:#3a4555; --good:#5ccf84; --warn:#f0a35c; --bad:#f08a80; --pick:#ffffff;
-  --s1:#3987e5; --s2:#d95926; --seq-lo:#1f4f7d; --seq-hi:#bfe0ff; --spot:#fb923c; color-scheme:dark}
+  --s1:#3987e5; --s2:#d95926; --seq-lo:#1f4f7d; --seq-hi:#bfe0ff; --spot:#fb923c; --ml-lo:#4a2312; --ml-hi:#fdba74; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--text);padding-block:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
@@ -149,7 +149,7 @@ footer{padding:8px 0 28px;color:var(--muted);font-size:12px;border-top:1px solid
       <div class="empty" id="empty"><div id="emptytxt"></div></div>
     </div>
     <div class="legend">
-      <div class="seg" role="group" aria-label="Map"><button id="m-score" aria-pressed="true" data-i="mode_score">Score</button><button id="m-sun" aria-pressed="false" data-i="mode_sun">Low-Sun window</button></div>
+      <div class="seg" role="group" aria-label="Map"><button id="m-score" aria-pressed="true" data-i="mode_score">Score</button><button id="m-sun" aria-pressed="false" data-i="mode_sun">Low-Sun window</button><button id="m-ml" aria-pressed="false" data-i="mode_ml" hidden>ML (experimental)</button></div>
       <select id="month" aria-label="Month" hidden style="width:auto;padding:3px 6px"></select>
       <span><span id="lo-l" data-i="lo">lower</span><span class="ramp" id="ramp"></span><span id="hi-l" data-i="hi">higher similarity</span></span>
       <span id="snowkey" hidden><span class="sw hatch"></span> <span data-i="snow_leg">snow ≥ 10 % that month</span></span>
@@ -210,6 +210,7 @@ const I18N = {
     glos_t:"What the words mean",
     glos:[["Cell","A square of 0.5 × 0.5 degrees, about 55 km across. Every number on this page describes a whole cell, not a single spot."],["Slope at a 1 km step","The steepness between points 1 km apart. The Moon, Mars and Earth are all measured at this same step, so their slopes compare."],["Low Sun","The Sun between 0 and 5 degrees above the horizon. At the lunar south pole it never climbs higher than about 2 degrees, so shadows are long all the time."],["Percentile","Where a cell stands among all ranked cells: 0.90 means it beats 90 % of them."],["Coverage","The share of the task’s weight that has data for this cell. Under 50 % there is no score."],["Hard filter","A yes/no condition, such as bare ground or road access, that removes a cell before ranking."],["Why Earth never gets to 39 K","Earth’s coldest surface is around 184 K (−89 °C, Antarctica). Permanently shadowed lunar craters are near 40 K, so cold criteria only rank Earth from warm to cold."]],
     trip_t:"Getting there",trip_road:"Nearest major road",trip_from:"Flight from",trip_co2:"CO₂ one way, economy, per passenger",trip_rf:"with non-CO₂ effects of flight (×1.7)",trip_src:"Great-circle distance +8 %, economy CO₂ 68.0 g per passenger-km under 3,700 km and 63.2 g above (UK DESNZ greenhouse gas conversion factors 2025, methodology paper); ×1.7 is its central estimate for non-CO₂ effects. Ground travel is not included.",r_road:"filter: nearest major road",
+    mode_ml:"ML (experimental)",ml_lo:"unlike",ml_hi:"like the known analog sites (experimental)",ml_card:"ML layer, experimental: resemblance to the known analog sites",ml_rel_t:"Experimental ML layer",ml_rel:"A model trained on the known analog sites (positive-unlabeled learning on 39 Earth measures, without location or the volcano, impact and road lists) ranks cells by how much they resemble them. On {n} sites it did not see (each hidden with everything within 300 km) its median percentile is {ml} against {f} for the formula, top 20 % in {mt} % against {ft} %, both among all land cells. It learns the pattern of past choices, including reasons that have nothing to do with the Moon or Mars, so it is shown apart and never mixed into the score.",
     r_data:"too little data",r_out:"not on the land grid",r_ndvi:"filter: green cell, NDVI",r_flat:"filter: flat share",r_ice:"filter: no ground ice, mean surface",r_snow:"filter: no snow-free month",
     spot_t:"Spotlight",spot_sub:"A place the team proposes, not a known analog. It is not used in the validation.",spot_why:"Why this place",spot_src:"Source",
     hist_t:"Slope classes at a 1 km step",hist_cell:"this cell",hist_tgt:"target",hist_src:"Cell: SRTMGL30. Target: LOLA 240 m averaged 4 × 4 (Moon) or MOLA MEGDR (Mars).",
@@ -247,6 +248,7 @@ const I18N = {
     glos_t:"Що означають терміни",
     glos:[["Клітинка","Квадрат 0,5 × 0,5 градуса, близько 55 км. Кожне число на сторінці описує всю клітинку, а не одну точку."],["Схил на кроці 1 км","Крутизна між точками, що стоять за 1 км одна від одної. Місяць, Марс і Земля виміряні на цьому ж кроці, тому їхні схили порівнянні."],["Низьке Сонце","Сонце на 0–5 градусів над горизонтом. На південному полюсі Місяця воно не піднімається вище ~2 градусів, тому тіні завжди довгі."],["Перцентиль","Місце клітинки серед усіх ранжованих: 0,90 — краща за 90 % із них."],["Покриття","Частка ваги задачі, для якої є дані в цій клітинці. Менше 50 % — оцінки немає."],["Жорсткий фільтр","Умова так/ні, як-от голий ґрунт чи доступ дорогою, що прибирає клітинку до ранжування."],["Чому Земля не дає 39 K","Найхолодніша поверхня Землі — близько 184 K (−89 °C, Антарктида). Вічно затінені кратери Місяця мають ~40 K, тож критерії холоду лише ранжують Землю від теплого до холодного."]],
     trip_t:"Як дістатися",trip_road:"Найближча велика дорога",trip_from:"Переліт із",trip_co2:"CO₂ в один бік, економ, на пасажира",trip_rf:"з не-CO₂ ефектами авіації (×1,7)",trip_src:"Відстань по великому колу +8 %, CO₂ в економ-класі 68,0 г на пасажиро-км до 3700 км і 63,2 г понад (коефіцієнти парникових газів уряду Великої Британії DESNZ 2025, методологія); ×1,7 — її центральна оцінка не-CO₂ ефектів. Наземний шлях не враховано.",r_road:"фільтр: найближча велика дорога",
+    mode_ml:"ML (експеримент)",ml_lo:"не схоже",ml_hi:"схоже на відомі аналоги (експеримент)",ml_card:"ML-шар, експеримент: схожість на відомі аналоги",ml_rel_t:"Експериментальний ML-шар",ml_rel:"Модель, навчена на відомих аналогах (positive-unlabeled learning на 39 земних вимірах, без координат і без списків вулканів, кратерів і доріг), ранжує клітинки за схожістю на них. На {n} місцях, яких вона не бачила (кожне сховане разом з усім у радіусі 300 км), її медіана перцентиля {ml} проти {f} у формули, у топ-20 % — {mt} % проти {ft} %, обидва серед усіх клітинок суходолу. Вона вчиться на звичках минулого вибору, зокрема на причинах, що не стосуються Місяця чи Марса, тому показана окремо й не змішується з оцінкою.",
     r_data:"замало даних",r_out:"поза сіткою суходолу",r_ndvi:"фільтр: зелена клітинка, NDVI",r_flat:"фільтр: частка рівного",r_ice:"фільтр: немає ґрунтового льоду, середня поверхня",r_snow:"фільтр: немає місяця без снігу",
     spot_t:"У фокусі",spot_sub:"Місце, яке пропонує команда, а не відомий аналог. У валідації не використовується.",spot_why:"Чому це місце",spot_src:"Джерело",
     hist_t:"Класи схилів на кроці 1 км",hist_cell:"ця клітинка",hist_tgt:"ціль",hist_src:"Клітинка: SRTMGL30. Ціль: LOLA 240 м, усереднення 4 × 4 (Місяць) або MOLA MEGDR (Марс).",
@@ -353,14 +355,24 @@ for(let k=0;k<256;k++){const t=k/255*(STOPS.length-1),a=Math.min(Math.floor(t),S
   RAMP[k]="rgb("+STOPS[a].map((v,j)=>Math.round(v+(STOPS[a+1][j]-v)*f)).join(",")+")"}
 let CSSV={};
 function readCss(){const cs=getComputedStyle(document.documentElement);
-  for(const k of ["--sea","--land","--ink","--accent","--pick","--surface","--line","--muted","--s1","--s2","--seq-lo","--seq-hi","--spot"]) CSSV[k]=cs.getPropertyValue(k).trim();
+  for(const k of ["--sea","--land","--ink","--accent","--pick","--surface","--line","--muted","--s1","--s2","--seq-lo","--seq-hi","--spot","--ml-lo","--ml-hi"]) CSSV[k]=cs.getPropertyValue(k).trim();
   const h2r=h=>{h=h.replace("#",""); return [0,2,4].map(k=>parseInt(h.substr(k,2),16))};
   const lo=h2r(CSSV["--seq-lo"]||"#dcebf9"), hi=h2r(CSSV["--seq-hi"]||"#0b4f9c");
   for(let k=0;k<256;k++){const f=k/255; SEQ[k]="rgb("+lo.map((v,j)=>Math.round(v+(hi[j]-v)*f)).join(",")+")"}
+  const mlo=h2r(CSSV["--ml-lo"]||"#fde2cf"), mhi=h2r(CSSV["--ml-hi"]||"#9a3412");
+  for(let k=0;k<256;k++){const f=k/255; MLR[k]="rgb("+mlo.map((v,j)=>Math.round(v+(mhi[j]-v)*f)).join(",")+")"}
   const pc=document.createElement("canvas"); pc.width=pc.height=6; const g=pc.getContext("2d");
   g.fillStyle=CSSV["--land"]; g.fillRect(0,0,6,6); g.strokeStyle=CSSV["--muted"]; g.lineWidth=1; g.beginPath(); g.moveTo(0,6); g.lineTo(6,0); g.stroke();
   SNOWPAT=ctx.createPattern(pc,"repeat");}
-const SEQ=new Array(256); let SNOWPAT=null;
+const SEQ=new Array(256), MLR=new Array(256); let SNOWPAT=null; const MLPCT={};
+function mlPct(world){
+  if(MLPCT[world]!==undefined) return MLPCT[world];
+  const r=rawInfo("ml_"+world); if(!r) return MLPCT[world]=null;
+  const v=new Float32Array(M.n); for(let i=0;i<M.n;i++){const q=D[r.offset+i]; v[i]=q===255?NaN:q}
+  const srt=Float32Array.from(v.filter(x=>x===x)).sort(), out=new Float32Array(M.n).fill(NaN);
+  for(let i=0;i<M.n;i++){if(v[i]===v[i]){let lo=0,hi=srt.length; while(lo<hi){const m=(lo+hi)>>1; if(srt[m]<v[i]) lo=m+1; else hi=m} let a=lo; hi=srt.length; while(a<hi){const m=(a+hi)>>1; if(srt[m]<=v[i]) a=m+1; else hi=m} out[i]=(lo+a)/2/srt.length}}
+  return MLPCT[world]=out;
+}
 function rawInfo(n){return M.raw.find(r=>r.name===n)}
 function sunHours(i,m){return M.lowsun[ROWS[i]][m-1]}
 function snowOf(i,m){const r=rawInfo("snow_m"+String(m).padStart(2,"0")); if(!r) return NaN; const q=D[r.offset+i]; return q===255?NaN:r.min+q/254*(r.max-r.min)}
@@ -392,7 +404,10 @@ function draw(){
   for(let i=0;i<M.n;i++){
     const x=X(-180+COLS[i]*0.5), y=Y(90-ROWS[i]*0.5);
     if(x<-cw||y<-cw||x>W||y>H+cw) continue;
-    if(sun){
+    if(S.mode==="ml"){
+      const mp=mlPct(S.world), p=mp?mp[i]:NaN;
+      ctx.fillStyle=p===p?MLR[Math.max(0,Math.min(255,Math.round(p*255)))]:CSSV["--land"];
+    } else if(sun){
       const q=sr?D[sr.offset+i]:255, sn=q===255?NaN:sr.min+q/254*(sr.max-sr.min);
       ctx.fillStyle=sn!==sn?CSSV["--land"]:sn>=10?SNOWPAT:SEQ[Math.max(0,Math.min(255,Math.round(sunHours(i,m)/smax*255)))];
     } else {
@@ -448,6 +463,7 @@ function hover(px,py){
   const tip=$("tip"), a=S.showAn?nearAnalog(px,py):null, i=cellAt(px,py);
   let html="";
   if(a){html="<b>"+(lang==="uk"?a.name_uk:a.name)+"</b> · "+a.country}
+  else if(i>=0&&S.mode==="ml"){const mp=mlPct(S.world), p=mp?mp[i]:NaN; html=T("lat")+" "+cellLat(i).toFixed(2)+", "+T("lon")+" "+cellLon(i).toFixed(2)+(p===p?" · ML "+p.toFixed(2):"")}
   else if(i>=0&&S.mode==="sun"){const sn=snowOf(i,S.month); html=T("lat")+" "+cellLat(i).toFixed(2)+" · "+T("months")[S.month-1]+": "+sunHours(i,S.month).toFixed(1)+" h"+(sn===sn?" · "+(lang==="uk"?"сніг ":"snow ")+Math.round(sn)+" %":"")}
   else if(i>=0){const v=SC[i]; html=T("lat")+" "+cellLat(i).toFixed(2)+", "+T("lon")+" "+cellLon(i).toFixed(2)+(v===v?" · "+(v*100).toFixed(0)+"%":"")}
   if(!html){tip.style.display="none";return}
@@ -595,12 +611,12 @@ $("dl-geo").onclick=()=>{const rows=exportRows(); const fc={type:"FeatureCollect
 /* ---------- map mode ---------- */
 function fillMonths(){const sel=$("month"); const v=S.month; sel.innerHTML=T("months").map((m,k)=>'<option value="'+(k+1)+'">'+m+"</option>").join(""); sel.value=String(v)}
 function setMode(m){
-  S.mode=m; $("m-score").setAttribute("aria-pressed",m==="score"); $("m-sun").setAttribute("aria-pressed",m==="sun");
+  S.mode=m; $("m-score").setAttribute("aria-pressed",m==="score"); $("m-sun").setAttribute("aria-pressed",m==="sun"); $("m-ml").setAttribute("aria-pressed",m==="ml");
   if(m==="sun"&&S.sel>=0){let best=-1,bh=0; for(let k=1;k<=12;k++){const sn=snowOf(S.sel,k), h=sunHours(S.sel,k); if(sn===sn&&sn<10&&h>bh){bh=h;best=k}}
     if(best<0){const b=raw("lowsun_best_month",S.sel); if(b===b&&b>=1) best=Math.round(b)} if(best>0) S.month=best; fillMonths()}
   $("month").hidden=m!=="sun"; $("snowkey").hidden=m!=="sun"; legend(); draw();
 }
-$("m-score").onclick=()=>setMode("score"); $("m-sun").onclick=()=>setMode("sun");
+$("m-score").onclick=()=>setMode("score"); $("m-sun").onclick=()=>setMode("sun"); $("m-ml").onclick=()=>setMode("ml");
 $("month").onchange=e=>{S.month=+e.target.value; legend(); draw()};
 
 /* ---------- getting there (Ф12) ---------- */
@@ -741,6 +757,8 @@ function renderCard(){
     '<div><div class="label">'+T("top")+'</div><div class="big">'+Math.max(0.1,(1-pctOf(v))*100).toFixed(1)+'%</div><div class="sub">'+T("of_ranked")+'</div></div>'+
     '<div><div class="label">'+T("coverage")+'</div><div class="big">'+Math.round(CV[i]*100)+'%</div></div></div>'}
   else{h+='<p class="sub" style="margin:8px 0">'+(lang==="uk"?"Ця клітинка не ранжується: ":"This cell is not ranked: ")+whyNot(i)+".</p>"}
+  const mp=mlPct(S.world);
+  if(mp&&mp[i]===mp[i]) h+='<p class="sub" style="margin-top:6px">'+T("ml_card")+": <b>"+mp[i].toFixed(2)+"</b> ("+T("pct")+")</p>";
   h+='<h3 style="margin-top:12px">'+T("crit")+'</h3>';
   for(const name of used){
     const w=S.weights[name]??0, off=available(name)?critOffset(name):undefined, q=off!==undefined?D[off+i]:255;
@@ -823,6 +841,9 @@ function renderRel(){
   h+='<ul class="plain sub"><li>'+T("weights_not_tuned")+"</li><li>"+T("lim1")+"</li><li>"+T("lim2")+"</li><li>"+T("lim3")+"</li>"+((M.no_data_yet||[]).includes("dryness")?"<li>"+T("lim_dry")+"</li>":"")+"<li>"+T("lim4")+"</li></ul>";
   const se=M.sensitivity&&M.sensitivity[S.task];
   if(se) h+='<p class="sub" style="margin-top:8px">'+T("stab")+": "+Math.round(se.mean_overlap*100)+" % "+(lang==="uk"?"верхніх 5 % клітинок лишаються при зміні ваг на ±25 %.":"of the top 5 % cells stay when the weights change by 25 %.")+"</p>";
+  const mr=M.ml_report&&M.ml_report[S.world];
+  if(mr&&mr.ml&&mr.ml.n) h+='<h3 style="margin-top:14px">'+T("ml_rel_t")+'</h3><p class="sub" style="margin-top:4px">'+T("ml_rel").replace("{n}",mr.ml.n).replace("{ml}",mr.ml.median.toFixed(2)).replace("{f}",mr.formula_same_sites.median.toFixed(2))
+     .replace("{mt}",Math.round(mr.ml.top20*100)).replace("{ft}",Math.round(mr.formula_same_sites.top20*100))+"</p>";
   h+='<details><summary>'+T("how")+'</summary><p>'+T("how1")+"</p><p>"+T("how2")+"</p><p>"+T("how3")+"</p><p>"+T("how4")+"</p></details>";
   h+='<details><summary>'+T("srcs")+'</summary><p>'+T("src1")+"</p><p>"+T("src2")+"</p></details>";
   $("rel").innerHTML=h;
@@ -837,6 +858,7 @@ function applyStatic(){
   document.documentElement.lang=lang; $("foot").textContent=T("foot");
   $("l-en").setAttribute("aria-pressed",lang==="en"); $("l-uk").setAttribute("aria-pressed",lang==="uk");
   $("w-moon").setAttribute("aria-pressed",S.world==="moon"); $("w-mars").setAttribute("aria-pressed",S.world==="mars");
+  if(D){$("m-ml").hidden=!rawInfo("ml_"+S.world); if(S.mode==="ml"&&$("m-ml").hidden) S.mode="score"}
   document.title=T("title");
   legend();
 }
@@ -845,12 +867,13 @@ function refresh(rebuildControls){
   compute(); renderCands(); renderSpots(); renderCard(); renderCity(); renderVal(); renderGaps(); renderRel(); renderGlossary(); draw();
 }
 function legend(){
+  if(S.mode==="ml"){$("ramp").style.background="linear-gradient(90deg,var(--ml-lo),var(--ml-hi))"; $("lo-l").textContent=T("ml_lo"); $("hi-l").textContent=T("ml_hi"); return}
   if(S.mode==="sun"){$("ramp").style.background="linear-gradient(90deg,var(--seq-lo),var(--seq-hi))"; $("lo-l").textContent=T("lo_sun"); $("hi-l").textContent=(D?SUNMAX().toFixed(1)+(lang==="uk"?" год ":" h "):"")+T("hi_sun")}
   else{$("ramp").style.background="linear-gradient(90deg,"+STOPS.map(s=>"rgb("+s.join(",")+")").join(",")+")"; $("lo-l").textContent=T("lo"); $("hi-l").textContent=T("hi")}
 }
 
 $("w-moon").onclick=()=>setWorld("moon"); $("w-mars").onclick=()=>setWorld("mars");
-function setWorld(w){S.world=w; S.sel=-1; fillTargets(); fillTasks(); resetWeights(); fillSliders(); applyStatic(); refresh(false)}
+function setWorld(w){S.world=w; S.sel=-1; $("m-ml").hidden=!rawInfo("ml_"+w); if(S.mode==="ml"&&$("m-ml").hidden) setMode("score"); fillTargets(); fillTasks(); resetWeights(); fillSliders(); applyStatic(); refresh(false)}
 $("target").onchange=e=>{S.target=e.target.value; S.sel=-1; fillSliders(); refresh(false)};
 $("task").onchange=e=>{S.task=e.target.value; S.sel=-1; resetWeights(); fillSliders(); refresh(false)};
 $("reset").onclick=()=>{resetWeights(); fillSliders(); refresh(false)};
@@ -870,6 +893,7 @@ new MutationObserver(()=>draw()).observe(document.documentElement,{attributes:tr
   try{ await load(); }catch(e){ $("loading").textContent="Could not read the embedded data: "+e.message; return }
   $("loading").hidden=true; $("results").hidden=false;
   CITIES=M.cities||[];
+  $("m-ml").hidden=!rawInfo("ml_moon");
   S.world="moon"; S.target=(M.targets.find(t=>t.world==="moon"&&t.mvp)||M.targets[0]).id; S.task="landing";
   fillTargets(); fillTasks(); resetWeights(); fillSliders(); resize(); refresh(false);
   if(CANDS.length) select(CANDS[0]);

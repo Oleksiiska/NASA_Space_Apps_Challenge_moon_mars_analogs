@@ -21,6 +21,7 @@ earth = ["earthaccess>=0.9"]
 # Readers for the downloaded Earth products, for the next step of the pipeline:
 # MODIS HDF4 (pyhdf; the rasterio wheel for Windows has no HDF4 driver), EMIT NetCDF, GeoTIFF
 formats = ["pyhdf>=0.11", "xarray", "netCDF4", "h5py", "rasterio"]
+ml = ["scikit-learn>=1.3"]
 dev = ["pytest>=8", "pvlib", "pandas", "pyproj>=3.6"]
 
 [project.scripts]

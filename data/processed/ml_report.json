@@ -1,0 +1,599 @@
+{
+ "features": [
+  "elev_mean_m",
+  "relief_m",
+  "slope_mean_deg",
+  "slope_lt8",
+  "slope_lt15",
+  "rough_p50_m",
+  "slope_h0",
+  "slope_h1",
+  "slope_h2",
+  "slope_h3",
+  "slope_h4",
+  "slope_h5",
+  "slope_h6",
+  "slope_h7",
+  "slope_h8",
+  "lst_day_mean_k",
+  "lst_night_mean_k",
+  "lst_day_max_k",
+  "lst_night_min_k",
+  "lst_diurnal_k",
+  "ndvi_mean",
+  "ndvi_max",
+  "snow_cover_pct",
+  "snow_free_months",
+  "precip_mm_yr",
+  "lowsun_best_h",
+  "lowsun_mean_h",
+  "ice_frac",
+  "min_calcite",
+  "min_chlorite",
+  "min_dolomite",
+  "min_goethite",
+  "min_gypsum",
+  "min_hematite",
+  "min_illite_muscovite",
+  "min_kaolinite",
+  "min_montmorillonite",
+  "min_vermiculite",
+  "min_quartz_feldspar"
+ ],
+ "left_out": [
+  "lat",
+  "lon",
+  "volc_dist_km",
+  "volc_basalt_dist_km",
+  "impact_dist_km",
+  "impact_diam_km",
+  "road_dist_km"
+ ],
+ "n_bags": 40,
+ "exclude_km": 300.0,
+ "unlabeled_per_positive": 20,
+ "worlds": {
+  "moon": {
+   "positives": 22,
+   "sites": 22,
+   "held_out": [
+    {
+     "cell": 1926,
+     "sites": [
+      "svalbard"
+     ],
+     "lat": 77.75,
+     "lon": 16.25,
+     "ml_percentile": 0.74,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.796
+    },
+    {
+     "cell": 2766,
+     "sites": [
+      "haughton"
+     ],
+     "lat": 75.25,
+     "lon": -89.75,
+     "ml_percentile": 0.892,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.802
+    },
+    {
+     "cell": 10822,
+     "sites": [
+      "askja"
+     ],
+     "lat": 65.25,
+     "lon": -16.75,
+     "ml_percentile": 0.772,
+     "positives_left_for_training": 20,
+     "formula_percentile": 0.913
+    },
+    {
+     "cell": 11379,
+     "sites": [
+      "chill_ice_lava_tube"
+     ],
+     "lat": 64.75,
+     "lon": -20.75,
+     "ml_percentile": 0.942,
+     "positives_left_for_training": 20,
+     "formula_percentile": 0.987
+    },
+    {
+     "cell": 19701,
+     "sites": [
+      "mistastin"
+     ],
+     "lat": 55.75,
+     "lon": -63.25,
+     "ml_percentile": 0.828,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.953
+    },
+    {
+     "cell": 24878,
+     "sites": [
+      "gros_morne"
+     ],
+     "lat": 49.75,
+     "lon": -57.75,
+     "ml_percentile": 0.746,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.834
+    },
+    {
+     "cell": 25754,
+     "sites": [
+      "ries"
+     ],
+     "lat": 48.75,
+     "lon": 10.75,
+     "ml_percentile": 0.902,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.93
+    },
+    {
+     "cell": 27355,
+     "sites": [
+      "sudbury"
+     ],
+     "lat": 46.75,
+     "lon": -81.25,
+     "ml_percentile": 0.556,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.931
+    },
+    {
+     "cell": 29976,
+     "sites": [
+      "craters_of_the_moon"
+     ],
+     "lat": 43.25,
+     "lon": -113.75,
+     "ml_percentile": 0.947,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.891
+    },
+    {
+     "cell": 33757,
+     "sites": [
+      "etna"
+     ],
+     "lat": 37.75,
+     "lon": 15.25,
+     "ml_percentile": 0.998,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.909
+    },
+    {
+     "cell": 33966,
+     "sites": [
+      "sw_nevada_vf"
+     ],
+     "lat": 37.25,
+     "lon": -116.25,
+     "ml_percentile": 0.755,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.868
+    },
+    {
+     "cell": 34304,
+     "sites": [
+      "rio_grande_del_norte"
+     ],
+     "lat": 36.75,
+     "lon": -105.75,
+     "ml_percentile": 0.998,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.827
+    },
+    {
+     "cell": 34929,
+     "sites": [
+      "sp_crater"
+     ],
+     "lat": 35.75,
+     "lon": -111.75,
+     "ml_percentile": 0.927,
+     "positives_left_for_training": 20,
+     "formula_percentile": 0.832
+    },
+    {
+     "cell": 35234,
+     "sites": [
+      "meteor_crater"
+     ],
+     "lat": 35.25,
+     "lon": -111.25,
+     "ml_percentile": 0.935,
+     "positives_left_for_training": 20,
+     "formula_percentile": 0.968
+    },
+    {
+     "cell": 37384,
+     "sites": [
+      "kilbourne_hole"
+     ],
+     "lat": 31.75,
+     "lon": -106.75,
+     "ml_percentile": 0.921,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.55
+    },
+    {
+     "cell": 39322,
+     "sites": [
+      "lanzarote_timanfaya"
+     ],
+     "lat": 28.75,
+     "lon": -13.75,
+     "ml_percentile": 0.542,
+     "positives_left_for_training": 20,
+     "formula_percentile": 0.94
+    },
+    {
+     "cell": 39621,
+     "sites": [
+      "teide"
+     ],
+     "lat": 28.25,
+     "lon": -16.75,
+     "ml_percentile": 0.999,
+     "positives_left_for_training": 20,
+     "formula_percentile": 0.939
+    },
+    {
+     "cell": 44214,
+     "sites": [
+      "hi_seas"
+     ],
+     "lat": 19.75,
+     "lon": -155.25,
+     "ml_percentile": 0.582,
+     "positives_left_for_training": 20,
+     "formula_percentile": 0.959
+    },
+    {
+     "cell": 44448,
+     "sites": [
+      "kilauea"
+     ],
+     "lat": 19.25,
+     "lon": -155.25,
+     "ml_percentile": 0.997,
+     "positives_left_for_training": 20,
+     "formula_percentile": 0.906
+    },
+    {
+     "cell": 58858,
+     "sites": [
+      "lmas_reunion"
+     ],
+     "lat": -21.25,
+     "lon": 55.75,
+     "ml_percentile": 0.998,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.931
+    },
+    {
+     "cell": 70135,
+     "sites": [
+      "concordia"
+     ],
+     "lat": -75.25,
+     "lon": 123.75,
+     "ml_percentile": 0.625,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.691
+    },
+    {
+     "cell": 72400,
+     "sites": [
+      "mcmurdo_dry_valleys"
+     ],
+     "lat": -77.25,
+     "lon": 162.75,
+     "ml_percentile": 0.533,
+     "positives_left_for_training": 21,
+     "formula_percentile": 0.559
+    }
+   ],
+   "ml": {
+    "n": 22,
+    "median": 0.897,
+    "top20": 0.591,
+    "top10": 0.5
+   },
+   "formula_same_sites": {
+    "n": 22,
+    "median": 0.907,
+    "top20": 0.818,
+    "top10": 0.545
+   }
+  },
+  "mars": {
+   "positives": 24,
+   "sites": 24,
+   "held_out": [
+    {
+     "cell": 1926,
+     "sites": [
+      "svalbard"
+     ],
+     "lat": 77.75,
+     "lon": 16.25,
+     "ml_percentile": 0.797,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.585
+    },
+    {
+     "cell": 2766,
+     "sites": [
+      "haughton"
+     ],
+     "lat": 75.25,
+     "lon": -89.75,
+     "ml_percentile": 0.859,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.763
+    },
+    {
+     "cell": 8496,
+     "sites": [
+      "kangerlussuaq"
+     ],
+     "lat": 67.25,
+     "lon": -50.75,
+     "ml_percentile": 0.593,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.58
+    },
+    {
+     "cell": 11379,
+     "sites": [
+      "chill_ice_lava_tube"
+     ],
+     "lat": 64.75,
+     "lon": -20.75,
+     "ml_percentile": 0.891,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.963
+    },
+    {
+     "cell": 24878,
+     "sites": [
+      "gros_morne"
+     ],
+     "lat": 49.75,
+     "lon": -57.75,
+     "ml_percentile": 0.84,
+     "positives_left_for_training": 23,
+     "formula_percentile": null
+    },
+    {
+     "cell": 27355,
+     "sites": [
+      "sudbury"
+     ],
+     "lat": 46.75,
+     "lon": -81.25,
+     "ml_percentile": 0.251,
+     "positives_left_for_training": 23,
+     "formula_percentile": null
+    },
+    {
+     "cell": 29976,
+     "sites": [
+      "craters_of_the_moon"
+     ],
+     "lat": 43.25,
+     "lon": -113.75,
+     "ml_percentile": 0.968,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.844
+    },
+    {
+     "cell": 32482,
+     "sites": [
+      "tirez"
+     ],
+     "lat": 39.75,
+     "lon": -3.25,
+     "ml_percentile": 0.381,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.606
+    },
+    {
+     "cell": 33352,
+     "sites": [
+      "mdrs"
+     ],
+     "lat": 38.25,
+     "lon": -110.75,
+     "ml_percentile": 0.994,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.729
+    },
+    {
+     "cell": 33575,
+     "sites": [
+      "qaidam"
+     ],
+     "lat": 38.25,
+     "lon": 91.25,
+     "ml_percentile": 0.903,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.837
+    },
+    {
+     "cell": 33739,
+     "sites": [
+      "rio_tinto"
+     ],
+     "lat": 37.75,
+     "lon": -6.75,
+     "ml_percentile": 0.697,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.48
+    },
+    {
+     "cell": 33757,
+     "sites": [
+      "etna"
+     ],
+     "lat": 37.75,
+     "lon": 15.25,
+     "ml_percentile": 0.996,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.674
+    },
+    {
+     "cell": 34609,
+     "sites": [
+      "death_valley"
+     ],
+     "lat": 36.25,
+     "lon": -116.75,
+     "ml_percentile": 0.932,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.606
+    },
+    {
+     "cell": 35234,
+     "sites": [
+      "meteor_crater"
+     ],
+     "lat": 35.25,
+     "lon": -111.25,
+     "ml_percentile": 0.981,
+     "positives_left_for_training": 23,
+     "formula_percentile": null
+    },
+    {
+     "cell": 39322,
+     "sites": [
+      "lanzarote_timanfaya"
+     ],
+     "lat": 28.75,
+     "lon": -13.75,
+     "ml_percentile": 0.753,
+     "positives_left_for_training": 22,
+     "formula_percentile": 0.996
+    },
+    {
+     "cell": 39621,
+     "sites": [
+      "teide"
+     ],
+     "lat": 28.25,
+     "lon": -16.75,
+     "ml_percentile": 0.998,
+     "positives_left_for_training": 22,
+     "formula_percentile": 0.645
+    },
+    {
+     "cell": 44214,
+     "sites": [
+      "hi_seas"
+     ],
+     "lat": 19.75,
+     "lon": -155.25,
+     "ml_percentile": 0.407,
+     "positives_left_for_training": 22,
+     "formula_percentile": 0.523
+    },
+    {
+     "cell": 44448,
+     "sites": [
+      "kilauea"
+     ],
+     "lat": 19.25,
+     "lon": -155.25,
+     "ml_percentile": 0.991,
+     "positives_left_for_training": 22,
+     "formula_percentile": 0.698
+    },
+    {
+     "cell": 46696,
+     "sites": [
+      "dallol"
+     ],
+     "lat": 14.25,
+     "lon": 40.25,
+     "ml_percentile": 0.84,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.65
+    },
+    {
+     "cell": 58646,
+     "sites": [
+      "makgadikgadi"
+     ],
+     "lat": -20.75,
+     "lon": 25.25,
+     "ml_percentile": 0.474,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.55
+    },
+    {
+     "cell": 58866,
+     "sites": [
+      "pilbara"
+     ],
+     "lat": -21.25,
+     "lon": 119.25,
+     "ml_percentile": 0.877,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.473
+    },
+    {
+     "cell": 60018,
+     "sites": [
+      "atacama"
+     ],
+     "lat": -24.75,
+     "lon": -69.25,
+     "ml_percentile": 0.97,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.74
+    },
+    {
+     "cell": 70135,
+     "sites": [
+      "concordia"
+     ],
+     "lat": -75.25,
+     "lon": 123.75,
+     "ml_percentile": 0.483,
+     "positives_left_for_training": 23,
+     "formula_percentile": null
+    },
+    {
+     "cell": 72400,
+     "sites": [
+      "mcmurdo_dry_valleys"
+     ],
+     "lat": -77.25,
+     "lon": 162.75,
+     "ml_percentile": 0.422,
+     "positives_left_for_training": 23,
+     "formula_percentile": 0.543
+    }
+   ],
+   "ml": {
+    "n": 24,
+    "median": 0.849,
+    "top20": 0.583,
+    "top10": 0.375
+   },
+   "formula_same_sites": {
+    "n": 20,
+    "median": 0.647,
+    "top20": 0.2,
+    "top10": 0.1
+   }
+  }
+ }
+}

@@ -55,10 +55,11 @@ pipeline/
     targets/             feature "fingerprints" of the Moon and Mars targets
     scoring.py           criteria and task scores
     validate.py          known-analog validation, weight sensitivity, export for the web page
+    ml/pu.py             experimental machine-learning layer (branch ml-layer)
     pipeline_all.py      the `all` command
     export/              compact binary grid
   scripts/               generator of docs/data_sources.md
-  tests/                 80 tests; they need no downloads
+  tests/                 84 tests; they need no downloads (the ML tests run only with scikit-learn)
 webapp/
   template.html          the page; build_app.py embeds data/processed into index.html
 data/
@@ -87,6 +88,23 @@ nothing is downloaded: it builds the volcano and impact layers from the tables i
 repository, scores every task, writes the validation and rebuilds `webapp/index.html`
 (a few seconds). If PowerShell refuses to run `Activate.ps1`, use `cmd` and
 `.venv\Scripts\activate.bat`.
+
+## Experimental ML layer (branch `ml-layer`)
+
+```powershell
+pip install -e "pipeline[ml]"
+python -m analog_finder ml
+python -m analog_finder merge
+python -m analog_finder web
+```
+
+`ml` trains a bagged positive-unlabeled classifier on the known analog sites (39 Earth measures; location and the
+volcano, impact and road lists are left out because those lists contain the sites themselves) and checks it on
+every site hidden together with everything within 300 km. It takes 5–10 minutes. The page then gets a third map
+mode, "ML (experimental)". Results are in `data/processed/ml_report.md`: on the same yardstick (percentile among
+all land cells) the formula finds the known lunar analog sites better than the model (median 0.91 against 0.90,
+top 20 % in 82 % against 59 %), and the model finds the known Martian ones better (0.85 against 0.65, 58 % against
+20 %). The model learns the pattern of past choices, so it is shown apart and never mixed into the score.
 
 ## Rebuilding from the raw data
 
@@ -169,7 +187,7 @@ python -m analog_finder web
 
 ## What is not done yet
 
-- No detail below the 55 km cell (smaller windows, 30 m DEMs for the top candidates), no side-by-side images of Earth and target, no protected-area layer (the WDPA data may not be redistributed), no machine-learning layer.
+- No detail below the 55 km cell (smaller windows, 30 m DEMs for the top candidates), no side-by-side images of Earth and target, no protected-area layer (the WDPA data may not be redistributed). The machine-learning layer is experimental and lives on the `ml-layer` branch.
 - No maps of the Moon and Mars on the page; targets are chosen from a list.
 
 ## Use of AI

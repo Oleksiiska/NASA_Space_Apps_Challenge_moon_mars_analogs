@@ -134,7 +134,23 @@ hold-out would give the same numbers.
 - **Trip CO₂.** The card of a cell estimates one passenger's flight from an origin city (Kyiv unless the viewer picks another): great-circle distance + 8 %, times 68.0 g CO₂ per passenger-km under 3,700 km or 63.2 g above (economy class, UK DESNZ greenhouse gas conversion factors 2025, methodology paper, tables of passenger flights), and ×1.7 for the non-CO₂ effects of flight, the paper's central estimate. Ground travel is not included.
 - **Check a place.** The page has the 7,342 populated places of Natural Earth (`data/reference/cities.csv`). Picking one shows the score and percentile of its cell for every task with the default weights, or why it has none, and the nearest cell in the top 10 % for the current task.
 
-## 8. Low-Sun windows
+## 8. Experimental ML layer (branch ml-layer)
+
+A second, independent way to rank cells, kept apart from the formula.
+
+- **Question.** Which Earth cells look like the places agencies already chose? The formula asks what the test task needs from the target; this layer only learns from the known sites, so it repeats their pattern, including reasons that have nothing to do with the Moon or Mars (access, tradition, earlier programmes).
+- **Data.** Positives: the cells of the known sites marked `validate=yes` for one world (sites for both worlds count for each): 22 cells for the Moon, 24 for Mars. Unlabeled: all other land cells; there are no true negatives. Features: 39 Earth measures of `grid.bin` (terrain, slope classes, temperatures, NDVI, snow, precipitation, low Sun, glaciers, minerals). Left out: latitude and longitude, and the volcano, impact and road distances, because those lists contain many of the sites and the model would learn them back.
+- **Model.** Bagged positive-unlabeled learning (Mordelet and Vert 2014): 40 times, all positives against a random sample of 20 unlabeled cells per positive, a gradient-boosted tree model of depth 3 (scikit-learn), with the two classes balanced; each cell's score is the mean over the bags that did not use it.
+- **Evaluation.** Spatial leave-one-site-out: each positive cell and every cell within 300 km are hidden from training (20 bags); the hidden site's percentile among all land cells is recorded. The formula's percentile of the same site is taken on the same yardstick: mean over the site's tasks and main targets, among all land cells, scores only, a cell without a score counting as the lowest. (This differs from section 6, which ranks among scored cells only.)
+
+| World | Sites | ML median | ML top 20 % | Formula median | Formula top 20 % |
+| --- | --- | --- | --- | --- | --- |
+| Moon | 22 | 0.90 | 59 % | 0.91 | 82 % |
+| Mars | 24 (formula: 20 with a task score) | 0.85 | 58 % | 0.65 | 20 % |
+
+Reading: for the Moon the physics-based formula finds the known sites better. For Mars the model finds them better, because the Martian analog sites share a climate pattern (dry, bare, cold or hot desert) that the model picks up directly, while the formula ranks them against flat targets such as Arcadia Planitia at a 55 km scale. Cells where the model scores high and the formula low look like the usual choices but do not match the target for the task; cells where the formula scores high and the model low are physically similar but unlike past choices, which are the new candidates the challenge asks for. With about 20 positives per world, the scores are unstable and should be read as a contrast to the formula, not as a ranking of their own. Full table: `data/processed/ml_report.md`.
+
+## 9. Low-Sun windows
 
 Hours per day with the Sun 0–5 degrees above a flat horizon depend only on latitude and date; they are
 computed for every grid row and month (`data/processed/lowsun_by_latitude.csv`, checked against pvlib). The
@@ -142,7 +158,7 @@ page combines them with the monthly MODIS snow cover of 2023: a month counts for
 snow cover is under 10 %. The "Low-Sun window" map shows one month at a time; the card of a cell shows all
 twelve and names the best snow-free month.
 
-## 9. What Earth cannot reproduce
+## 10. What Earth cannot reproduce
 
 `data/reference/environment_gaps.json` lists gravity, surface pressure, length of the solar day,
 spin-axis tilt, sunlight above the atmosphere, radiation dose and surface temperature for the
@@ -152,7 +168,7 @@ score. The card of a lunar target also lists the values of the target that no Ea
 the coldest surface (about 39 K at the ridge), the share where ice is stable within 1 m, and the
 highest Sun elevation.
 
-## 10. Known limits
+## 11. Known limits
 
 - Scale: 55 km cells against sites of a few kilometres. Smaller windows inside each cell are the main improvement left.
 - SRTMGL30 has no data south of 60 S, so Antarctic cells have no terrain criteria; north of 60 N the values come from a coarser source.
@@ -162,7 +178,7 @@ highest Sun elevation.
 - Sun elevations assume a flat horizon.
 - Coordinates of 11 known sites are approximate and 4 uses are still to be confirmed (marked in `known_analogs.csv`).
 
-## 11. Reproducing the result
+## 12. Reproducing the result
 
 ```powershell
 pip install -e "pipeline[geo,earth,formats,dev]"

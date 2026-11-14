@@ -18,6 +18,7 @@
   score                   validate on known analogs, export the scores for the web page
   web                     build webapp/index.html from data/processed
   all                     run every step that is not done yet, then score and build the page
+  ml                      experimental PU-learning layer from the known analogs (needs scikit-learn)
   inspect FILE            show the variables inside an HDF4 / NetCDF file
 """
 from __future__ import annotations
@@ -141,6 +142,13 @@ def _cmd_all(args) -> int:
     return pipeline_all.run_all(force=args.force, fetch=args.fetch)
 
 
+def _cmd_ml(args) -> int:
+    from .ml import pu
+    pu.run(n_bags=args.bags, loso_bags=args.loso_bags)
+    print("Layer saved: ml_pu.npz; report: data/processed/ml_report.md\nNext: python -m analog_finder merge, then web")
+    return 0
+
+
 def _cmd_score(args) -> int:
     from . import validate
     validate.run()
@@ -199,6 +207,10 @@ def main(argv=None) -> int:
     al.add_argument("--fetch", action="store_true", help="also download missing data (PDS, Earthdata with login, POWER)")
     al.add_argument("--force", nargs="+", default=[], metavar="STEP", help="redo these steps even if done (or: all)")
     al.set_defaults(func=_cmd_all)
+    ml = sub.add_parser("ml", help="experimental PU-learning layer from the known analogs")
+    ml.add_argument("--bags", type=int, default=40, help="bags of the final model")
+    ml.add_argument("--loso-bags", type=int, default=20, help="bags per held-out site in the evaluation")
+    ml.set_defaults(func=_cmd_ml)
     sub.add_parser("score", help="validate the ranking on known analogs and export scores for the web app").set_defaults(func=_cmd_score)
     sub.add_parser("merge", help="add computed Earth layers to grid.bin").set_defaults(func=_cmd_merge)
     i = sub.add_parser("inspect", help="show the variables inside an HDF4 / NetCDF file")
