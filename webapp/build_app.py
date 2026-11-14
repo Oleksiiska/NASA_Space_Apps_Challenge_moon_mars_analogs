@@ -10,6 +10,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "pipeline"))
 from analog_finder import config  # noqa: E402
 from analog_finder.prep import reference  # noqa: E402
+from analog_finder import scoring  # noqa: E402
 
 RAW = ["elev_mean_m", "relief_m", "slope_mean_deg", "slope_lt8", "rough_p50_m", "lst_day_mean_k", "lst_night_min_k", "lst_diurnal_k",
        "ndvi_mean", "snow_free_months", "lowsun_best_h", "ice_frac",
@@ -35,9 +36,19 @@ def build(pdir: Path, out: Path):
     cbytes = np.fromfile(pdir / "criteria.bin", dtype=np.uint8)
     gbytes = np.fromfile(pdir / "grid.bin", dtype=np.uint8)
     index = np.fromfile(pdir / "grid_index.bin", dtype="<u4").astype(np.int64)
-    blocks = [cbytes]
+    # Shared criteria and the filter bits travel in the page. The three terrain criteria of each target
+    # (slope classes, relief, roughness) are left out: the page recomputes them for the chosen target from
+    # the same grid values with the formulas of scoring.matched_criteria, which keeps the page 4 times smaller.
+    shared = [c for c in crit["criteria"] if not c.get("target")]
+    blocks, crit_meta, off = [], [], 0
+    for c in shared:
+        blocks.append(cbytes[c["offset"]: c["offset"] + n])
+        crit_meta.append(dict(c, offset=off))
+        off += n
+    blocks.append(cbytes[crit["constraint_offset"]: crit["constraint_offset"] + n])
+    cons_off = off
+    off += n
     raw_meta = []
-    off = cbytes.size
     for name in RAW:
         f = next((x for x in grid["features"] if x["name"] == name), None)
         if f is None:
@@ -104,16 +115,30 @@ def build(pdir: Path, out: Path):
         quant.append({"id": q["id"], "name": q["name"], "name_uk": q.get("name_uk", q["name"]), "unit": q.get("unit", ""),
                       "values": vals, "reproducible": q["reproducible_on_earth"], "workaround": q.get("workaround", ""),
                       "note": q.get("note", "")})
-    meta = {"n": n, "grid": grid["grid"], "criteria": crit["criteria"], "constraint_bits": crit["constraint_bits"],
-            "constraint_offset": crit["constraint_offset"], "constraints_not_checked": crit["constraints_not_checked"],
+    tmatch = {k: {"hist": [float(x) for x in t["terrain_1km"]["slope_hist"]],
+                  "relief": float(t["terrain_1km"]["relief_p5_p95_m"]), "rough": float(t["terrain_1km"]["roughness_rms_p50_m"])}
+              for k, t in prof.items() if "terrain_1km" in t}
+    meta = {"n": n, "grid": grid["grid"], "criteria": crit_meta, "constraint_bits": crit["constraint_bits"],
+            "constraint_offset": cons_off, "match_offset": off + 4 * n, "tmatch": tmatch,
+            "match_scales": {"relief": scoring.RELIEF_SCALE_M, "rough": scoring.ROUGH_SCALE_M, "sigma": scoring.MATCH_SIGMA}, "constraints_not_checked": crit["constraints_not_checked"],
             "min_coverage": crit["min_coverage"], "no_data_yet": crit["no_data_yet"], "tasks": crit["tasks"],
             "constraints_doc": config.tasks().get("constraints", {}), "raw": raw_meta, "rc_offset": rc_off,
             "targets": [t for t in targets if t["has_profile"]], "analogs": analogs, "gaps": quant,
             "tfacts": tfacts, "lowsun": lowsun, "spotlights": spots, "cities": cities, "road_max_km": crit.get("road_max_km", 50), "sensitivity": val.get("sensitivity", {}).get("by_task", {}), "validation": val["summary"], "validation_skipped": val["skipped_tasks"]}
     html = (HERE / "template.html").read_text(encoding="utf-8")
+    cd = float(grid["grid"].get("cell_deg", 0.5))
+    deg = f"{cd:g}"
+    html = (html.replace("{{KM}}", str(round(cd * 111.2))).replace("{{DEG}}", deg)
+            .replace("{{DEGUK}}", deg.replace(".", ",")))
     html = html.replace("/*META*/null", json.dumps(meta, ensure_ascii=False, separators=(",", ":")))
     html = html.replace("/*BLOB*/\"\"", '"' + base64.b64encode(blob).decode() + '"')
-    out.write_text(html, encoding="utf-8")
+    # A standalone document head for opening the file directly or serving it from GitHub Pages; the artifact
+    # host adds its own, so everything up to STANDALONE_END is cut before publishing there.
+    head = ('<!doctype html>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+            '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}'
+            'body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>\n<!--STANDALONE_END-->\n')
+    out.write_text(head + html, encoding="utf-8")
     print(f"{out}: {out.stat().st_size / 1e6:.2f} MB (blob {len(blob) / 1e6:.2f} MB gzip)")
 
 

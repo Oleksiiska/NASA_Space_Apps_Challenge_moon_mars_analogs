@@ -103,3 +103,13 @@ def test_build_layers_from_synthetic_monthly_data_and_merge(tmp_path, monkeypatc
     meta, back = layers.load_layer(p)
     assert [x.name for x in back] == list(es.LST_SPEC)
     assert back[0].values[10, 10] == pytest.approx(300.0)
+
+
+def test_finer_grid_block_size_and_emit_upsampling(monkeypatch):
+    assert es._cells(0.25) == (0.25, 5) and es._cells(0.5) == (0.5, 10)
+    with pytest.raises(ValueError):
+        es._cells(0.33)
+    a = np.array([[1.0, 2.0], [3.0, np.nan]], np.float32)
+    u = es.upsample(a, 2)
+    assert u.shape == (4, 4) and u[1, 1] == 1.0 and u[0, 3] == 2.0 and np.isnan(u[3, 3])
+    assert es.upsample(a, 1) is a

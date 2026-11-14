@@ -117,7 +117,8 @@ def nearest(points: Iterable[dict], radius_km: Optional[Iterable[float]] = None,
     return np.minimum(dist, max_km).astype(np.float32), idx
 
 
-def cell_value(arr: np.ndarray, lat: float, lon: float, cell_deg: float = CELL_DEG) -> float:
+def cell_value(arr: np.ndarray, lat: float, lon: float, cell_deg: Optional[float] = None) -> float:
+    cell_deg = cell_deg or 180.0 / arr.shape[0]
     r = min(max(int((90.0 - lat) / cell_deg), 0), arr.shape[0] - 1)
     c = min(max(int((lon + 180.0) / cell_deg), 0), arr.shape[1] - 1)
     return float(arr[r, c])
@@ -134,11 +135,17 @@ def _src(key: str, name: str, src_dir: Optional[Path]) -> Path:
     return path
 
 
-def build_volcanic(src_dir: Optional[Path] = None, log: Callable[[str], None] = print) -> Path:
+def _shape(cell_deg: Optional[float]) -> dict:
+    cd = cell_deg or layers.grid_cell_deg()
+    return {"n_lat": int(round(180 / cd)), "n_lon": int(round(360 / cd)), "cell_deg": cd}
+
+
+def build_volcanic(src_dir: Optional[Path] = None, log: Callable[[str], None] = print, cell_deg: Optional[float] = None) -> Path:
+    g = _shape(cell_deg)
     vols = read_volcanoes(_src("earth_volcanoes", "volcano_db.csv", src_dir))
     basalt = [v for v in vols if v["basaltic"]]
-    d_any, _ = nearest(vols)
-    d_bas, _ = nearest(basalt)
+    d_any, _ = nearest(vols, **g)
+    d_bas, _ = nearest(basalt, **g)
     problems = []
     for name, lat, lon, arr, ok in (("Kilauea", 19.41, -155.29, d_bas, lambda v: v < 40),
                                     ("Craters of the Moon", 43.42, -113.5, d_bas, lambda v: v < 60),
@@ -154,12 +161,13 @@ def build_volcanic(src_dir: Optional[Path] = None, log: Callable[[str], None] = 
     items = [layers.LayerFeature("volc_dist_km", d_any, 0.0, MAX_KM, "km", "Distance to the nearest Holocene volcano on land (capped at 300 km)", VOLC_SOURCE),
              layers.LayerFeature("volc_basalt_dist_km", d_bas, 0.0, MAX_KM, "km",
                                  "Distance to the nearest basaltic Holocene volcano: shield, volcanic field, fissure vent, cinder cone (capped at 300 km)", VOLC_SOURCE)]
-    return layers.save_layer("earth_volcanic", items, CELL_DEG)
+    return layers.save_layer("earth_volcanic", items, g["cell_deg"])
 
 
-def build_impacts(src_dir: Optional[Path] = None, log: Callable[[str], None] = print) -> Path:
+def build_impacts(src_dir: Optional[Path] = None, log: Callable[[str], None] = print, cell_deg: Optional[float] = None) -> Path:
+    g = _shape(cell_deg)
     imp = read_impacts(_src("earth_impacts", "earth-impact-craters.csv", src_dir))
-    d, k = nearest(imp, radius_km=[p["diameter_km"] / 2 for p in imp])
+    d, k = nearest(imp, radius_km=[p["diameter_km"] / 2 for p in imp], **g)
     diam = np.where(k >= 0, np.array([p["diameter_km"] for p in imp] + [0.0], dtype=np.float32)[k], 0.0).astype(np.float32)
     problems = []
     for name, lat, lon, ok in (("Meteor Crater", 35.03, -111.02, lambda v: v < 40), ("Ries", 48.88, 10.58, lambda v: v < 40),
@@ -172,7 +180,7 @@ def build_impacts(src_dir: Optional[Path] = None, log: Callable[[str], None] = p
     log(f"Impact structures: {len(imp)}; self-check ok (Meteor Crater, Ries, Vredefort, Amazon)")
     items = [layers.LayerFeature("impact_dist_km", d, 0.0, MAX_KM, "km", "Distance to the rim of the nearest confirmed impact structure, 0 inside (capped at 300 km)", IMPACT_SOURCE),
              layers.LayerFeature("impact_diam_km", np.minimum(diam, 300.0), 0.0, 300.0, "km", "Diameter of that impact structure (0 when none within 300 km)", IMPACT_SOURCE)]
-    return layers.save_layer("earth_impact", items, CELL_DEG)
+    return layers.save_layer("earth_impact", items, g["cell_deg"])
 
 
 # --------------------------------------------------------------------------- dryness from NASA POWER
@@ -228,7 +236,8 @@ def points_to_grid(points: Iterable[tuple[float, float, float]], lat_step: float
     return np.where(np.isfinite(near), near, other).astype(np.float32)
 
 
-def build_dryness(src_dir: Optional[Path] = None, log: Callable[[str], None] = print) -> Path:
+def build_dryness(src_dir: Optional[Path] = None, log: Callable[[str], None] = print, cell_deg: Optional[float] = None) -> Path:
+    g = _shape(cell_deg)
     from .. import config
     src = Path(src_dir) if src_dir else config.resolve(config.dataset("earth_power_precip_grid")["dest"])
     files = sorted(src.glob("box_*.json"))
@@ -237,7 +246,7 @@ def build_dryness(src_dir: Optional[Path] = None, log: Callable[[str], None] = p
     pts = []
     for p in files:
         pts += power_points(json.loads(p.read_text(encoding="utf-8")))
-    mm_day = points_to_grid(pts)
+    mm_day = points_to_grid(pts, **g)
     mm_yr = (mm_day * 365.25).astype(np.float32)
     problems = []
     for name, lat, lon, ok in (("Atacama", -24.0, -69.5, lambda v: v < 250), ("central Sahara", 25.0, 10.0, lambda v: v < 250),
@@ -252,7 +261,7 @@ def build_dryness(src_dir: Optional[Path] = None, log: Callable[[str], None] = p
     log(f"Dryness: {len(files)} boxes, {len(pts)} POWER points, {int(np.isfinite(mm_yr).sum())} cells with precipitation")
     items = [layers.LayerFeature("precip_mm_yr", np.minimum(mm_yr, 4000.0), 0.0, 4000.0, "mm/year",
                                  "Mean annual precipitation, NASA POWER (MERRA-2 corrected), 0.5 x 0.625 degree points", POWER_SOURCE)]
-    return layers.save_layer("earth_dryness", items, CELL_DEG)
+    return layers.save_layer("earth_dryness", items, g["cell_deg"])
 
 
 # --------------------------------------------------------------------------- roads (logistics)
@@ -283,10 +292,11 @@ def road_points(data: dict, bin_deg: float = ROAD_BIN_DEG, step_km: float = ROAD
     return [{"lat": (i + 0.5) * bin_deg, "lon": (j + 0.5) * bin_deg} for i, j in bins]
 
 
-def build_roads(src_dir: Optional[Path] = None, log: Callable[[str], None] = print) -> Path:
+def build_roads(src_dir: Optional[Path] = None, log: Callable[[str], None] = print, cell_deg: Optional[float] = None) -> Path:
+    g = _shape(cell_deg)
     path = _src("earth_naturalearth_roads", "ne_10m_roads.geojson", src_dir)
     pts = road_points(json.loads(path.read_text(encoding="utf-8")))
-    d, _ = nearest(pts, max_km=MAX_KM)
+    d, _ = nearest(pts, max_km=MAX_KM, **g)
     problems = []
     for name, lat, lon, ok in (("Paris", 48.86, 2.35, lambda v: v < 30), ("Kyiv", 50.45, 30.52, lambda v: v < 30),
                                ("Denver", 39.74, -104.99, lambda v: v < 30), ("Greenland ice sheet", 72.0, -40.0, lambda v: v > 250)):
@@ -299,7 +309,7 @@ def build_roads(src_dir: Optional[Path] = None, log: Callable[[str], None] = pri
     items = [layers.LayerFeature("road_dist_km", d, 0.0, MAX_KM, "km",
                                  "Distance from the cell centre to the nearest major road of Natural Earth 1:10M (capped at 300 km); small and unpaved roads are not in the map",
                                  ROAD_SOURCE)]
-    return layers.save_layer("earth_roads", items, CELL_DEG)
+    return layers.save_layer("earth_roads", items, g["cell_deg"])
 
 
 BUILDERS = {"volcanic": build_volcanic, "impact": build_impacts, "dryness": build_dryness, "roads": build_roads}

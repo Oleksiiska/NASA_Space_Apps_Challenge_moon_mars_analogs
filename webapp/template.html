@@ -119,7 +119,7 @@ footer{padding:8px 0 28px;color:var(--muted);font-size:12px;border-top:1px solid
 <header>
   <div>
     <h1 data-i="title">Moon–Mars Analog Finder</h1>
-    <p data-i="sub">Where on Earth are the conditions of a lunar or Martian site closest? Pick a target and a task, weigh the criteria, and see which 55 km cells of the Earth match, and what they cannot reproduce.</p>
+    <p data-i="sub">Where on Earth are the conditions of a lunar or Martian site closest? Pick a target and a task, weigh the criteria, and see which {{KM}} km cells of the Earth match, and what they cannot reproduce.</p>
   </div>
   <p class="disc" data-i="disc" style="flex-basis:100%"></p>
   <div class="seg" role="group" aria-label="Language"><button id="l-en" aria-pressed="true">EN</button><button id="l-uk" aria-pressed="false">УК</button></div>
@@ -190,7 +190,7 @@ const BLOB_B64=/*BLOB*/"";
 "use strict";
 const M = META;
 const I18N = {
-  en:{title:"Moon–Mars Analog Finder",sub:"Where on Earth are the conditions of a lunar or Martian site closest? Pick a target and a task, weigh the criteria, and see which 55 km cells of the Earth match, and what they cannot reproduce.",
+  en:{title:"Moon–Mars Analog Finder",sub:"Where on Earth are the conditions of a lunar or Martian site closest? Pick a target and a task, weigh the criteria, and see which {{KM}} km cells of the Earth match, and what they cannot reproduce.",
     moon:"Moon",mars:"Mars",target:"Target to reproduce",task:"Test task",weights:"Criteria weights",reset:"Reset",filters:"Hard filters",lo:"lower",hi:"higher similarity",a_ok:"known analog",show_an:"show known analogs",
     loading:"Loading the grid of 88,883 land cells…",cands:"Best regions",copy:"Copy list",cands_sub:"Best cell of each region (regions at least 600 km apart).",nodata:"no data yet",unchecked:"Not checked (no data): ",
     score:"Similarity",top:"Top",of_ranked:"of ranked cells",coverage:"Data coverage",cell:"Cell",facts:"What this cell is like",crit:"How the score is made",filt:"Filters",pass:"passes",fail:"fails",
@@ -206,9 +206,9 @@ const I18N = {
     how3:"Terrain criteria compare the cell with the target. Cold, day–night swing, low Sun, ground ice and minerals rank Earth cells in the useful direction, because Earth cannot reach lunar or Martian values.",
     how4:"The known analog sites are only used to check the ranking, never to tune it. What Earth cannot reproduce is shown next to every candidate, not inside the score.",
     srcs:"Data and sources",src1:"Earth: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) and MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth land; volcanoes: Smithsonian Global Volcanism Program; impact structures: Earth Impact Database (PASSC, University of New Brunswick); precipitation: NASA POWER when built.",src2:"Moon: LRO LOLA and Diviner polar resource product (NASA PDS Geosciences). Mars: MGS MOLA MEGDR and Mars Odyssey GRS (NASA PDS).",
-    city_l:"Check a place: type a city",city_t:"How does this place do?",city_sub:"Scores of the city’s 55 km cell for every task of this world and target, with the default weights of each task.",city_task:"Task",city_score:"Score",city_pct:"Top",city_near:"Nearest cell in the top 10 % for the current task",city_show:"Show it",city_origin:"Use as trip origin",city_origin_set:"Trips are counted from this city",city_origin_hint:"The “Getting there” block of every cell card now gives the flight distance and CO₂ from here. Pick a cell on the map or a region in the list to see it.",city_origin_now:"Trips are now counted from",city_none:"No cell of the current task reaches the top 10 % yet.",city_far:"The city is not on the land grid; its nearest land cell is used.",
+    city_l:"Check a place: type a city",city_t:"How does this place do?",city_sub:"Scores of the city’s {{KM}} km cell for every task of this world and target, with the default weights of each task.",city_task:"Task",city_score:"Score",city_pct:"Top",city_near:"Nearest cell in the top 10 % for the current task",city_show:"Show it",city_origin:"Use as trip origin",city_origin_set:"Trips are counted from this city",city_origin_hint:"The “Getting there” block of every cell card now gives the flight distance and CO₂ from here. Pick a cell on the map or a region in the list to see it.",city_origin_now:"Trips are now counted from",city_none:"No cell of the current task reaches the top 10 % yet.",city_far:"The city is not on the land grid; its nearest land cell is used.",
     glos_t:"What the words mean",
-    glos:[["Cell","A square of 0.5 × 0.5 degrees, about 55 km across. Every number on this page describes a whole cell, not a single spot."],["Slope at a 1 km step","The steepness between points 1 km apart. The Moon, Mars and Earth are all measured at this same step, so their slopes compare."],["Low Sun","The Sun between 0 and 5 degrees above the horizon. At the lunar south pole it never climbs higher than about 2 degrees, so shadows are long all the time."],["Percentile","Where a cell stands among all ranked cells: 0.90 means it beats 90 % of them."],["Coverage","The share of the task’s weight that has data for this cell. Under 50 % there is no score."],["Hard filter","A yes/no condition, such as bare ground or road access, that removes a cell before ranking."],["Why Earth never gets to 39 K","Earth’s coldest surface is around 184 K (−89 °C, Antarctica). Permanently shadowed lunar craters are near 40 K, so cold criteria only rank Earth from warm to cold."]],
+    glos:[["Cell","A square of {{DEG}} × {{DEG}} degrees, about {{KM}} km across. Every number on this page describes a whole cell, not a single spot."],["Slope at a 1 km step","The steepness between points 1 km apart. The Moon, Mars and Earth are all measured at this same step, so their slopes compare."],["Low Sun","The Sun between 0 and 5 degrees above the horizon. At the lunar south pole it never climbs higher than about 2 degrees, so shadows are long all the time."],["Percentile","Where a cell stands among all ranked cells: 0.90 means it beats 90 % of them."],["Coverage","The share of the task’s weight that has data for this cell. Under 50 % there is no score."],["Hard filter","A yes/no condition, such as bare ground or road access, that removes a cell before ranking."],["Why Earth never gets to 39 K","Earth’s coldest surface is around 184 K (−89 °C, Antarctica). Permanently shadowed lunar craters are near 40 K, so cold criteria only rank Earth from warm to cold."]],
     trip_t:"Getting there",trip_road:"Nearest major road",trip_from:"Flight from",trip_co2:"CO₂ one way, economy, per passenger",trip_rf:"with non-CO₂ effects of flight (×1.7)",trip_src:"Great-circle distance +8 %, economy CO₂ 68.0 g per passenger-km under 3,700 km and 63.2 g above (UK DESNZ greenhouse gas conversion factors 2025, methodology paper); ×1.7 is its central estimate for non-CO₂ effects. Ground travel is not included.",r_road:"filter: nearest major road",
     r_data:"too little data",r_out:"not on the land grid",r_ndvi:"filter: green cell, NDVI",r_flat:"filter: flat share",r_ice:"filter: no ground ice, mean surface",r_snow:"filter: no snow-free month",
     spot_t:"Spotlight",spot_sub:"A place the team proposes, not a known analog. It is not used in the validation.",spot_why:"Why this place",spot_src:"Source",
@@ -218,7 +218,7 @@ const I18N = {
     dl_csv:"CSV",dl_geo:"GeoJSON",dl_note:"CSV and GeoJSON hold the 10 regions and the 100 best cells. Downloads work on the published site; inside a preview use Copy list.",
     s_srtm:"SRTMGL30",s_lst:"MODIS MOD11C3",s_ndvi:"MODIS MOD13C2",s_snow:"MODIS MOD10CM",s_sun:"solar geometry",s_ne:"Natural Earth",s_gvp:"Smithsonian GVP",s_eid:"Earth Impact Database",s_power:"NASA POWER",
     months:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-    lim1:"A cell is about 55 km across; real analog sites are far smaller.",lim2:"Cold, thermal range and low Sun are ranked in the useful direction only; Earth cannot reach lunar or Martian values.",lim3:"Volcanoes and impact structures enter as distance to the nearest listed point. The caves and EVA geology tasks rank known sites high partly because those lists contain the sites themselves.",lim_dry:"Dryness has no data yet: it needs the NASA POWER precipitation layer.",indep:"Without the tasks that use the volcano and impact lists",val_t:"Where the known analogs land",val_sub:"Percentile of each known site’s cell for this task and target, recomputed as you move the sliders. 1.00 = best cell on Earth, 0.50 = what a random place gets.",val_none:"No known site is listed for this task and world.",val_ns:"not ranked",val_other:"Other known sites of this world",val_med:"Median of the listed sites",f_volc:"Nearest basaltic volcano",f_volc_any:"Nearest Holocene volcano",f_imp:"Nearest impact structure (to its rim)",f_precip:"Annual precipitation",lim4:"Ground ice is a proxy from annual surface temperature and glaciers. Minerals exist only for bare ground between 55°N and 54.5°S.",
+    lim1:"A cell is about {{KM}} km across; real analog sites are far smaller.",lim2:"Cold, thermal range and low Sun are ranked in the useful direction only; Earth cannot reach lunar or Martian values.",lim3:"Volcanoes and impact structures enter as distance to the nearest listed point. The caves and EVA geology tasks rank known sites high partly because those lists contain the sites themselves.",lim_dry:"Dryness has no data yet: it needs the NASA POWER precipitation layer.",indep:"Without the tasks that use the volcano and impact lists",val_t:"Where the known analogs land",val_sub:"Percentile of each known site’s cell for this task and target, recomputed as you move the sliders. 1.00 = best cell on Earth, 0.50 = what a random place gets.",val_none:"No known site is listed for this task and world.",val_ns:"not ranked",val_other:"Other known sites of this world",val_med:"Median of the listed sites",f_volc:"Nearest basaltic volcano",f_volc_any:"Nearest Holocene volcano",f_imp:"Nearest impact structure (to its rim)",f_precip:"Annual precipitation",lim4:"Ground ice is a proxy from annual surface temperature and glaciers. Minerals exist only for bare ground between 55°N and 54.5°S.",
     nocell:"No cell has enough data for this task yet: ",ranked:"cells ranked",pct:"percentile",lat:"lat",lon:"lon",reg:"Region around",
     elev:"Mean elevation",relief:"Relief P5–P95",slope:"Mean slope",flat:"Share under 8° slope",tday:"Daytime surface, annual mean",tnight:"Coldest night month",swing:"Day–night swing",ndvi:"NDVI (greenness)",snow:"Snow-free months",lowsun:"Low-Sun hours per day (best month)",ice:"Glacier share",
     foot:"Data: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Smithsonian Global Volcanism Program; Earth Impact Database (PASSC); Natural Earth. Pipeline and page were built with Claude (Anthropic) from the team’s plan; every number comes from the files in the repository. Check validation.md before quoting a figure.",
@@ -227,7 +227,7 @@ const I18N = {
     cons:{bare_ground_min:"Enough bare ground (NDVI ≤ 0.25)",flat_patch_exists:"A flat patch exists (≥ 5 % under 8°)",ground_ice_present:"Ground ice or glacier present",snow_free_window:"At least one snow-free month",road_access:"A major road within 50 km (Natural Earth)"},
     nr:{road_access:"road access",safe_access:"safe access",protected_ecosystem_flag:"protected areas"},
     role:{base_site:"base site"}},
-  uk:{title:"Пошук земних аналогів Місяця та Марса",sub:"Де на Землі умови найближчі до місця на Місяці чи Марсі? Оберіть ціль і задачу, налаштуйте ваги критеріїв і побачте, які клітинки 55 км збігаються і чого вони не відтворюють.",
+  uk:{title:"Пошук земних аналогів Місяця та Марса",sub:"Де на Землі умови найближчі до місця на Місяці чи Марсі? Оберіть ціль і задачу, налаштуйте ваги критеріїв і побачте, які клітинки {{KM}} км збігаються і чого вони не відтворюють.",
     moon:"Місяць",mars:"Марс",target:"Що відтворюємо",task:"Тестова задача",weights:"Ваги критеріїв",reset:"Скинути",filters:"Жорсткі фільтри",lo:"менше",hi:"більша схожість",a_ok:"відомий аналог",show_an:"показати відомі аналоги",
     loading:"Завантажую сітку з 88 883 клітинок суходолу…",cands:"Найкращі регіони",copy:"Копіювати список",cands_sub:"Найкраща клітинка кожного регіону (регіони щонайменше за 600 км один від одного).",nodata:"даних ще немає",unchecked:"Не перевіряється (немає даних): ",
     score:"Схожість",top:"Топ",of_ranked:"ранжованих клітинок",coverage:"Покриття даними",cell:"Клітинка",facts:"Яка ця клітинка",crit:"З чого складається оцінка",filt:"Фільтри",pass:"проходить",fail:"не проходить",
@@ -243,9 +243,9 @@ const I18N = {
     how3:"Критерії рельєфу порівнюють клітинку з ціллю. Холод, різниця день–ніч, низьке Сонце, ґрунтовий лід і мінерали ранжують клітинки Землі в потрібному напрямку, бо Земля не досягає місячних чи марсіанських значень.",
     how4:"Відомі аналоги лише перевіряють рейтинг і ніколи його не налаштовують. Те, чого Земля не відтворює, показано біля кандидата, а не всередині оцінки.",
     srcs:"Дані та джерела",src1:"Земля: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) і MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth; вулкани: Smithsonian Global Volcanism Program; імпактні структури: Earth Impact Database (PASSC); опади: NASA POWER, якщо шар збудовано.",src2:"Місяць: LRO LOLA і полярний ресурсний продукт Diviner (NASA PDS Geosciences). Марс: MGS MOLA MEGDR і Mars Odyssey GRS (NASA PDS).",
-    city_l:"Перевір місце: введіть місто",city_t:"Як тут з аналогами?",city_sub:"Оцінки клітинки 55 км навколо міста для кожної задачі цього світу й цілі, зі стандартними вагами кожної задачі.",city_task:"Задача",city_score:"Оцінка",city_pct:"Топ",city_near:"Найближча клітинка з топ-10 % для поточної задачі",city_show:"Показати",city_origin:"Звідси рахувати поїздку",city_origin_set:"Поїздки рахуються від цього міста",city_origin_hint:"Блок «Як дістатися» в картці кожної клітинки тепер показує відстань і CO₂ перельоту звідси. Оберіть клітинку на мапі або регіон у списку, щоб побачити.",city_origin_now:"Зараз поїздки рахуються від",city_none:"Для поточної задачі поки немає клітинок у топ-10 %.",city_far:"Місто не на сітці суходолу; взято найближчу клітинку суходолу.",
+    city_l:"Перевір місце: введіть місто",city_t:"Як тут з аналогами?",city_sub:"Оцінки клітинки {{KM}} км навколо міста для кожної задачі цього світу й цілі, зі стандартними вагами кожної задачі.",city_task:"Задача",city_score:"Оцінка",city_pct:"Топ",city_near:"Найближча клітинка з топ-10 % для поточної задачі",city_show:"Показати",city_origin:"Звідси рахувати поїздку",city_origin_set:"Поїздки рахуються від цього міста",city_origin_hint:"Блок «Як дістатися» в картці кожної клітинки тепер показує відстань і CO₂ перельоту звідси. Оберіть клітинку на мапі або регіон у списку, щоб побачити.",city_origin_now:"Зараз поїздки рахуються від",city_none:"Для поточної задачі поки немає клітинок у топ-10 %.",city_far:"Місто не на сітці суходолу; взято найближчу клітинку суходолу.",
     glos_t:"Що означають терміни",
-    glos:[["Клітинка","Квадрат 0,5 × 0,5 градуса, близько 55 км. Кожне число на сторінці описує всю клітинку, а не одну точку."],["Схил на кроці 1 км","Крутизна між точками, що стоять за 1 км одна від одної. Місяць, Марс і Земля виміряні на цьому ж кроці, тому їхні схили порівнянні."],["Низьке Сонце","Сонце на 0–5 градусів над горизонтом. На південному полюсі Місяця воно не піднімається вище ~2 градусів, тому тіні завжди довгі."],["Перцентиль","Місце клітинки серед усіх ранжованих: 0,90 — краща за 90 % із них."],["Покриття","Частка ваги задачі, для якої є дані в цій клітинці. Менше 50 % — оцінки немає."],["Жорсткий фільтр","Умова так/ні, як-от голий ґрунт чи доступ дорогою, що прибирає клітинку до ранжування."],["Чому Земля не дає 39 K","Найхолодніша поверхня Землі — близько 184 K (−89 °C, Антарктида). Вічно затінені кратери Місяця мають ~40 K, тож критерії холоду лише ранжують Землю від теплого до холодного."]],
+    glos:[["Клітинка","Квадрат {{DEGUK}} × {{DEGUK}} градуса, близько {{KM}} км. Кожне число на сторінці описує всю клітинку, а не одну точку."],["Схил на кроці 1 км","Крутизна між точками, що стоять за 1 км одна від одної. Місяць, Марс і Земля виміряні на цьому ж кроці, тому їхні схили порівнянні."],["Низьке Сонце","Сонце на 0–5 градусів над горизонтом. На південному полюсі Місяця воно не піднімається вище ~2 градусів, тому тіні завжди довгі."],["Перцентиль","Місце клітинки серед усіх ранжованих: 0,90 — краща за 90 % із них."],["Покриття","Частка ваги задачі, для якої є дані в цій клітинці. Менше 50 % — оцінки немає."],["Жорсткий фільтр","Умова так/ні, як-от голий ґрунт чи доступ дорогою, що прибирає клітинку до ранжування."],["Чому Земля не дає 39 K","Найхолодніша поверхня Землі — близько 184 K (−89 °C, Антарктида). Вічно затінені кратери Місяця мають ~40 K, тож критерії холоду лише ранжують Землю від теплого до холодного."]],
     trip_t:"Як дістатися",trip_road:"Найближча велика дорога",trip_from:"Переліт із",trip_co2:"CO₂ в один бік, економ, на пасажира",trip_rf:"з не-CO₂ ефектами авіації (×1,7)",trip_src:"Відстань по великому колу +8 %, CO₂ в економ-класі 68,0 г на пасажиро-км до 3700 км і 63,2 г понад (коефіцієнти парникових газів уряду Великої Британії DESNZ 2025, методологія); ×1,7 — її центральна оцінка не-CO₂ ефектів. Наземний шлях не враховано.",r_road:"фільтр: найближча велика дорога",
     r_data:"замало даних",r_out:"поза сіткою суходолу",r_ndvi:"фільтр: зелена клітинка, NDVI",r_flat:"фільтр: частка рівного",r_ice:"фільтр: немає ґрунтового льоду, середня поверхня",r_snow:"фільтр: немає місяця без снігу",
     spot_t:"У фокусі",spot_sub:"Місце, яке пропонує команда, а не відомий аналог. У валідації не використовується.",spot_why:"Чому це місце",spot_src:"Джерело",
@@ -255,7 +255,7 @@ const I18N = {
     dl_csv:"CSV",dl_geo:"GeoJSON",dl_note:"CSV і GeoJSON містять 10 регіонів і 100 найкращих клітинок. Завантаження працює на опублікованому сайті; у попередньому перегляді скористайтеся «Копіювати список».",
     s_srtm:"SRTMGL30",s_lst:"MODIS MOD11C3",s_ndvi:"MODIS MOD13C2",s_snow:"MODIS MOD10CM",s_sun:"сонячна геометрія",s_ne:"Natural Earth",s_gvp:"Smithsonian GVP",s_eid:"Earth Impact Database",s_power:"NASA POWER",
     months:["січ","лют","бер","кві","тра","чер","лип","сер","вер","жов","лис","гру"],
-    lim1:"Клітинка має близько 55 км, а справжні майданчики набагато менші.",lim2:"Холод, добовий діапазон і низьке Сонце ранжуються лише в потрібному напрямку: Земля не досягає місячних чи марсіанських значень.",lim3:"Вулкани й імпактні структури входять як відстань до найближчої точки зі списку. Задачі «печери» й «геологічні виходи» ставлять відомі місця високо частково тому, що ці списки містять самі ці місця.",lim_dry:"Посушливості ще немає: потрібен шар опадів NASA POWER.",indep:"Без задач, що використовують списки вулканів і кратерів",val_t:"Де опинилися відомі аналоги",val_sub:"Перцентиль клітинки кожного відомого місця для цієї задачі й цілі; перераховується, коли рухаєте повзунки. 1,00 — найкраща клітинка Землі, 0,50 — випадкове місце.",val_none:"Для цієї задачі й світу відомих місць немає.",val_ns:"не ранжується",val_other:"Інші відомі місця цього світу",val_med:"Медіана наведених місць",f_volc:"Найближчий базальтовий вулкан",f_volc_any:"Найближчий голоценовий вулкан",f_imp:"Найближча імпактна структура (до краю)",f_precip:"Опади за рік",lim4:"Ґрунтовий лід — наближення за річною температурою поверхні та льодовиками. Мінерали є лише для голого ґрунту між 55° пн.ш. і 54,5° пд.ш.",
+    lim1:"Клітинка має близько {{KM}} км, а справжні майданчики набагато менші.",lim2:"Холод, добовий діапазон і низьке Сонце ранжуються лише в потрібному напрямку: Земля не досягає місячних чи марсіанських значень.",lim3:"Вулкани й імпактні структури входять як відстань до найближчої точки зі списку. Задачі «печери» й «геологічні виходи» ставлять відомі місця високо частково тому, що ці списки містять самі ці місця.",lim_dry:"Посушливості ще немає: потрібен шар опадів NASA POWER.",indep:"Без задач, що використовують списки вулканів і кратерів",val_t:"Де опинилися відомі аналоги",val_sub:"Перцентиль клітинки кожного відомого місця для цієї задачі й цілі; перераховується, коли рухаєте повзунки. 1,00 — найкраща клітинка Землі, 0,50 — випадкове місце.",val_none:"Для цієї задачі й світу відомих місць немає.",val_ns:"не ранжується",val_other:"Інші відомі місця цього світу",val_med:"Медіана наведених місць",f_volc:"Найближчий базальтовий вулкан",f_volc_any:"Найближчий голоценовий вулкан",f_imp:"Найближча імпактна структура (до краю)",f_precip:"Опади за рік",lim4:"Ґрунтовий лід — наближення за річною температурою поверхні та льодовиками. Мінерали є лише для голого ґрунту між 55° пн.ш. і 54,5° пд.ш.",
     nocell:"Для цієї задачі ще немає клітинок з достатніми даними: ",ranked:"клітинок ранжовано",pct:"перцентиль",lat:"шир.",lon:"довг.",reg:"Регіон навколо",
     elev:"Середня висота",relief:"Рельєф P5–P95",slope:"Середній схил",flat:"Частка зі схилом до 8°",tday:"Денна поверхня, річне середнє",tnight:"Найхолодніший нічний місяць",swing:"Різниця день–ніч",ndvi:"NDVI (зелень)",snow:"Місяців без снігу",lowsun:"Годин низького Сонця на добу (найкращий місяць)",ice:"Частка льодовиків",
     foot:"Дані: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Smithsonian Global Volcanism Program; Earth Impact Database (PASSC); Natural Earth. Конвеєр і сторінку створено з Claude (Anthropic) за планом команди; кожне число береться з файлів репозиторію. Перед цитуванням цифр перегляньте validation.md.",
@@ -283,19 +283,42 @@ async function load(){
   const bin=atob(BLOB_B64), u8=new Uint8Array(bin.length);
   for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i);
   const stream=new Blob([u8]).stream().pipeThrough(new DecompressionStream("gzip"));
-  D=new Uint8Array(await new Response(stream).arrayBuffer());
-  const n=M.n;
+  const packed=new Uint8Array(await new Response(stream).arrayBuffer()), n=M.n;
+  D=new Uint8Array(M.match_offset+3*n); D.set(packed.subarray(0,M.match_offset));
   ROWS=new Uint16Array(D.slice(M.rc_offset,M.rc_offset+2*n).buffer);
   COLS=new Uint16Array(D.slice(M.rc_offset+2*n,M.rc_offset+4*n).buffer);
   LUT=new Int32Array(M.grid.n_lat*M.grid.n_lon).fill(-1);
   for(let i=0;i<n;i++) LUT[ROWS[i]*M.grid.n_lon+COLS[i]]=i;
   for(const c of M.criteria) CRIT[c.name+"|"+(c.target||"")]=c.offset;
+  CD=M.grid.cell_deg||180/M.grid.n_lat;
 }
-const cellLat=i=>90-ROWS[i]*0.5-0.25, cellLon=i=>-180+COLS[i]*0.5+0.25;
+let CD=0.5;
+const cellLat=i=>90-(ROWS[i]+0.5)*CD, cellLon=i=>-180+(COLS[i]+0.5)*CD;
 function raw(name,i){const r=M.raw.find(x=>x.name===name); const q=D[r.offset+i]; return q===255?NaN:r.min+q/254*(r.max-r.min)}
 
 /* ---------- scoring ---------- */
+/* The three terrain criteria of the chosen target are recomputed here from the cell values in the page,
+   with the formulas of pipeline/analog_finder/scoring.py (matched_criteria), into one reserved block of D. */
+let MATCHED_FOR=null;
+function matchTarget(tid){
+  MATCHED_FOR=tid; for(const k of Object.keys(CRIT)) if(!k.endsWith("|")) delete CRIT[k];
+  const tm=M.tmatch&&M.tmatch[tid]; if(!tm) return;
+  const n=M.n, base=M.match_offset, sc=M.match_scales, H=[];
+  for(let k=0;k<9;k++){const r=rawInfo("slope_h"+k); if(!r) return; H.push(r)}
+  const rr=rawInfo("relief_m"), ro=rawInfo("rough_p50_m"); if(!rr||!ro) return;
+  const lt=(x,t,sc0)=>Math.log1p(Math.max(x,0)/sc0)-Math.log1p(Math.max(t,0)/sc0);
+  const q8=v=>Math.max(0,Math.min(254,Math.round(v*254)));
+  for(let i=0;i<n;i++){
+    let miss=false, d=0;
+    for(let k=0;k<9;k++){const q=D[H[k].offset+i]; if(q===255){miss=true;break} d+=Math.abs(H[k].min+q/254*(H[k].max-H[k].min)-tm.hist[k])}
+    D[base+i]=miss?255:q8(Math.max(0,Math.min(1,1-0.5*d)));
+    let q=D[rr.offset+i]; if(q===255) D[base+n+i]=255; else {const z=lt(rr.min+q/254*(rr.max-rr.min),tm.relief,sc.relief)/sc.sigma; D[base+n+i]=q8(Math.exp(-0.5*z*z))}
+    q=D[ro.offset+i]; if(q===255) D[base+2*n+i]=255; else {const z=lt(ro.min+q/254*(ro.max-ro.min),tm.rough,sc.rough)/sc.sigma; D[base+2*n+i]=q8(Math.exp(-0.5*z*z))}
+  }
+  CRIT["slope_hist|"+tid]=base; CRIT["relief|"+tid]=base+n; CRIT["roughness|"+tid]=base+2*n;
+}
 function critOffset(name){
+  if(MATCHED_FOR!==S.target) matchTarget(S.target);
   const o=CRIT[name+"|"+S.target]; if(o!==undefined) return o;
   return CRIT[name+"|"]; // shared criteria
 }
@@ -311,7 +334,7 @@ function compute(){
     if(available(name)&&w>0) items.push({name,w,off:critOffset(name)});
   }
   USED=items.map(x=>x.name);
-  SC=new Float32Array(n).fill(NaN); CV=new Float32Array(n);
+  SC=new Float32Array(n).fill(NaN); CV=new Float32Array(n); SCV++;
   let mask=0;
   for(const c of task.constraints||[]) if(S.on[c]&&M.constraint_bits[c]!==undefined) mask|=1<<M.constraint_bits[c];
   const cOff=M.constraint_offset, minCov=M.min_coverage;
@@ -348,9 +371,9 @@ function pickCandidates(){
 
 /* ---------- colour ---------- */
 const STOPS=[[68,1,84],[59,82,139],[33,145,140],[94,201,98],[253,231,37]];
-const RAMP=new Array(256);
+const RAMP=new Array(256), RAMP_RGB=new Array(256);
 for(let k=0;k<256;k++){const t=k/255*(STOPS.length-1),a=Math.min(Math.floor(t),STOPS.length-2),f=t-a;
-  RAMP[k]="rgb("+STOPS[a].map((v,j)=>Math.round(v+(STOPS[a+1][j]-v)*f)).join(",")+")"}
+  RAMP_RGB[k]=STOPS[a].map((v,j)=>Math.round(v+(STOPS[a+1][j]-v)*f)); RAMP[k]="rgb("+RAMP_RGB[k].join(",")+")"}
 let CSSV={};
 function readCss(){const cs=getComputedStyle(document.documentElement);
   for(const k of ["--sea","--land","--ink","--accent","--pick","--surface","--line","--muted","--s1","--s2","--seq-lo","--seq-hi","--spot"]) CSSV[k]=cs.getPropertyValue(k).trim();
@@ -364,7 +387,12 @@ const SEQ=new Array(256); let SNOWPAT=null;
 function rawInfo(n){return M.raw.find(r=>r.name===n)}
 function sunHours(i,m){return M.lowsun[ROWS[i]][m-1]}
 function snowOf(i,m){const r=rawInfo("snow_m"+String(m).padStart(2,"0")); if(!r) return NaN; const q=D[r.offset+i]; return q===255?NaN:r.min+q/254*(r.max-r.min)}
-const SUNMAX=()=>{let mx=0; for(let i=0;i<M.n;i++){const v=M.lowsun[ROWS[i]][S.month-1]; if(v>mx) mx=v} return mx||1};
+let SUNMAX_KEY="", SUNMAX_V=1;
+const SUNMAX=()=>{ // longest low-Sun window of the month among the cells that are coloured (snow-free that month)
+  if(SUNMAX_KEY===String(S.month)) return SUNMAX_V;
+  const sr=rawInfo("snow_m"+String(S.month).padStart(2,"0")); let mx=0;
+  for(let i=0;i<M.n;i++){const q=sr?D[sr.offset+i]:255; if(q===255||sr.min+q/254*(sr.max-sr.min)>=10) continue; const v=M.lowsun[ROWS[i]][S.month-1]; if(v>mx) mx=v}
+  SUNMAX_KEY=String(S.month); SUNMAX_V=mx||1; return SUNMAX_V};
 
 /* ---------- map ---------- */
 const cv=$("map"), ctx=cv.getContext("2d");
@@ -376,30 +404,53 @@ function resize(){
   draw();
 }
 const X=lo=>(lo-S.view.cx)*S.view.s+W/2, Y=la=>(S.view.cy-la)*S.view.s+H/2;
-function clampView(){const v=S.view; v.s=Math.min(60,Math.max(S.fit,v.s));
+function clampView(){const v=S.view; v.s=Math.min(30/CD,Math.max(S.fit,v.s));
   const hw=W/2/v.s,hh=H/2/v.s; v.cx=Math.max(-180+Math.min(hw,180),Math.min(180-Math.min(hw,180),v.cx)); v.cy=Math.max(-90+Math.min(hh,90),Math.min(90-Math.min(hh,90),v.cy));}
+/* The land cells are painted once into an image of the grid (one pixel per cell) and the map scales that image;
+   repainting is needed only when the scores, the mode, the month or the theme change. */
+const GIMG=document.createElement("canvas"); let GKEY="", SCV=0;
+function rgbOf(c){const g=GIMG.getContext("2d"); g.fillStyle="#000"; g.fillStyle=c; const v=g.fillStyle;
+  if(v[0]==="#") return [1,3,5].map(k=>parseInt(v.substr(k,2),16)); const m=v.match(/[\d.]+/g)||[0,0,0]; return m.slice(0,3).map(Number)}
+function paintGrid(){
+  const sun=S.mode==="sun", m=S.month, key=[S.mode,sun?m:SCV,CSSV["--land"],CSSV["--seq-lo"],CSSV["--seq-hi"],CSSV["--muted"]].join("|");
+  if(key===GKEY) return; GKEY=key;
+  const nl=M.grid.n_lon, nr=M.grid.n_lat; if(GIMG.width!==nl){GIMG.width=nl; GIMG.height=nr}
+  const g=GIMG.getContext("2d"), img=g.createImageData(nl,nr), px=img.data;
+  const land=rgbOf(CSSV["--land"]), mut=rgbOf(CSSV["--muted"]), snowc=land.map((v,j)=>Math.round(v*0.6+mut[j]*0.4));
+  const lo=rgbOf(CSSV["--seq-lo"]||"#dcebf9"), hi=rgbOf(CSSV["--seq-hi"]||"#0b4f9c");
+  const inv=1/(RANGE[1]-RANGE[0]), smax=sun?SUNMAX():1, sr=sun?rawInfo("snow_m"+String(m).padStart(2,"0")):null;
+  for(let i=0;i<M.n;i++){
+    let c;
+    if(sun){
+      const q=sr?D[sr.offset+i]:255, sn=q===255?NaN:sr.min+q/254*(sr.max-sr.min);
+      if(sn!==sn) c=land; else if(sn>=10) c=snowc; else {const f=Math.max(0,Math.min(1,sunHours(i,m)/smax)); c=[lo[0]+(hi[0]-lo[0])*f,lo[1]+(hi[1]-lo[1])*f,lo[2]+(hi[2]-lo[2])*f]}
+    } else {
+      const v=SC?SC[i]:NaN; c=(v===v)?RAMP_RGB[Math.max(0,Math.min(255,Math.round((v-RANGE[0])*inv*255)))]:land;
+    }
+    const o=4*(ROWS[i]*nl+COLS[i]); px[o]=c[0]; px[o+1]=c[1]; px[o+2]=c[2]; px[o+3]=255;
+  }
+  g.putImageData(img,0,0);
+}
 function draw(){
   if(!D||!W) return; readCss();
   ctx.setTransform(DPR,0,0,DPR,0,0); ctx.fillStyle=CSSV["--sea"]; ctx.fillRect(0,0,W,H);
-  const s=S.view.s, cw=0.5*s, pad=cw<1?0.6:0;
+  const s=S.view.s, cw=CD*s;
   // graticule
   ctx.strokeStyle=CSSV["--line"]; ctx.lineWidth=1; ctx.globalAlpha=.5; ctx.beginPath();
   for(let lo=-180;lo<=180;lo+=30){const x=Math.round(X(lo))+.5; ctx.moveTo(x,0);ctx.lineTo(x,H)}
   for(let la=-60;la<=60;la+=30){const y=Math.round(Y(la))+.5; ctx.moveTo(0,y);ctx.lineTo(W,y)}
   ctx.stroke(); ctx.globalAlpha=1;
-  const inv=1/(RANGE[1]-RANGE[0]), sun=S.mode==="sun", m=S.month, smax=sun?SUNMAX():1;
-  const sr=sun?rawInfo("snow_m"+String(m).padStart(2,"0")):null;
-  for(let i=0;i<M.n;i++){
-    const x=X(-180+COLS[i]*0.5), y=Y(90-ROWS[i]*0.5);
-    if(x<-cw||y<-cw||x>W||y>H+cw) continue;
-    if(sun){
-      const q=sr?D[sr.offset+i]:255, sn=q===255?NaN:sr.min+q/254*(sr.max-sr.min);
-      ctx.fillStyle=sn!==sn?CSSV["--land"]:sn>=10?SNOWPAT:SEQ[Math.max(0,Math.min(255,Math.round(sunHours(i,m)/smax*255)))];
-    } else {
-      const v=SC?SC[i]:NaN;
-      ctx.fillStyle=(v===v)?RAMP[Math.max(0,Math.min(255,Math.round((v-RANGE[0])*inv*255)))]:CSSV["--land"];
-    }
-    ctx.fillRect(x,y,cw+pad,cw+pad);
+  paintGrid();
+  ctx.imageSmoothingEnabled=cw*DPR<1; ctx.imageSmoothingQuality="high";
+  ctx.drawImage(GIMG,X(-180),Y(90),360*s,180*s);
+  ctx.imageSmoothingEnabled=true;
+  if(S.mode==="sun"&&cw>=4){ // hatch the cells under snow once they are large enough to show it
+    const sr=rawInfo("snow_m"+String(S.month).padStart(2,"0")), nl=M.grid.n_lon;
+    if(sr){const r0=Math.max(0,Math.floor((90-(S.view.cy+H/2/s))/CD)), r1=Math.min(M.grid.n_lat-1,Math.floor((90-(S.view.cy-H/2/s))/CD));
+      const c0=Math.max(0,Math.floor((S.view.cx-W/2/s+180)/CD)), c1=Math.min(nl-1,Math.floor((S.view.cx+W/2/s+180)/CD));
+      ctx.fillStyle=SNOWPAT;
+      for(let r=r0;r<=r1;r++) for(let c=c0;c<=c1;c++){const i=LUT[r*nl+c]; if(i<0) continue; const q=D[sr.offset+i];
+        if(q!==255&&sr.min+q/254*(sr.max-sr.min)>=10) ctx.fillRect(X(-180+c*CD),Y(90-r*CD),cw,cw)}}
   }
   for(const sp of M.spotlights||[]){const x=X(sp.lon),y=Y(sp.lat); if(x<0||y<0||x>W||y>H) continue;
     ctx.beginPath(); ctx.arc(x,y,7,0,7); ctx.strokeStyle=CSSV["--spot"]; ctx.lineWidth=2.5; ctx.stroke()}
@@ -414,11 +465,11 @@ function draw(){
   if(S.mode==="score") CANDS.forEach((i,k)=>{const x=X(cellLon(i)),y=Y(cellLat(i)); ctx.beginPath(); ctx.arc(x,y,9,0,7); ctx.fillStyle=CSSV["--surface"]; ctx.fill();
     ctx.strokeStyle=CSSV["--ink"]; ctx.lineWidth=1.5; ctx.stroke(); ctx.fillStyle=CSSV["--ink"]; ctx.font="600 10px "+getComputedStyle(document.body).fontFamily;
     ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(String(k+1),x,y+.5)});
-  if(S.sel>=0){const x=X(-180+COLS[S.sel]*0.5),y=Y(90-ROWS[S.sel]*0.5); ctx.strokeStyle=CSSV["--pick"]; ctx.lineWidth=2.5; ctx.strokeRect(x-1,y-1,cw+2,cw+2)}
+  if(S.sel>=0){const x=X(-180+COLS[S.sel]*CD),y=Y(90-ROWS[S.sel]*CD); ctx.strokeStyle=CSSV["--pick"]; ctx.lineWidth=2.5; ctx.strokeRect(x-1,y-1,cw+2,cw+2)}
 }
 function cellAt(px,py){
   const lo=S.view.cx+(px-W/2)/S.view.s, la=S.view.cy-(py-H/2)/S.view.s;
-  const r=Math.floor((90-la)/0.5), c=Math.floor((lo+180)/0.5);
+  const r=Math.floor((90-la)/CD), c=Math.floor((lo+180)/CD);
   if(r<0||r>=M.grid.n_lat||c<0||c>=M.grid.n_lon) return -1; return LUT[r*M.grid.n_lon+c];
 }
 function nearAnalog(px,py){let best=null,bd=100;
@@ -440,7 +491,7 @@ cv.addEventListener("pointerup",e=>{ptrs.delete(e.pointerId); if(!moved&&down){c
   if(i>=0||a){ if(i>=0) select(i);} } down=null; pinch0=0});
 cv.addEventListener("pointerleave",()=>{$("tip").style.display="none"});
 cv.addEventListener("wheel",e=>{e.preventDefault(); zoomAt(e.offsetX,e.offsetY,Math.exp(-e.deltaY*0.0015))},{passive:false});
-function zoomAt(px,py,f){const v=S.view; const lo=v.cx+(px-W/2)/v.s, la=v.cy-(py-H/2)/v.s; v.s=Math.min(60,Math.max(S.fit,v.s*f)); v.touched=true;
+function zoomAt(px,py,f){const v=S.view; const lo=v.cx+(px-W/2)/v.s, la=v.cy-(py-H/2)/v.s; v.s=Math.min(30/CD,Math.max(S.fit,v.s*f)); v.touched=true;
   v.cx=lo-(px-W/2)/v.s; v.cy=la+(py-H/2)/v.s; clampView(); draw()}
 $("zin").onclick=()=>zoomAt(W/2,H/2,1.6); $("zout").onclick=()=>zoomAt(W/2,H/2,1/1.6);
 $("zreset").onclick=()=>{S.view.touched=false; resize()};
@@ -634,9 +685,9 @@ function suggest(q){
   box.querySelectorAll("button").forEach(b=>b.onclick=()=>{box.hidden=true; const c=CITIES[+b.dataset.k]; $("city").value=(lang==="uk"&&c[1]?c[1]:c[0]); pickCity(c)});
 }
 function cellOfPoint(lat,lon){
-  const r=Math.floor((90-lat)/0.5), c=Math.floor((lon+180)/0.5);
+  const r=Math.floor((90-lat)/CD), c=Math.floor((lon+180)/CD), NL=M.grid.n_lon;
   let best=-1,bd=1e9;
-  for(let dr=-2;dr<=2;dr++) for(let dc=-2;dc<=2;dc++){const rr=r+dr, cc=((c+dc)%720+720)%720; if(rr<0||rr>=M.grid.n_lat) continue;
+  for(let dr=-2;dr<=2;dr++) for(let dc=-2;dc<=2;dc++){const rr=r+dr, cc=((c+dc)%NL+NL)%NL; if(rr<0||rr>=M.grid.n_lat) continue;
     const k=LUT[rr*M.grid.n_lon+cc]; if(k<0) continue; const d=km(lat,lon,cellLat(k),cellLon(k)); if(d<bd){bd=d;best=k}}
   return best;
 }
@@ -784,7 +835,12 @@ function renderCard(){
 function hasRaw(n){return M.raw.some(r=>r.name===n)}
 function distTxt(v){return v===v?(v>=299?"> 300 km":Math.round(v)+" km"):"–"}
 function impDiam(i){const d=hasRaw("impact_diam_km")?raw("impact_diam_km",i):NaN; return d===d&&d>0?" (⌀ "+(d<10?d.toFixed(1):Math.round(d))+" km)":""}
-function analogPos(a){const r=Math.floor((90-a.lat)/0.5), c=Math.floor((a.lon+180)/0.5); return (r<0||r>=M.grid.n_lat||c<0||c>=M.grid.n_lon)?-1:LUT[r*M.grid.n_lon+c]}
+function analogPos(a){ // the cell of the site; a coastal site whose cell is mostly sea takes the nearest land cell next to it (as the validation does)
+  const r=Math.floor((90-a.lat)/CD), c=Math.floor((a.lon+180)/CD), NL=M.grid.n_lon; let best=-1,bd=1e9;
+  if(r>=0&&r<M.grid.n_lat&&c>=0&&c<NL&&LUT[r*NL+c]>=0) return LUT[r*NL+c];
+  for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){const rr=r+dr, cc=((c+dc)%NL+NL)%NL; if(rr<0||rr>=M.grid.n_lat) continue;
+    const k=LUT[rr*NL+cc]; if(k<0) continue; const d=km(a.lat,a.lon,cellLat(k),cellLon(k)); if(d<bd){bd=d;best=k}}
+  return best}
 function renderVal(){
   const box=$("val"); const mine=[], other=[];
   for(const a of M.analogs){

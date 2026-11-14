@@ -125,19 +125,22 @@ def targets_geojson() -> dict:
 def analogs_on_grid(rows: Iterable[dict], processed_dir: str | Path | None = None) -> list[dict]:
     """Grid cell and the ready grid features at each analog site.
 
-    A site is ``in_grid`` when its cell is a land cell of the exported grid.
+    A site is ``in_grid`` when its cell, or for a coastal site the nearest neighbouring cell, is a land
+    cell of the exported grid (the same rule as the validation, ``scoring.Cells.position``).
     """
-    from ..export import to_binary
+    from .. import scoring
 
-    meta, index, feats = to_binary.read_grid(processed_dir or config.processed_dir())
-    cell_deg = meta["grid"]["cell_deg"]
+    cells = scoring.load_cells(processed_dir or config.processed_dir())
+    meta, index, feats = cells.meta, cells.index, cells.f
     n_lon = meta["grid"]["n_lon"]
     out = []
     for r in rows:
-        row, col = grid_mod.cell_of(r["lat"], r["lon"], cell_deg)
-        flat = row * n_lon + col
-        k = int(np.searchsorted(index, flat))
-        inside = k < index.size and int(index[k]) == flat
+        k = cells.position(r["lat"], r["lon"])
+        inside = k >= 0
+        if inside:
+            row, col = divmod(int(index[k]), n_lon)
+        else:
+            row, col = grid_mod.cell_of(r["lat"], r["lon"], meta["grid"]["cell_deg"])
         rec = {"id": r["id"], "name": r["name"], "world": r["world"], "validate": "yes" if r["validate"] else "no",
                "lat": r["lat"], "lon": r["lon"], "cell_row": row, "cell_col": col,
                "cell_index": k if inside else "", "in_grid": "yes" if inside else "no"}

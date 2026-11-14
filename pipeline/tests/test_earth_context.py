@@ -122,3 +122,10 @@ def test_road_access_filter_appears_with_the_road_layer():
     cells.f["road_dist_km"] = np.array([0, 49, 51, 300, np.nan, 10], np.float32)
     ok = scoring.constraints(cells)["road_access"]
     assert ok.tolist() == [True, True, False, False, True, True]
+
+
+def test_nearest_on_a_quarter_degree_grid():
+    d, _ = ec.nearest([{"lat": 39.875, "lon": 20.125}], n_lat=720, n_lon=1440, cell_deg=0.25)
+    assert d.shape == (720, 1440)
+    assert d[200, 800] == pytest.approx(0.0, abs=1e-3)              # centre of row 200, column 800
+    assert ec.cell_value(d, 39.9, 20.1) == pytest.approx(0.0, abs=1e-3)

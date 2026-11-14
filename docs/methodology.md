@@ -18,7 +18,7 @@ training and useless for testing ice drills.
 
 ## 2. The same yardstick on three worlds
 
-- **Earth grid.** Land is cut into 0.5 degree cells (about 55 km). A cell is kept when at least 20 % of it is land: 88,883 cells. Row 0 is the northernmost row, column 0 starts at 180 W.
+- **Earth grid.** Land is cut into 0.25 degree cells (about 28 km). A cell is kept when at least 20 % of it is land: 350,281 cells. Row 0 is the northernmost row, column 0 starts at 180 W. The first version used 0.5 degree cells (about 55 km, 88,883 cells); `python -m analog_finder grid --cell-deg 0.5` still builds it, and section 6 compares the two. A coastal or island site whose own cell is mostly sea (and so not a land cell) takes the nearest land cell next to it.
 - **Terrain at one step.** Slopes, relief and roughness are computed at a ground step of about 1 km on all three worlds: SRTMGL30 for the Earth (926 m), MOLA MEGDR 64 pixels per degree for Mars (926 m), LOLA 240 m averaged 4 × 4 for the Moon (960 m). A slope measured at 5 m and one measured at 1 km are different quantities, so nothing finer is mixed in.
 - **Targets.** 12 targets in `pipeline/config/targets.yaml`: 5 on the Moon (Shackleton–de Gerlache ridge and Mons Mouton are the main ones; Shackleton crater, de Gerlache crater and Malapert for context) and 7 on Mars (Jezero and Arcadia Planitia are the main ones; Gale, Phoenix, Viking 2 / Utopia, Meridiani, Mawrth Vallis). Each target has an analysis window (10–40 km radius on the Moon, 40–100 km on Mars).
 - **Target fingerprint** (`data/processed/target_profiles.json`): share of the window in 9 slope classes (edges 0, 2, 5, 8, 10, 15, 20, 25, 30, 90 degrees), mean slope, relief P5–P95, median roughness (RMS of elevation in 3 × 3 windows); for the Moon also Diviner temperatures, the share where ice is stable within 1 m and the highest Sun elevation; for Mars the GRS water content.
@@ -27,11 +27,11 @@ training and useless for testing ice drills.
 
 | Feature | Source | How it is made |
 | --- | --- | --- |
-| Slope classes, mean slope, relief, roughness, elevation | NASA SRTMGL30 | Same functions as for the targets, 60 × 60 pixels per cell |
-| Surface temperature (day and night means, hottest and coldest month, day–night swing) | MODIS MOD11C3, 12 months of 2023 | 10 × 10 blocks of 0.05 degree pixels; at least 6 valid months |
+| Slope classes, mean slope, relief, roughness, elevation | NASA SRTMGL30 | Same functions as for the targets, 30 × 30 pixels per cell (60 × 60 on the 0.5 degree grid) |
+| Surface temperature (day and night means, hottest and coldest month, day–night swing) | MODIS MOD11C3, 12 months of 2023 | 5 × 5 blocks of 0.05 degree pixels (10 × 10 at 0.5 degrees), at least 30 % valid; at least 6 valid months |
 | Greenness (NDVI mean and maximum) | MODIS MOD13C2, 12 months | Same |
 | Snow cover (annual mean and each month), snow-free months | MODIS MOD10CM, 12 months | Codes for night, cloud and water are treated as unknown |
-| Mineral abundances (11 minerals) | NASA EMIT L3 ASA | EMIT cells are a quarter cell off the grid and are averaged 2 × 2; only bare ground between 55 N and 54.5 S |
+| Mineral abundances (11 minerals) | NASA EMIT L3 ASA | EMIT is a 0.5 degree product a quarter cell off that grid: averaged 2 × 2 to 0.5 degree cells, then each value is repeated over the four 0.25 degree cells inside; only bare ground between 55 N and 54.5 S |
 | Hours per day with the Sun 0–5 degrees up | Solar geometry (`features/sun.py`, checked against pvlib) | Best month and annual mean |
 | Glacier share | Natural Earth glaciated areas | Share of the cell |
 | Distance to the nearest Holocene volcano, and to the nearest basaltic one | Smithsonian Global Volcanism Program list | Great-circle distance from the cell centre, capped at 300 km |
@@ -99,25 +99,30 @@ target of its world, the score of its cell is turned into a percentile among all
 (1.0 = best cell on Earth). A place picked at random gets a median of 0.5 and lands in the top 20 %
 one time in five.
 
-| Set | Pairs scored | Median percentile | In the top 20 % | In the top 10 % |
-| --- | --- | --- | --- | --- |
-| All tasks, scores only | 132 of 136 | 0.77 | 46 % | 33 % |
-| All tasks, with hard filters | 78 of 136 | 0.72 | 41 % | 30 % |
-| Without caves and EVA geology, scores only | 82 of 86 | 0.70 | 21 % | 6 % |
-| Without caves and EVA geology, with hard filters | 46 of 86 | 0.41 | 13 % | 7 % |
+| Set | Pairs scored | Median percentile | In the top 20 % | In the top 10 % | 0.5 degree grid: median, top 20 % |
+| --- | --- | --- | --- | --- | --- |
+| All tasks, scores only | 132 of 136 | 0.84 | 55 % | 39 % | 0.77, 46 % |
+| All tasks, with hard filters | 80 of 136 | 0.73 | 42 % | 32 % | 0.72, 41 % |
+| Without caves and EVA geology, scores only | 82 of 86 | 0.71 | 29 % | 10 % | 0.70, 21 % |
+| Without caves and EVA geology, with hard filters | 50 of 86 | 0.45 | 16 % | 4 % | 0.41, 13 % |
 
-By task (scores only): caves 0.99, EVA geology 0.92, low-Sun operations 0.76, mobility 0.75,
-ice mining 0.69, biosignatures 0.58.
+By task (scores only): caves 1.00, EVA geology 0.95, mobility 0.77, low-Sun operations 0.75,
+ice mining 0.69, biosignatures 0.59 (on the 0.5 degree grid: 0.99, 0.92, 0.75, 0.76, 0.69, 0.58).
+
+Halving the cell size helps where the terrain of the site itself matters (mobility, EVA geology) and
+changes little where the criteria come from coarser products (ice from 0.05 degree temperatures, minerals
+and dryness from 0.5 degree EMIT and POWER cells). One site needed the coastal rule of section 2: the
+0.25 degree cell of Timanfaya (Lanzarote) is mostly sea, so the site takes the land cell next to it.
 
 How to read this:
 
 - **Caves and EVA geology** use the volcano and impact lists, and those lists contain many of the analog sites themselves (Craters of the Moon, Meteor Crater, Haughton). Their high percentiles show that the context layers work; they are not independent evidence that the method finds analogs.
-- **The other tasks** put known sites clearly above a random place (median 0.70 against 0.50), but not into the very top: only 21 % are in the top 20 %, about the rate of chance. The main reason is scale: a site is a few hundred metres to a few kilometres across, while a cell is 55 km and mixes the site with its surroundings. Flat targets such as Arcadia Planitia are rarely matched by a whole Earth cell.
-- **Hard filters** remove sites whose cell is mostly vegetated although the site itself is bare (Ries, Mistastin, Réunion), and for rover mobility the remote sites with no major road within 50 km (Haughton, Svalbard). With filters the independent median falls to 0.41, below a random place.
+- **The other tasks** put known sites clearly above a random place (median 0.71 against 0.50), but not often into the very top: 29 % are in the top 20 % (21 % with 55 km cells; chance is 20 %). The main reason is scale: a site is a few hundred metres to a few kilometres across, while a cell is 28 km and mixes the site with its surroundings. Flat targets such as Arcadia Planitia are rarely matched by a whole Earth cell.
+- **Hard filters** remove sites whose cell is mostly vegetated although the site itself is bare (Ries, Mistastin, Réunion), and for rover mobility the remote sites with no major road within 50 km (Haughton, MDRS, McMurdo). With filters the independent median falls to 0.45, below a random place.
 
 **Stability.** Every weight of a task was changed at random by up to ±25 % (30 draws). The share of
-the baseline top 5 % cells that stays in the top 5 %: ice mining 99 %, landing 96 %, EVA geology
-95 %, mobility 95 %, caves 92 %, biosignatures 83 %, low-Sun operations 75 %. The page shows the
+the baseline top 5 % cells that stays in the top 5 %: ice mining 99 %, mobility 97 %, landing 96 %,
+EVA geology 95 %, caves 92 %, biosignatures 83 %, low-Sun operations 76 %. The page shows the
 same test for the selected cell (20 draws, top 10 %).
 
 **Sanity.** Share of the top 5 % cells under dense vegetation (NDVI over 0.4): 0 % for every task
@@ -154,7 +159,7 @@ highest Sun elevation.
 
 ## 10. Known limits
 
-- Scale: 55 km cells against sites of a few kilometres. Smaller windows inside each cell are the main improvement left.
+- Scale: 28 km cells against sites of a few kilometres. Going from 55 km to 28 km cells raised the independent share of known sites in the top 20 % from 21 % to 29 %; smaller windows (for example 30 m DEMs around the top candidates) are the main improvement left. Minerals (EMIT) and precipitation (POWER) stay at their own 0.5 degree resolution.
 - SRTMGL30 has no data south of 60 S, so Antarctic cells have no terrain criteria; north of 60 N the values come from a coarser source.
 - Ground ice is a temperature proxy; the volcano and impact criteria are distances to listed points, not mapped outcrops.
 - MODIS values are for 2023 only. Polar night removes winter months, so means above about 60 degrees are warm-biased.
@@ -173,4 +178,7 @@ python -m analog_finder all --fetch    # downloads everything first (Earthdata L
 
 The web page `webapp/index.html` is built from `data/processed/` by `python -m analog_finder web`.
 It recomputes the same weighted mean in the browser from the criteria stored as bytes (0–254), so
-its scores differ from the Python ones by less than 0.4 %.
+its scores differ from the Python ones by less than 0.4 %. To keep the page near 6 MB at 0.25 degrees,
+the three terrain criteria of each target (slope classes, relief, roughness) are not stored: the page
+computes them for the chosen target from the cell values it already carries, with the formulas of
+section 4, and gets the same bytes as `criteria.bin` (checked on 20,000 cells for three targets).

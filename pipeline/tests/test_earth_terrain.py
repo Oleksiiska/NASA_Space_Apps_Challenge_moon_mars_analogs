@@ -100,7 +100,7 @@ def test_build_layer_and_merge_into_grid(project):
     src.mkdir(parents=True)
     z = np.full((120, 240), 800.0)                               # 1 x 0.5 degree... 2 x 4 cells at 20 E, 40 N
     write_tile(src / "e020n40.SRTMGL30.dem.zip", z, name_corner=(20.0, 40.0))
-    path = earth_terrain.build_layer(src, log=lambda s: None)
+    path = earth_terrain.build_layer(src, cell_deg=0.5, log=lambda s: None)   # no grid yet: the size is given
     assert path.name == "earth_terrain.npz"
     meta, feats = layers.load_layer(path)
     by = {f.name: f for f in feats}

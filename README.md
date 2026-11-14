@@ -4,7 +4,7 @@ NASA Space Apps Challenge 2026, challenge "Identify Earth Locations that Analog 
 Permanent Moon Base Locations and Mars".
 
 Where on Earth can a team test what it will do at the Shackleton–de Gerlache ridge, at Mons
-Mouton, in Jezero crater or on Arcadia Planitia? The Earth's land is cut into 0.5 degree cells.
+Mouton, in Jezero crater or on Arcadia Planitia? The Earth's land is cut into 0.25 degree cells (about 28 km).
 Every cell and every Moon or Mars target gets the same measures (terrain at a 1 km step, cold,
 ice, bare ground, low Sun, minerals, volcanoes, impact structures). A cell is a good analog
 *for a given test task* when its measures are close to the target's. Sites that agencies
@@ -21,12 +21,13 @@ This is a screening tool, not an engineering assessment or a site-selection reco
 
 ## Result in short
 
-- 88,883 land cells, 12 targets (5 Moon, 7 Mars), 7 test tasks, 46 per-cell criteria.
-- Known analog sites rank well above a random place: median percentile 0.77 over all tasks
+- 350,281 land cells, 12 targets (5 Moon, 7 Mars), 7 test tasks, 46 per-cell criteria.
+- Known analog sites rank well above a random place: median percentile 0.84 over all tasks
   (random: 0.50). Without the two tasks that use the volcano and impact lists, which contain
-  many of the sites themselves, the median is 0.70 and only 21 % of the sites reach the top
-  20 %: the 55 km cell is much larger than a real site. See `docs/methodology.md`, section 6.
-- Changing every weight by up to ±25 % keeps 75–99 % of the top 5 % cells in place.
+  many of the sites themselves, the median is 0.71 and 29 % of the sites reach the top 20 %
+  (chance: 20 %): a 28 km cell is still much larger than a real site. See `docs/methodology.md`,
+  section 6, which also compares the first 0.5 degree grid (0.77 and 21 %).
+- Changing every weight by up to ±25 % keeps 76–99 % of the top 5 % cells in place.
 
 ## What the page does
 
@@ -58,7 +59,7 @@ pipeline/
     pipeline_all.py      the `all` command
     export/              compact binary grid
   scripts/               generator of docs/data_sources.md
-  tests/                 80 tests; they need no downloads
+  tests/                 82 tests; they need no downloads
 webapp/
   template.html          the page; build_app.py embeds data/processed into index.html
 data/
@@ -154,7 +155,7 @@ python -m analog_finder web
 ### Optional
 
 - `python -m analog_finder fetch power` and `fetch copdem`: climate (NASA POWER) and Copernicus DEM tiles at the known analog sites only, for site cards and Antarctic detail. Not used by the ranking.
-- `python -m analog_finder grid`: rebuilds the land grid and the low-Sun features from scratch (about 3 minutes); then rerun `merge`.
+- `python -m analog_finder grid --cell-deg 0.25`: rebuilds the land grid and the low-Sun features from scratch (about 10 minutes; `--cell-deg 0.5` gives the first, coarser grid in 3). Every layer depends on the cell size, so then run `terrain`, `surface`, `context`, `merge`, `score` and `web` again (about 6 minutes with the raw data in place).
 - `python -m analog_finder reference`: rewrites the GeoJSON layers and `analogs_grid.csv` after editing `known_analogs.csv` or `targets.yaml`.
 - `python pipeline/scripts/make_sources_doc.py`: regenerates `docs/data_sources.md` after editing `sources.yaml`.
 
@@ -169,7 +170,7 @@ python -m analog_finder web
 
 ## What is not done yet
 
-- No detail below the 55 km cell (smaller windows, 30 m DEMs for the top candidates), no side-by-side images of Earth and target, no protected-area layer (the WDPA data may not be redistributed), no machine-learning layer.
+- No detail below the 28 km cell (smaller windows, 30 m DEMs for the top candidates), no side-by-side images of Earth and target, no protected-area layer (the WDPA data may not be redistributed), no machine-learning layer.
 - No maps of the Moon and Mars on the page; targets are chosen from a list.
 
 ## Use of AI

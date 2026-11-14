@@ -1,6 +1,6 @@
 {
  "schema": 1,
- "n_cells": 88883,
+ "n_cells": 350281,
  "scale": "uint8 0..254 -> 0..1, 255 no data",
  "criteria": [
   {
@@ -11,227 +11,227 @@
   {
    "name": "thermal_range",
    "target": null,
-   "offset": 88883
+   "offset": 350281
   },
   {
    "name": "ground_ice",
    "target": null,
-   "offset": 177766
+   "offset": 700562
   },
   {
    "name": "bare_ground",
    "target": null,
-   "offset": 266649
+   "offset": 1050843
   },
   {
    "name": "low_sun",
    "target": null,
-   "offset": 355532
+   "offset": 1401124
   },
   {
    "name": "snow_free",
    "target": null,
-   "offset": 444415
+   "offset": 1751405
   },
   {
    "name": "composition",
    "target": null,
-   "offset": 533298
+   "offset": 2101686
   },
   {
    "name": "volcanic",
    "target": null,
-   "offset": 622181
+   "offset": 2451967
   },
   {
    "name": "impact",
    "target": null,
-   "offset": 711064
+   "offset": 2802248
   },
   {
    "name": "dryness",
    "target": null,
-   "offset": 799947
+   "offset": 3152529
   },
   {
    "name": "slope_hist",
    "target": "shackleton_ridge",
-   "offset": 888830
+   "offset": 3502810
   },
   {
    "name": "relief",
    "target": "shackleton_ridge",
-   "offset": 977713
+   "offset": 3853091
   },
   {
    "name": "roughness",
    "target": "shackleton_ridge",
-   "offset": 1066596
+   "offset": 4203372
   },
   {
    "name": "slope_hist",
    "target": "shackleton_crater",
-   "offset": 1155479
+   "offset": 4553653
   },
   {
    "name": "relief",
    "target": "shackleton_crater",
-   "offset": 1244362
+   "offset": 4903934
   },
   {
    "name": "roughness",
    "target": "shackleton_crater",
-   "offset": 1333245
+   "offset": 5254215
   },
   {
    "name": "slope_hist",
    "target": "de_gerlache_crater",
-   "offset": 1422128
+   "offset": 5604496
   },
   {
    "name": "relief",
    "target": "de_gerlache_crater",
-   "offset": 1511011
+   "offset": 5954777
   },
   {
    "name": "roughness",
    "target": "de_gerlache_crater",
-   "offset": 1599894
+   "offset": 6305058
   },
   {
    "name": "slope_hist",
    "target": "mons_mouton",
-   "offset": 1688777
+   "offset": 6655339
   },
   {
    "name": "relief",
    "target": "mons_mouton",
-   "offset": 1777660
+   "offset": 7005620
   },
   {
    "name": "roughness",
    "target": "mons_mouton",
-   "offset": 1866543
+   "offset": 7355901
   },
   {
    "name": "slope_hist",
    "target": "malapert",
-   "offset": 1955426
+   "offset": 7706182
   },
   {
    "name": "relief",
    "target": "malapert",
-   "offset": 2044309
+   "offset": 8056463
   },
   {
    "name": "roughness",
    "target": "malapert",
-   "offset": 2133192
+   "offset": 8406744
   },
   {
    "name": "slope_hist",
    "target": "jezero",
-   "offset": 2222075
+   "offset": 8757025
   },
   {
    "name": "relief",
    "target": "jezero",
-   "offset": 2310958
+   "offset": 9107306
   },
   {
    "name": "roughness",
    "target": "jezero",
-   "offset": 2399841
+   "offset": 9457587
   },
   {
    "name": "slope_hist",
    "target": "arcadia_planitia",
-   "offset": 2488724
+   "offset": 9807868
   },
   {
    "name": "relief",
    "target": "arcadia_planitia",
-   "offset": 2577607
+   "offset": 10158149
   },
   {
    "name": "roughness",
    "target": "arcadia_planitia",
-   "offset": 2666490
+   "offset": 10508430
   },
   {
    "name": "slope_hist",
    "target": "gale",
-   "offset": 2755373
+   "offset": 10858711
   },
   {
    "name": "relief",
    "target": "gale",
-   "offset": 2844256
+   "offset": 11208992
   },
   {
    "name": "roughness",
    "target": "gale",
-   "offset": 2933139
+   "offset": 11559273
   },
   {
    "name": "slope_hist",
    "target": "phoenix",
-   "offset": 3022022
+   "offset": 11909554
   },
   {
    "name": "relief",
    "target": "phoenix",
-   "offset": 3110905
+   "offset": 12259835
   },
   {
    "name": "roughness",
    "target": "phoenix",
-   "offset": 3199788
+   "offset": 12610116
   },
   {
    "name": "slope_hist",
    "target": "viking2_utopia",
-   "offset": 3288671
+   "offset": 12960397
   },
   {
    "name": "relief",
    "target": "viking2_utopia",
-   "offset": 3377554
+   "offset": 13310678
   },
   {
    "name": "roughness",
    "target": "viking2_utopia",
-   "offset": 3466437
+   "offset": 13660959
   },
   {
    "name": "slope_hist",
    "target": "meridiani",
-   "offset": 3555320
+   "offset": 14011240
   },
   {
    "name": "relief",
    "target": "meridiani",
-   "offset": 3644203
+   "offset": 14361521
   },
   {
    "name": "roughness",
    "target": "meridiani",
-   "offset": 3733086
+   "offset": 14711802
   },
   {
    "name": "slope_hist",
    "target": "mawrth_vallis",
-   "offset": 3821969
+   "offset": 15062083
   },
   {
    "name": "relief",
    "target": "mawrth_vallis",
-   "offset": 3910852
+   "offset": 15412364
   },
   {
    "name": "roughness",
    "target": "mawrth_vallis",
-   "offset": 3999735
+   "offset": 15762645
   }
  ],
  "constraint_bits": {
@@ -246,7 +246,7 @@
   "protected_ecosystem_flag"
  ],
  "road_max_km": 50.0,
- "constraint_offset": 4088618,
+ "constraint_offset": 16112926,
  "min_coverage": 0.5,
  "no_data_yet": [],
  "composition_worlds": [

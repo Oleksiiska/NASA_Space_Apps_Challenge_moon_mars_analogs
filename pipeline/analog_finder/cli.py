@@ -88,7 +88,8 @@ def _cmd_check(args) -> int:
 
 def _cmd_grid(args) -> int:
     from . import build
-    build.build_grid(min_land_frac=args.min_land_frac)
+    from .prep import layers as _layers
+    build.build_grid(cell_deg=args.cell_deg or _layers.grid_cell_deg(), min_land_frac=args.min_land_frac)
     from .prep import layers
     if layers.layers_dir().exists() and any(layers.layers_dir().glob("*.npz")):
         layers.merge_into_grid()
@@ -180,13 +181,14 @@ def main(argv=None) -> int:
 
     g = sub.add_parser("grid", help="build the Earth land grid and low-Sun features")
     g.add_argument("--min-land-frac", type=float, default=0.2)
+    g.add_argument("--cell-deg", type=float, default=None, help="cell size in degrees (0.5 or 0.25; default: keep the current grid)")
     g.set_defaults(func=_cmd_grid)
 
     sub.add_parser("profiles", help="compute Moon and Mars target fingerprints").set_defaults(func=_cmd_profiles)
     sub.add_parser("reference", help="write GeoJSON layers of targets and known analogs").set_defaults(func=_cmd_reference)
 
     t = sub.add_parser("terrain", help="terrain features of Earth cells from SRTMGL30")
-    t.add_argument("--cell-deg", type=float, default=0.5)
+    t.add_argument("--cell-deg", type=float, default=None, help="default: the cell size of the current grid")
     t.set_defaults(func=_cmd_terrain)
     sf = sub.add_parser("surface", help="temperature, NDVI, snow and mineral features from MODIS and EMIT")
     sf.add_argument("--only", nargs="+", choices=["lst", "ndvi", "snow", "emit"], help="restrict to these products")

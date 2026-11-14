@@ -29,6 +29,14 @@ class LayerFeature:
     source: str = ""
 
 
+def grid_cell_deg(default: float = 0.25) -> float:
+    """Cell size of the grid in data/processed (the layers are built to match it); ``default`` when there is no grid yet."""
+    p = config.processed_dir() / "grid.json"
+    if p.exists():
+        return float(json.loads(p.read_text(encoding="utf-8"))["grid"]["cell_deg"])
+    return default
+
+
 def layers_dir() -> Path:
     return config.data_dir() / "interim" / "layers"
 

@@ -4,7 +4,7 @@ Known analogs are never used to set weights or thresholds. They are only looked 
 every task it is listed for, the score of its cell is turned into a percentile among all ranked cells of that task and target.
 A site picked at random would land near 0.5 (and in the top 20 % one time in five).
 
-Two caveats shown in every report: a site is a few hundred metres to a few kilometres across and a cell is about 55 km; and
+Two caveats shown in every report: a site is a few hundred metres to a few kilometres across and a cell is about 28 km (0.25 degree grid) or 55 km (0.5 degree); and
 criteria without data yet (volcanic, impact, dryness) are missing from the tasks that use them.
 """
 from __future__ import annotations
@@ -128,18 +128,19 @@ def summarize(records: list[dict], context_tasks: Optional[list[str]] = None) ->
     return out
 
 
-def report_markdown(result: dict) -> str:
+def report_markdown(result: dict, cell_deg: float = 0.5) -> str:
     s = result["summary"]
+    km = round(cell_deg * 111.2)
     a = s["all"]["scores_only"]
     f = s["all"]["with_filters"]
     lines = ["# Validation against known analog sites", "",
-             "Each site is a cell of the 0.5 degree grid; its score is turned into a percentile among all ranked cells "
+             f"Each site is a cell of the {cell_deg:g} degree grid (a coastal site whose own cell is mostly sea takes the nearest land cell next to it); its score is turned into a percentile among all ranked cells "
              "(1.0 = best cell on Earth for that task and target). A random site would get a median of 0.5 and land in the top 20 % one time in five. "
              "Known analogs were not used to set any weight or threshold.", "",
              f"- Scores only: {a['scored']} of {a['pairs']} site-task-target pairs scored, median percentile {a['median_percentile']}, "
              f"top 20 % in {a['share_top20']:.0%}, top 10 % in {a['share_top10']:.0%}.",
              f"- With the hard filters of each task: {f['scored']} pairs left, median {f['median_percentile']}, top 20 % in {f['share_top20']:.0%}. "
-             "Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands), and remote sites with no major road within 50 km for rover mobility.",
+             f"Filters remove sites whose {km} km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands), and remote sites with no major road within 50 km for rover mobility.",
              f"- Independent part: the tasks {', '.join(s.get('context_tasks', [])) or '(none)'} use the volcano and impact lists, and those lists contain many "
              "of the analog sites themselves, so their high percentiles show that the layers work, not that the method finds analogs on its own. "
              f"Without them: {s['independent']['scores_only']['scored']} pairs, median percentile {s['independent']['scores_only']['median_percentile']}, "
@@ -164,7 +165,7 @@ def report_markdown(result: dict) -> str:
             lines.append(f"| {t} | {d['mean_overlap']:.0%} | {d['share_dense_vegetation']:.0%} |")
         lines += ["", "No spatial hold-out is run: no weight or threshold is fitted to the known sites, so every site is already unseen by the method."]
     lines += ["", "## How to read this", "",
-              "- A cell is about 55 km across; a site is much smaller. A flat Martian plain (Arcadia) is rarely matched by a whole cell.",
+              f"- A cell is about {km} km across; a site is much smaller. A flat Martian plain (Arcadia) is rarely matched by a whole cell.",
               "- Earth cannot reach lunar or Martian cold, vacuum or radiation. Cold, thermal range and low Sun are ranked in the useful direction only.",
               "- Volcanic fields and impact structures enter as distance to the nearest listed point or rim; dryness comes from NASA POWER precipitation when its layer was built.",
               ""]
@@ -228,7 +229,7 @@ def run(processed_dir: Optional[Path] = None, log=print) -> dict:
     log("Sensitivity to +-25 % weight changes ...")
     result["sensitivity"] = sensitivity(cells, profiles)
     (pdir / "validation.json").write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
-    (pdir / "validation.md").write_text(report_markdown(result), encoding="utf-8")
+    (pdir / "validation.md").write_text(report_markdown(result, cells.meta["grid"]["cell_deg"]), encoding="utf-8")
     doc = export_scores(cells, profiles, pdir)
     s = result["summary"]["all"]
     log(f"Validation: {s['scores_only']['scored']} of {s['scores_only']['pairs']} pairs scored, "

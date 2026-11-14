@@ -94,6 +94,10 @@ def test_position_of_a_point():
     k = cells.position(89.75 - 100 * 0.5, -179.75 + 2 * 0.5)
     assert k == 2
     assert cells.position(-60.0, 0.0) == -1
+    # just outside the row of land cells (one row south): snaps to the nearest land cell unless snap=0
+    assert cells.position(89.75 - 101 * 0.5, -179.75 + 3 * 0.5) == 3
+    assert cells.position(89.75 - 101 * 0.5, -179.75 + 3 * 0.5, snap=0) == -1
+    assert cells.position(89.75 - 102 * 0.5, -179.75 + 3 * 0.5) == -1
 
 
 def test_summarize_and_report():

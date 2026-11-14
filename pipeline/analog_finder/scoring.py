@@ -37,6 +37,7 @@ VOLC_SCALE_KM = 50.0      # score 1 at a volcano, 0.37 at 50 km, 0.05 at 150 km
 IMPACT_SCALE_KM = 40.0    # score 1 inside a structure, 0.37 at 40 km from its rim
 DRY_WET_MM, DRY_ARID_MM = 1000.0, 25.0     # dryness 0 at 1000 mm/year or more, 1 at 25 mm/year or less (log scale)
 MATCHED = ("slope_hist", "relief", "roughness")
+RELIEF_SCALE_M, ROUGH_SCALE_M, MATCH_SIGMA = 50.0, 5.0, 0.7   # log-Gaussian match of relief and roughness (webapp repeats it)
 
 
 @dataclass
@@ -51,14 +52,42 @@ class Cells:
     def n(self) -> int:
         return int(self.index.size)
 
-    def position(self, lat: float, lon: float) -> int:
-        """Position of the cell that contains a point, -1 if it is not a land cell of the grid."""
+    def _find(self, r: int, c: int) -> int:
         g = self.meta["grid"]
-        r = int((90.0 - lat) / g["cell_deg"])
-        c = int((lon + 180.0) / g["cell_deg"])
-        flat = r * g["n_lon"] + c
+        if r < 0 or r >= g["n_lat"]:
+            return -1
+        flat = r * g["n_lon"] + c % g["n_lon"]
         k = int(np.searchsorted(self.index, flat))
         return k if k < self.index.size and int(self.index[k]) == flat else -1
+
+    def position(self, lat: float, lon: float, snap: int = 1) -> int:
+        """Position of the land cell that contains a point, -1 if there is none.
+
+        A coastal or island site whose own cell is mostly sea (not a land cell) takes the nearest land
+        cell among its neighbours up to ``snap`` cells away; ``snap=0`` turns this off.
+        """
+        g = self.meta["grid"]
+        cd = g["cell_deg"]
+        r, c = int((90.0 - lat) // cd), int((lon + 180.0) // cd)
+        k = self._find(r, c)
+        if k >= 0 or snap <= 0:
+            return k
+        best, bd = -1, np.inf
+        for dr in range(-snap, snap + 1):
+            for dc in range(-snap, snap + 1):
+                j = self._find(r + dr, c + dc)
+                if j < 0:
+                    continue
+                d = _km(lat, lon, float(self.lat[j]), float(self.lon[j]))
+                if d < bd:
+                    best, bd = j, d
+        return best
+
+
+def _km(la1: float, lo1: float, la2: float, lo2: float) -> float:
+    p1, p2, dl = np.radians(la1), np.radians(la2), np.radians(lo2 - lo1)
+    a = np.sin((p2 - p1) / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(dl / 2) ** 2
+    return float(12742.0 * np.arcsin(np.sqrt(min(1.0, a))))
 
 
 def load_cells(processed_dir: str | Path | None = None) -> Cells:
@@ -84,7 +113,7 @@ def pct_rank(x: np.ndarray) -> np.ndarray:
     return out
 
 
-def _log_match(c: np.ndarray, t: float, scale: float, sigma: float = 0.7) -> np.ndarray:
+def _log_match(c: np.ndarray, t: float, scale: float, sigma: float = MATCH_SIGMA) -> np.ndarray:
     d = (np.log1p(np.maximum(c, 0) / scale) - np.log1p(max(t, 0.0) / scale)) / sigma
     return np.exp(-0.5 * d * d).astype(np.float32)
 
@@ -99,8 +128,8 @@ def matched_criteria(cells: Cells, terrain_1km: dict) -> dict[str, np.ndarray]:
     slope[~np.isfinite(h).all(axis=0)] = np.nan
     return {
         "slope_hist": np.clip(slope, 0, 1),
-        "relief": _log_match(cells.f["relief_m"], float(terrain_1km["relief_p5_p95_m"]), 50.0),
-        "roughness": _log_match(cells.f["rough_p50_m"], float(terrain_1km["roughness_rms_p50_m"]), 5.0),
+        "relief": _log_match(cells.f["relief_m"], float(terrain_1km["relief_p5_p95_m"]), RELIEF_SCALE_M),
+        "roughness": _log_match(cells.f["rough_p50_m"], float(terrain_1km["roughness_rms_p50_m"]), ROUGH_SCALE_M),
     }
 
 

@@ -1,6 +1,7 @@
 """Surface climate and mineral features of Earth cells: MODIS land temperature, NDVI, snow, EMIT minerals.
 
-Every product is reduced to the 0.5 degree grid (row 0 = 90 N, column 0 = 180 W, cell centres at .25 / .75):
+Every product is reduced to the land grid, 0.5 or 0.25 degrees (row 0 = 90 N, column 0 = 180 W); the text below
+gives the numbers for 0.5 degrees, a 0.25 degree cell takes 5 x 5 MODIS pixels and repeats each EMIT cell 2 x 2:
 
 * MODIS CMG products (MOD11C3, MOD13C2, MOD10CM) are 3600 x 7200 at 0.05 degrees, row 0 at 90 N. A cell is the mean of
   10 x 10 valid pixels (at least 30 % must be valid). One file per month; annual statistics need at least 6 valid months.
@@ -71,8 +72,9 @@ def block_mean(a: np.ndarray, n: int = 10, min_frac: float = MIN_FRAC) -> np.nda
     return out
 
 
-def cell_at(arr: np.ndarray, lat: float, lon: float, cell_deg: float = CELL_DEG) -> float:
-    """Value of the 0.5 degree cell that contains a point."""
+def cell_at(arr: np.ndarray, lat: float, lon: float, cell_deg: Optional[float] = None) -> float:
+    """Value of the grid cell that contains a point (the cell size follows from the array shape)."""
+    cell_deg = cell_deg or 180.0 / arr.shape[0]
     r = int((90.0 - lat) / cell_deg)
     c = int((lon + 180.0) / cell_deg)
     return float(arr[min(max(r, 0), arr.shape[0] - 1), min(max(c, 0), arr.shape[1] - 1)])
@@ -147,7 +149,17 @@ LST_SPEC = {
 }
 
 
-def build_lst(src_dir: Optional[Path] = None, log: Callable[[str], None] = print) -> Path:
+def _cells(cell_deg: Optional[float]) -> tuple[float, int]:
+    """(cell size, 0.05 degree pixels per cell side) for the grid in data/processed."""
+    cd = cell_deg or layers.grid_cell_deg()
+    n = int(round(cd / 0.05))
+    if abs(n * 0.05 - cd) > 1e-9:
+        raise ValueError(f"cell size {cd} is not a multiple of the 0.05 degree MODIS pixels")
+    return cd, n
+
+
+def build_lst(src_dir: Optional[Path] = None, log: Callable[[str], None] = print, cell_deg: Optional[float] = None) -> Path:
+    cd, nb = _cells(cell_deg)
     src = _dir("earth_mod11c3", src_dir)
     files = _monthly_files(src, "MOD11C3.*.hdf")
     if len(files) < MIN_MONTHS:
@@ -159,7 +171,7 @@ def build_lst(src_dir: Optional[Path] = None, log: Callable[[str], None] = print
         for store, sds in ((day, "LST_Day_CMG"), (night, "LST_Night_CMG")):
             raw = read_sds(p, sds)
             k = np.where(raw >= 7500, raw * 0.02, np.nan).astype(np.float32)      # valid_range 7500..65535, scale 0.02
-            store[m] = block_mean(k)
+            store[m] = block_mean(k, nb)
         log(f"  month {m:2d}: {p.name}")
     feats = lst_features(day, night)
     problems: list[str] = []
@@ -170,7 +182,7 @@ def build_lst(src_dir: Optional[Path] = None, log: Callable[[str], None] = print
     _fail(problems, "LST")
     log("LST self-check: ok (Sahara hot, Greenland cold, Amazon warm)")
     items = [_item(k, feats[k], *LST_SPEC[k], LST_SOURCE) for k in LST_SPEC]
-    return layers.save_layer("earth_lst", items, CELL_DEG)
+    return layers.save_layer("earth_lst", items, cd)
 
 
 # --------------------------------------------------------------------------- vegetation
@@ -188,7 +200,8 @@ def ndvi_features(monthly: dict[int, np.ndarray]) -> dict[str, np.ndarray]:
     return {"ndvi_mean": _reduce(s, np.nanmean), "ndvi_max": _reduce(s, np.nanmax)}
 
 
-def build_ndvi(src_dir: Optional[Path] = None, log: Callable[[str], None] = print) -> Path:
+def build_ndvi(src_dir: Optional[Path] = None, log: Callable[[str], None] = print, cell_deg: Optional[float] = None) -> Path:
+    cd, nb = _cells(cell_deg)
     src = _dir("earth_mod13c2", src_dir)
     files = _monthly_files(src, "MOD13C2.*.hdf")
     if len(files) < MIN_MONTHS:
@@ -198,7 +211,7 @@ def build_ndvi(src_dir: Optional[Path] = None, log: Callable[[str], None] = prin
     for m, p in sorted(files.items()):
         raw = read_sds(p, NDVI_SDS).astype(np.float32)
         v = np.where((raw > -2999) & (raw >= -2000) & (raw <= 10000), raw / 10000.0, np.nan).astype(np.float32)   # fill -3000
-        monthly[m] = block_mean(v)
+        monthly[m] = block_mean(v, nb)
         log(f"  month {m:2d}: {p.name}")
     feats = ndvi_features(monthly)
     problems: list[str] = []
@@ -207,7 +220,7 @@ def build_ndvi(src_dir: Optional[Path] = None, log: Callable[[str], None] = prin
     _fail(problems, "NDVI")
     log("NDVI self-check: ok (Sahara bare, Amazon green)")
     items = [_item(k, feats[k], *NDVI_SPEC[k], NDVI_SOURCE) for k in NDVI_SPEC]
-    return layers.save_layer("earth_ndvi", items, CELL_DEG)
+    return layers.save_layer("earth_ndvi", items, cd)
 
 
 # --------------------------------------------------------------------------- snow
@@ -241,7 +254,8 @@ SNOW_MONTH_SPEC = {f"snow_m{m:02d}": (0.0, 100.0, "percent", f"Snow cover in mon
                    for m in range(1, 13)}
 
 
-def build_snow(src_dir: Optional[Path] = None, log: Callable[[str], None] = print) -> Path:
+def build_snow(src_dir: Optional[Path] = None, log: Callable[[str], None] = print, cell_deg: Optional[float] = None) -> Path:
+    cd, nb = _cells(cell_deg)
     src = _dir("earth_mod10cm", src_dir)
     files = _monthly_files(src, "MOD10CM.*.hdf")
     if len(files) < MIN_MONTHS:
@@ -249,7 +263,7 @@ def build_snow(src_dir: Optional[Path] = None, log: Callable[[str], None] = prin
                                 "Run: python -m analog_finder fetch earth --only earth_mod10cm")
     monthly: dict[int, np.ndarray] = {}
     for m, p in sorted(files.items()):
-        monthly[m] = block_mean(snow_cover(read_sds(p, SNOW_SDS)))
+        monthly[m] = block_mean(snow_cover(read_sds(p, SNOW_SDS)), nb)
         log(f"  month {m:2d}: {p.name}")
     feats = snow_features(monthly)
     problems: list[str] = []
@@ -260,7 +274,7 @@ def build_snow(src_dir: Optional[Path] = None, log: Callable[[str], None] = prin
     log("Snow self-check: ok (Greenland snowy, Sahara free)")
     spec = {**SNOW_SPEC, **SNOW_MONTH_SPEC}
     items = [_item(k, feats[k], *spec[k], SNOW_SOURCE) for k in spec]
-    return layers.save_layer("earth_snow", items, CELL_DEG)
+    return layers.save_layer("earth_snow", items, cd)
 
 
 # --------------------------------------------------------------------------- EMIT minerals
@@ -297,7 +311,16 @@ def emit_to_grid(a: np.ndarray, lat: np.ndarray, lon: np.ndarray, n_lat: int = 3
     return out
 
 
-def build_emit(src_dir: Optional[Path] = None, log: Callable[[str], None] = print) -> Path:
+def upsample(a: np.ndarray, factor: int) -> np.ndarray:
+    """Repeat every cell ``factor`` x ``factor`` times (EMIT stays a 0.5 degree product on a finer grid)."""
+    return a if factor == 1 else np.repeat(np.repeat(a, factor, axis=0), factor, axis=1)
+
+
+def build_emit(src_dir: Optional[Path] = None, log: Callable[[str], None] = print, cell_deg: Optional[float] = None) -> Path:
+    cd = cell_deg or layers.grid_cell_deg()
+    factor = int(round(0.5 / cd))
+    if abs(factor * cd - 0.5) > 1e-9:
+        raise ValueError(f"cell size {cd} does not divide the 0.5 degree EMIT cells")
     try:
         import netCDF4
     except ImportError as e:
@@ -316,7 +339,7 @@ def build_emit(src_dir: Optional[Path] = None, log: Callable[[str], None] = prin
         for var, (name, _) in EMIT_MINERALS.items():
             raw = np.ma.filled(ds[var][:].astype(np.float32), np.nan)
             raw[raw < -9000] = np.nan
-            grids[name] = emit_to_grid(raw, lat, lon)
+            grids[name] = upsample(emit_to_grid(raw, lat, lon), factor)
     finally:
         ds.close()
     problems: list[str] = []
@@ -334,7 +357,7 @@ def build_emit(src_dir: Optional[Path] = None, log: Callable[[str], None] = prin
         items.append(_item(name, g, 0.0, max(vmax, 0.01), "fraction",
                            f"Surface abundance of {label} from EMIT imaging spectroscopy (bare surfaces between 55 N and 54.5 S only).",
                            EMIT_SOURCE))
-    return layers.save_layer("earth_emit", items, CELL_DEG)
+    return layers.save_layer("earth_emit", items, cd)
 
 
 BUILDERS = {"lst": build_lst, "ndvi": build_ndvi, "snow": build_snow, "emit": build_emit}

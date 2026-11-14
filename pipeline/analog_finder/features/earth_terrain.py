@@ -1,6 +1,6 @@
 """Terrain features of Earth land cells from SRTMGL30, same metrics as the Moon and Mars.
 
-Each 0.5 degree cell is 60 x 60 pixels of 30 arc seconds (about 926 m). Slopes,
+Each grid cell is 60 x 60 pixels of 30 arc seconds (about 926 m) at 0.5 degrees, 30 x 30 at 0.25 degrees. Slopes,
 roughness and relief are computed with the functions of features/terrain.py,
 so a cell and a Moon or Mars target are compared on the same ground step.
 
@@ -104,10 +104,11 @@ def selfcheck(tiles: dict[str, "srtm.Tile"]) -> list[str]:
     return problems
 
 
-def build_layer(src_dir: Optional[Path] = None, cell_deg: float = 0.5, log: Callable[[str], None] = print) -> Path:
+def build_layer(src_dir: Optional[Path] = None, cell_deg: Optional[float] = None, log: Callable[[str], None] = print) -> Path:
     """Compute all cells from the downloaded tiles and save the layer ``earth_terrain``."""
     from .. import config
 
+    cell_deg = cell_deg or layers.grid_cell_deg()
     src = Path(src_dir) if src_dir else config.resolve(config.dataset("earth_srtmgl30")["dest"])
     zips = sorted(src.glob("*.zip"))
     if not zips:

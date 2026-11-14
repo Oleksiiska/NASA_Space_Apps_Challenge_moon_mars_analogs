@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "created_utc": "2026-11-14T16:08:23Z",
+  "created_utc": "2026-11-14T17:20:53Z",
   "grid": {
-    "cell_deg": 0.5,
-    "n_lat": 360,
-    "n_lon": 720,
-    "n_cells": 88883,
-    "row0_lat_center": 89.75,
-    "col0_lon_center": -179.75,
+    "cell_deg": 0.25,
+    "n_lat": 720,
+    "n_lon": 1440,
+    "n_cells": 350281,
+    "row0_lat_center": 89.875,
+    "col0_lon_center": -179.875,
     "row_order": "north_to_south",
     "index": {
       "file": "grid_index.bin",
@@ -35,7 +35,7 @@
     },
     {
       "name": "ice_frac",
-      "offset": 88883,
+      "offset": 350281,
       "min": 0.0,
       "max": 1.0,
       "unit": "fraction",
@@ -44,7 +44,7 @@
     },
     {
       "name": "lowsun_best_h",
-      "offset": 177766,
+      "offset": 700562,
       "min": 0.0,
       "max": 24.0,
       "unit": "hours/day",
@@ -53,7 +53,7 @@
     },
     {
       "name": "lowsun_mean_h",
-      "offset": 266649,
+      "offset": 1050843,
       "min": 0.0,
       "max": 24.0,
       "unit": "hours/day",
@@ -62,7 +62,7 @@
     },
     {
       "name": "lowsun_best_month",
-      "offset": 355532,
+      "offset": 1401124,
       "min": 1.0,
       "max": 12.0,
       "unit": "month",
@@ -70,143 +70,17 @@
       "source": "Computed from solar geometry (features/sun.py)"
     },
     {
-      "name": "elev_mean_m",
-      "offset": 444415,
-      "min": -500.0,
-      "max": 6500.0,
-      "unit": "m",
-      "description": "Mean elevation of the cell above the geoid",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "relief_m",
-      "offset": 533298,
+      "name": "precip_mm_yr",
+      "offset": 1751405,
       "min": 0.0,
-      "max": 6000.0,
-      "unit": "m",
-      "description": "Elevation range P95-P5 inside the cell",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_mean_deg",
-      "offset": 622181,
-      "min": 0.0,
-      "max": 40.0,
-      "unit": "deg",
-      "description": "Mean slope at a ~926 m step (Horn)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_lt8",
-      "offset": 711064,
-      "min": 0.0,
-      "max": 1.0,
-      "unit": "fraction",
-      "description": "Share of the cell with slope under 8 deg (landing limit)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_lt15",
-      "offset": 799947,
-      "min": 0.0,
-      "max": 1.0,
-      "unit": "fraction",
-      "description": "Share of the cell with slope under 15 deg (rover limit)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "rough_p50_m",
-      "offset": 888830,
-      "min": 0.0,
-      "max": 500.0,
-      "unit": "m",
-      "description": "Median RMS deviation of elevation in 3 x 3 pixel windows",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_h0",
-      "offset": 977713,
-      "min": 0.0,
-      "max": 1.0,
-      "unit": "fraction",
-      "description": "Share of the cell in slope class 0 (0-2 deg)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_h1",
-      "offset": 1066596,
-      "min": 0.0,
-      "max": 1.0,
-      "unit": "fraction",
-      "description": "Share of the cell in slope class 1 (2-5 deg)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_h2",
-      "offset": 1155479,
-      "min": 0.0,
-      "max": 1.0,
-      "unit": "fraction",
-      "description": "Share of the cell in slope class 2 (5-8 deg)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_h3",
-      "offset": 1244362,
-      "min": 0.0,
-      "max": 1.0,
-      "unit": "fraction",
-      "description": "Share of the cell in slope class 3 (8-10 deg)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_h4",
-      "offset": 1333245,
-      "min": 0.0,
-      "max": 1.0,
-      "unit": "fraction",
-      "description": "Share of the cell in slope class 4 (10-15 deg)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_h5",
-      "offset": 1422128,
-      "min": 0.0,
-      "max": 1.0,
-      "unit": "fraction",
-      "description": "Share of the cell in slope class 5 (15-20 deg)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_h6",
-      "offset": 1511011,
-      "min": 0.0,
-      "max": 1.0,
-      "unit": "fraction",
-      "description": "Share of the cell in slope class 6 (20-25 deg)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_h7",
-      "offset": 1599894,
-      "min": 0.0,
-      "max": 1.0,
-      "unit": "fraction",
-      "description": "Share of the cell in slope class 7 (25-30 deg)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
-    },
-    {
-      "name": "slope_h8",
-      "offset": 1688777,
-      "min": 0.0,
-      "max": 1.0,
-      "unit": "fraction",
-      "description": "Share of the cell in slope class 8 (30-90 deg)",
-      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+      "max": 4000.0,
+      "unit": "mm/year",
+      "description": "Mean annual precipitation, NASA POWER (MERRA-2 corrected), 0.5 x 0.625 degree points",
+      "source": "NASA POWER climatology (PRECTOTCORR, MERRA-2); computed by features/earth_context.py"
     },
     {
       "name": "min_calcite",
-      "offset": 1777660,
+      "offset": 2101686,
       "min": 0.0,
       "max": 0.75,
       "unit": "fraction",
@@ -215,7 +89,7 @@
     },
     {
       "name": "min_chlorite",
-      "offset": 1866543,
+      "offset": 2451967,
       "min": 0.0,
       "max": 0.52,
       "unit": "fraction",
@@ -224,7 +98,7 @@
     },
     {
       "name": "min_dolomite",
-      "offset": 1955426,
+      "offset": 2802248,
       "min": 0.0,
       "max": 0.35,
       "unit": "fraction",
@@ -233,7 +107,7 @@
     },
     {
       "name": "min_goethite",
-      "offset": 2044309,
+      "offset": 3152529,
       "min": 0.0,
       "max": 0.15,
       "unit": "fraction",
@@ -242,7 +116,7 @@
     },
     {
       "name": "min_gypsum",
-      "offset": 2133192,
+      "offset": 3502810,
       "min": 0.0,
       "max": 0.32,
       "unit": "fraction",
@@ -251,7 +125,7 @@
     },
     {
       "name": "min_hematite",
-      "offset": 2222075,
+      "offset": 3853091,
       "min": 0.0,
       "max": 0.18,
       "unit": "fraction",
@@ -260,7 +134,7 @@
     },
     {
       "name": "min_illite_muscovite",
-      "offset": 2310958,
+      "offset": 4203372,
       "min": 0.0,
       "max": 0.36,
       "unit": "fraction",
@@ -269,7 +143,7 @@
     },
     {
       "name": "min_kaolinite",
-      "offset": 2399841,
+      "offset": 4553653,
       "min": 0.0,
       "max": 0.17,
       "unit": "fraction",
@@ -278,7 +152,7 @@
     },
     {
       "name": "min_montmorillonite",
-      "offset": 2488724,
+      "offset": 4903934,
       "min": 0.0,
       "max": 0.21,
       "unit": "fraction",
@@ -287,7 +161,7 @@
     },
     {
       "name": "min_vermiculite",
-      "offset": 2577607,
+      "offset": 5254215,
       "min": 0.0,
       "max": 0.12,
       "unit": "fraction",
@@ -296,7 +170,7 @@
     },
     {
       "name": "min_quartz_feldspar",
-      "offset": 2666490,
+      "offset": 5604496,
       "min": 0.0,
       "max": 0.99,
       "unit": "fraction",
@@ -304,89 +178,8 @@
       "source": "NASA EMIT L3 ASA v002 (EOSDIS LP DAAC), computed by features/earth_surface.py"
     },
     {
-      "name": "lst_day_mean_k",
-      "offset": 2755373,
-      "min": 200.0,
-      "max": 340.0,
-      "unit": "K",
-      "description": "Mean daytime land surface temperature over the year (MODIS, clear sky). Above about 60 degrees the polar-night months are missing, so the mean is warm-biased there.",
-      "source": "NASA MOD11C3 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
-    },
-    {
-      "name": "lst_night_mean_k",
-      "offset": 2844256,
-      "min": 200.0,
-      "max": 320.0,
-      "unit": "K",
-      "description": "Mean night-time land surface temperature over the year (MODIS, clear sky). Above about 60 degrees the polar-night months are missing, so the mean is warm-biased there.",
-      "source": "NASA MOD11C3 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
-    },
-    {
-      "name": "lst_day_max_k",
-      "offset": 2933139,
-      "min": 220.0,
-      "max": 340.0,
-      "unit": "K",
-      "description": "Hottest monthly mean daytime temperature.",
-      "source": "NASA MOD11C3 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
-    },
-    {
-      "name": "lst_night_min_k",
-      "offset": 3022022,
-      "min": 190.0,
-      "max": 310.0,
-      "unit": "K",
-      "description": "Coldest monthly mean night-time temperature. Above about 60 degrees the polar-night months are missing, so the mean is warm-biased there.",
-      "source": "NASA MOD11C3 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
-    },
-    {
-      "name": "lst_diurnal_k",
-      "offset": 3110905,
-      "min": 0.0,
-      "max": 40.0,
-      "unit": "K",
-      "description": "Mean day minus night temperature (day-night swing), months with both values.",
-      "source": "NASA MOD11C3 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
-    },
-    {
-      "name": "ndvi_mean",
-      "offset": 3199788,
-      "min": -0.2,
-      "max": 0.9,
-      "unit": "index",
-      "description": "Mean monthly NDVI over the year (greenness; below 0.1 is bare ground, rock, snow or ice).",
-      "source": "NASA MOD13C2 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
-    },
-    {
-      "name": "ndvi_max",
-      "offset": 3288671,
-      "min": -0.2,
-      "max": 0.9,
-      "unit": "index",
-      "description": "Greenest monthly NDVI of the year.",
-      "source": "NASA MOD13C2 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
-    },
-    {
-      "name": "snow_cover_pct",
-      "offset": 3377554,
-      "min": 0.0,
-      "max": 100.0,
-      "unit": "percent",
-      "description": "Mean monthly snow cover over the months with a snow decision (MODIS). Polar-night months are missing.",
-      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
-    },
-    {
-      "name": "snow_free_months",
-      "offset": 3466437,
-      "min": 0.0,
-      "max": 12.0,
-      "unit": "months",
-      "description": "Months with a snow decision and under 10 % snow cover (months without decision are not counted as free).",
-      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
-    },
-    {
       "name": "impact_dist_km",
-      "offset": 3555320,
+      "offset": 5954777,
       "min": 0.0,
       "max": 300.0,
       "unit": "km",
@@ -395,7 +188,7 @@
     },
     {
       "name": "impact_diam_km",
-      "offset": 3644203,
+      "offset": 6305058,
       "min": 0.0,
       "max": 300.0,
       "unit": "km",
@@ -403,35 +196,98 @@
       "source": "Earth Impact Database (PASSC, University of New Brunswick); computed by features/earth_context.py"
     },
     {
-      "name": "volc_dist_km",
-      "offset": 3733086,
+      "name": "lst_day_mean_k",
+      "offset": 6655339,
+      "min": 200.0,
+      "max": 340.0,
+      "unit": "K",
+      "description": "Mean daytime land surface temperature over the year (MODIS, clear sky). Above about 60 degrees the polar-night months are missing, so the mean is warm-biased there.",
+      "source": "NASA MOD11C3 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "lst_night_mean_k",
+      "offset": 7005620,
+      "min": 200.0,
+      "max": 320.0,
+      "unit": "K",
+      "description": "Mean night-time land surface temperature over the year (MODIS, clear sky). Above about 60 degrees the polar-night months are missing, so the mean is warm-biased there.",
+      "source": "NASA MOD11C3 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "lst_day_max_k",
+      "offset": 7355901,
+      "min": 220.0,
+      "max": 340.0,
+      "unit": "K",
+      "description": "Hottest monthly mean daytime temperature.",
+      "source": "NASA MOD11C3 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "lst_night_min_k",
+      "offset": 7706182,
+      "min": 190.0,
+      "max": 310.0,
+      "unit": "K",
+      "description": "Coldest monthly mean night-time temperature. Above about 60 degrees the polar-night months are missing, so the mean is warm-biased there.",
+      "source": "NASA MOD11C3 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "lst_diurnal_k",
+      "offset": 8056463,
+      "min": 0.0,
+      "max": 40.0,
+      "unit": "K",
+      "description": "Mean day minus night temperature (day-night swing), months with both values.",
+      "source": "NASA MOD11C3 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "ndvi_mean",
+      "offset": 8406744,
+      "min": -0.2,
+      "max": 0.9,
+      "unit": "index",
+      "description": "Mean monthly NDVI over the year (greenness; below 0.1 is bare ground, rock, snow or ice).",
+      "source": "NASA MOD13C2 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "ndvi_max",
+      "offset": 8757025,
+      "min": -0.2,
+      "max": 0.9,
+      "unit": "index",
+      "description": "Greenest monthly NDVI of the year.",
+      "source": "NASA MOD13C2 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "road_dist_km",
+      "offset": 9107306,
       "min": 0.0,
       "max": 300.0,
       "unit": "km",
-      "description": "Distance to the nearest Holocene volcano on land (capped at 300 km)",
-      "source": "Smithsonian Global Volcanism Program, list of Holocene volcanoes; computed by features/earth_context.py"
+      "description": "Distance from the cell centre to the nearest major road of Natural Earth 1:10M (capped at 300 km); small and unpaved roads are not in the map",
+      "source": "Natural Earth 1:10M roads (public domain); computed by features/earth_context.py"
     },
     {
-      "name": "volc_basalt_dist_km",
-      "offset": 3821969,
+      "name": "snow_cover_pct",
+      "offset": 9457587,
       "min": 0.0,
-      "max": 300.0,
-      "unit": "km",
-      "description": "Distance to the nearest basaltic Holocene volcano: shield, volcanic field, fissure vent, cinder cone (capped at 300 km)",
-      "source": "Smithsonian Global Volcanism Program, list of Holocene volcanoes; computed by features/earth_context.py"
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Mean monthly snow cover over the months with a snow decision (MODIS). Polar-night months are missing.",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
     },
     {
-      "name": "precip_mm_yr",
-      "offset": 3910852,
+      "name": "snow_free_months",
+      "offset": 9807868,
       "min": 0.0,
-      "max": 4000.0,
-      "unit": "mm/year",
-      "description": "Mean annual precipitation, NASA POWER (MERRA-2 corrected), 0.5 x 0.625 degree points",
-      "source": "NASA POWER climatology (PRECTOTCORR, MERRA-2); computed by features/earth_context.py"
+      "max": 12.0,
+      "unit": "months",
+      "description": "Months with a snow decision and under 10 % snow cover (months without decision are not counted as free).",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
     },
     {
       "name": "snow_m01",
-      "offset": 3999735,
+      "offset": 10158149,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -440,7 +296,7 @@
     },
     {
       "name": "snow_m02",
-      "offset": 4088618,
+      "offset": 10508430,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -449,7 +305,7 @@
     },
     {
       "name": "snow_m03",
-      "offset": 4177501,
+      "offset": 10858711,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -458,7 +314,7 @@
     },
     {
       "name": "snow_m04",
-      "offset": 4266384,
+      "offset": 11208992,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -467,7 +323,7 @@
     },
     {
       "name": "snow_m05",
-      "offset": 4355267,
+      "offset": 11559273,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -476,7 +332,7 @@
     },
     {
       "name": "snow_m06",
-      "offset": 4444150,
+      "offset": 11909554,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -485,7 +341,7 @@
     },
     {
       "name": "snow_m07",
-      "offset": 4533033,
+      "offset": 12259835,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -494,7 +350,7 @@
     },
     {
       "name": "snow_m08",
-      "offset": 4621916,
+      "offset": 12610116,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -503,7 +359,7 @@
     },
     {
       "name": "snow_m09",
-      "offset": 4710799,
+      "offset": 12960397,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -512,7 +368,7 @@
     },
     {
       "name": "snow_m10",
-      "offset": 4799682,
+      "offset": 13310678,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -521,7 +377,7 @@
     },
     {
       "name": "snow_m11",
-      "offset": 4888565,
+      "offset": 13660959,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -530,7 +386,7 @@
     },
     {
       "name": "snow_m12",
-      "offset": 4977448,
+      "offset": 14011240,
       "min": 0.0,
       "max": 100.0,
       "unit": "percent",
@@ -538,13 +394,157 @@
       "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
     },
     {
-      "name": "road_dist_km",
-      "offset": 5066331,
+      "name": "elev_mean_m",
+      "offset": 14361521,
+      "min": -500.0,
+      "max": 6500.0,
+      "unit": "m",
+      "description": "Mean elevation of the cell above the geoid",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "relief_m",
+      "offset": 14711802,
+      "min": 0.0,
+      "max": 6000.0,
+      "unit": "m",
+      "description": "Elevation range P95-P5 inside the cell",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_mean_deg",
+      "offset": 15062083,
+      "min": 0.0,
+      "max": 40.0,
+      "unit": "deg",
+      "description": "Mean slope at a ~926 m step (Horn)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_lt8",
+      "offset": 15412364,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell with slope under 8 deg (landing limit)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_lt15",
+      "offset": 15762645,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell with slope under 15 deg (rover limit)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "rough_p50_m",
+      "offset": 16112926,
+      "min": 0.0,
+      "max": 500.0,
+      "unit": "m",
+      "description": "Median RMS deviation of elevation in 3 x 3 pixel windows",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_h0",
+      "offset": 16463207,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell in slope class 0 (0-2 deg)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_h1",
+      "offset": 16813488,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell in slope class 1 (2-5 deg)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_h2",
+      "offset": 17163769,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell in slope class 2 (5-8 deg)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_h3",
+      "offset": 17514050,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell in slope class 3 (8-10 deg)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_h4",
+      "offset": 17864331,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell in slope class 4 (10-15 deg)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_h5",
+      "offset": 18214612,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell in slope class 5 (15-20 deg)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_h6",
+      "offset": 18564893,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell in slope class 6 (20-25 deg)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_h7",
+      "offset": 18915174,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell in slope class 7 (25-30 deg)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "slope_h8",
+      "offset": 19265455,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell in slope class 8 (30-90 deg)",
+      "source": "NASA SRTMGL30 (EOSDIS LP DAAC), computed by features/earth_terrain.py"
+    },
+    {
+      "name": "volc_dist_km",
+      "offset": 19615736,
       "min": 0.0,
       "max": 300.0,
       "unit": "km",
-      "description": "Distance from the cell centre to the nearest major road of Natural Earth 1:10M (capped at 300 km); small and unpaved roads are not in the map",
-      "source": "Natural Earth 1:10M roads (public domain); computed by features/earth_context.py"
+      "description": "Distance to the nearest Holocene volcano on land (capped at 300 km)",
+      "source": "Smithsonian Global Volcanism Program, list of Holocene volcanoes; computed by features/earth_context.py"
+    },
+    {
+      "name": "volc_basalt_dist_km",
+      "offset": 19966017,
+      "min": 0.0,
+      "max": 300.0,
+      "unit": "km",
+      "description": "Distance to the nearest basaltic Holocene volcano: shield, volcanic field, fissure vent, cinder cone (capped at 300 km)",
+      "source": "Smithsonian Global Volcanism Program, list of Holocene volcanoes; computed by features/earth_context.py"
     }
   ],
   "min_land_frac": 0.2,

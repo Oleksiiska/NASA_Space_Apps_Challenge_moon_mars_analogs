@@ -83,9 +83,11 @@ def run_all(force: list[str] | None = None, fetch: bool = False, log: Callable[[
     if (config.processed_dir() / "grid.bin").exists() and "grid" not in force:
         head("grid", "done (grid.bin is there)")
     else:
-        head("grid", "building the land grid (about 3 minutes)")
         from . import build
-        build.build_grid()
+        from .prep import layers as _layers
+        cd = _layers.grid_cell_deg()
+        head("grid", f"building the {cd:g} degree land grid (about {3 if cd >= 0.5 else 10} minutes)")
+        build.build_grid(cell_deg=cd)
         feats = _grid_features()
 
     # 4. terrain from SRTM
