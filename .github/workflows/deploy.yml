@@ -1,0 +1,74 @@
+name: deploy
+
+on:
+  workflow_run:
+    workflows: [tests]
+    types: [completed]
+    branches: [analog-finder]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: >-
+      (github.event_name == 'workflow_run'
+        && github.event.workflow_run.conclusion == 'success'
+        && github.event.workflow_run.event == 'push')
+      || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/analog-finder')
+    runs-on: ubuntu-latest
+    environment:
+      name: nasa
+      url: https://${{ vars.SITE_DOMAIN }}
+    env:
+      APP_DIR: analog-finder
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - name: Check the built page
+        run: |
+          test -s webapp/index.html
+          head -c 300 webapp/index.html | grep -q 'Analog Finder'
+          grep -q 'const BLOB_B64="H4sI' webapp/index.html
+      - name: SSH setup
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host server\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n' \
+            "$DEPLOY_HOST" "$DEPLOY_USER" > ~/.ssh/config
+      - name: Upload page and server config
+        env:
+          SITE_DOMAIN: ${{ vars.SITE_DOMAIN }}
+        run: |
+          ssh server "mkdir -p ~/$APP_DIR/site"
+          scp deploy/Caddyfile deploy/docker-compose.yml "server:~/$APP_DIR/"
+          scp webapp/index.html "server:~/$APP_DIR/site/index.html.new"
+          ssh server "mv ~/$APP_DIR/site/index.html.new ~/$APP_DIR/site/index.html"
+          printf 'SITE_ADDRESS=%s\nHTTP_PORT=80\nHTTPS_PORT=443\nSITE_DIR=./site\n' "$SITE_DOMAIN" \
+            | ssh server "cat > ~/$APP_DIR/.env"
+      - name: Start or reload the web server
+        run: |
+          ssh server "cd ~/$APP_DIR && docker compose up -d && docker compose exec -T web caddy reload --config /etc/caddy/Caddyfile"
+      - name: Check the live page
+        env:
+          SITE_DOMAIN: ${{ vars.SITE_DOMAIN }}
+        run: |
+          for i in 1 2 3 4 5 6 7 8 9; do
+            if curl -fsS "https://$SITE_DOMAIN/" | head -c 300 | grep -q 'Analog Finder'; then
+              echo "live"; exit 0; fi
+            sleep 10
+          done
+          echo "page not reachable over HTTPS (first run: certificate may take a minute; check DNS and ports 80/443)"; exit 1
