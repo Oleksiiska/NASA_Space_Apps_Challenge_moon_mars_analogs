@@ -66,6 +66,46 @@ def validate(cells: scoring.Cells, profiles: dict, analogs: list[dict], tasks: O
     return {"schema": SCHEMA, "records": records, "skipped_tasks": skipped, "summary": summarize(records)}
 
 
+def sensitivity(cells: scoring.Cells, profiles: dict, tasks: Optional[dict] = None, n_draws: int = 30,
+                top_frac: float = 0.05, spread: float = 0.25, seed: int = 1) -> dict:
+    """Stability of the ranking when every weight of a task is changed by up to +-25 %.
+
+    For each task and main target: share of the baseline top 5 % cells that stay in the top 5 % after each random change of
+    the weights (mean over draws). 1.0 = the same cells every time. Also the share of top cells in dense vegetation
+    (NDVI over 0.4), which should be near zero.
+    """
+    tasks = tasks or {t["id"]: t for t in config.tasks()["tasks"]}
+    rng = np.random.default_rng(seed)
+    shared = scoring.shared_criteria(cells)
+    ndvi = cells.f["ndvi_mean"]
+    rows = []
+    for tid, task in tasks.items():
+        for world in task["worlds"]:
+            for tg in _targets(profiles, world):
+                crit = scoring.criteria_for(cells, profiles[tg], shared)
+                base, _, _ = scoring.task_score(task, crit, world, cells)
+                ok = np.isfinite(base)
+                if ok.sum() < 100:
+                    continue
+                k = max(10, int(top_frac * ok.sum()))
+                top = np.argsort(-np.nan_to_num(base, nan=-1))[:k]
+                overlaps = []
+                for _ in range(n_draws):
+                    w = {n: v * (1 + rng.uniform(-spread, spread)) for n, v in task["weights"].items()}
+                    sc, _, _ = scoring.task_score(task, crit, world, cells, weights=w)
+                    top2 = set(np.argsort(-np.nan_to_num(sc, nan=-1))[:k].tolist())
+                    overlaps.append(len(top2.intersection(top.tolist())) / k)
+                dense = float(np.mean(ndvi[top] > 0.4)) if np.isfinite(ndvi[top]).any() else None
+                rows.append({"task": tid, "target": tg, "top_cells": int(k), "mean_overlap": round(float(np.mean(overlaps)), 3),
+                             "min_overlap": round(float(np.min(overlaps)), 3), "share_dense_vegetation": None if dense is None else round(dense, 3)})
+    by_task = {}
+    for t in sorted({r["task"] for r in rows}):
+        rr = [r for r in rows if r["task"] == t]
+        by_task[t] = {"mean_overlap": round(float(np.mean([r["mean_overlap"] for r in rr])), 3),
+                      "share_dense_vegetation": round(float(np.mean([r["share_dense_vegetation"] or 0 for r in rr])), 3)}
+    return {"spread": spread, "draws": n_draws, "top_fraction": top_frac, "rows": rows, "by_task": by_task}
+
+
 def summarize(records: list[dict]) -> dict:
     def stats(key: str, rows: list[dict]) -> dict:
         v = np.array([r[key] for r in rows if r[key] is not None], dtype=float)
@@ -104,6 +144,16 @@ def report_markdown(result: dict) -> str:
     lines += ["", "## Per site", "", "| Site | Task | Target | Percentile | With filters | Failed filters |", "|---|---|---|---|---|---|"]
     for r in sorted(result["records"], key=lambda r: (r["task"], r["analog"], r["target"])):
         lines.append(f"| {r['analog']} | {r['task']} | {r['target']} | {r['percentile']} | {r['percentile_filtered']} | {', '.join(r['failed_filters']) or ''} |")
+    sens = result.get("sensitivity")
+    if sens:
+        lines += ["", "## Stability when the weights change", "",
+                  f"Every weight of a task was changed at random by up to +-{int(sens['spread'] * 100)} % ({sens['draws']} draws). "
+                  f"Share of the baseline top {int(sens['top_fraction'] * 100)} % cells that stay in the top {int(sens['top_fraction'] * 100)} % (1.0 = unchanged), "
+                  "and the share of those top cells under dense vegetation (NDVI over 0.4; should be near zero, though the bare-ground filter removes dense vegetation by construction).", "",
+                  "| Task | stays in top 5 % | dense vegetation in top |", "|---|---|---|"]
+        for t, d in sens["by_task"].items():
+            lines.append(f"| {t} | {d['mean_overlap']:.0%} | {d['share_dense_vegetation']:.0%} |")
+        lines += ["", "No spatial hold-out is run: no weight or threshold is fitted to the known sites, so every site is already unseen by the method."]
     lines += ["", "## How to read this", "",
               "- A cell is about 55 km across; a site is much smaller. A flat Martian plain (Arcadia) is rarely matched by a whole cell.",
               "- Earth cannot reach lunar or Martian cold, vacuum or radiation. Cold, thermal range and low Sun are ranked in the useful direction only.",
@@ -164,6 +214,8 @@ def run(processed_dir: Optional[Path] = None, log=print) -> dict:
     if missing:
         raise RuntimeError("grid.bin lacks " + ", ".join(missing) + ". Run: terrain, surface, merge")
     result = validate(cells, profiles, reference.read_analogs(validate_only=True))
+    log("Sensitivity to +-25 % weight changes ...")
+    result["sensitivity"] = sensitivity(cells, profiles)
     (pdir / "validation.json").write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
     (pdir / "validation.md").write_text(report_markdown(result), encoding="utf-8")
     doc = export_scores(cells, profiles, pdir)
@@ -172,5 +224,7 @@ def run(processed_dir: Optional[Path] = None, log=print) -> dict:
         f"median percentile {s['scores_only']['median_percentile']} (random 0.5), top 20 %: {s['scores_only']['share_top20']:.0%} (random 20 %)")
     for t, why in result["skipped_tasks"].items():
         log(f"  task {t} cannot be ranked: {why}")
+    for t, d in result["sensitivity"]["by_task"].items():
+        log(f"  {t}: {d['mean_overlap']:.0%} of the top 5 % stays when weights change by 25 %; dense vegetation in the top: {d['share_dense_vegetation']:.0%}")
     log(f"Wrote validation.json, validation.md, criteria.bin ({len(doc['criteria'])} criteria) and criteria.json to {pdir}")
     return result

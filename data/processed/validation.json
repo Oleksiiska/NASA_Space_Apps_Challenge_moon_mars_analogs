@@ -673,5 +673,182 @@
     }
    }
   }
+ },
+ "sensitivity": {
+  "spread": 0.25,
+  "draws": 30,
+  "top_fraction": 0.05,
+  "rows": [
+   {
+    "task": "landing",
+    "target": "shackleton_ridge",
+    "top_cells": 1175,
+    "mean_overlap": 0.982,
+    "min_overlap": 0.957,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "landing",
+    "target": "mons_mouton",
+    "top_cells": 1175,
+    "mean_overlap": 0.973,
+    "min_overlap": 0.932,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "landing",
+    "target": "jezero",
+    "top_cells": 1175,
+    "mean_overlap": 0.928,
+    "min_overlap": 0.826,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "landing",
+    "target": "arcadia_planitia",
+    "top_cells": 1175,
+    "mean_overlap": 0.952,
+    "min_overlap": 0.909,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "mobility",
+    "target": "shackleton_ridge",
+    "top_cells": 1175,
+    "mean_overlap": 0.984,
+    "min_overlap": 0.965,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "mobility",
+    "target": "mons_mouton",
+    "top_cells": 1175,
+    "mean_overlap": 0.98,
+    "min_overlap": 0.954,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "mobility",
+    "target": "jezero",
+    "top_cells": 1175,
+    "mean_overlap": 0.937,
+    "min_overlap": 0.889,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "mobility",
+    "target": "arcadia_planitia",
+    "top_cells": 1175,
+    "mean_overlap": 0.903,
+    "min_overlap": 0.807,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "eva_geology",
+    "target": "shackleton_ridge",
+    "top_cells": 1175,
+    "mean_overlap": 0.874,
+    "min_overlap": 0.076,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "eva_geology",
+    "target": "mons_mouton",
+    "top_cells": 1175,
+    "mean_overlap": 0.933,
+    "min_overlap": 0.09,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "isru_ice",
+    "target": "shackleton_ridge",
+    "top_cells": 2295,
+    "mean_overlap": 0.992,
+    "min_overlap": 0.99,
+    "share_dense_vegetation": null
+   },
+   {
+    "task": "isru_ice",
+    "target": "mons_mouton",
+    "top_cells": 2295,
+    "mean_overlap": 0.992,
+    "min_overlap": 0.99,
+    "share_dense_vegetation": null
+   },
+   {
+    "task": "isru_ice",
+    "target": "jezero",
+    "top_cells": 2295,
+    "mean_overlap": 0.992,
+    "min_overlap": 0.99,
+    "share_dense_vegetation": null
+   },
+   {
+    "task": "isru_ice",
+    "target": "arcadia_planitia",
+    "top_cells": 2295,
+    "mean_overlap": 0.992,
+    "min_overlap": 0.99,
+    "share_dense_vegetation": null
+   },
+   {
+    "task": "low_sun_ops",
+    "target": "shackleton_ridge",
+    "top_cells": 931,
+    "mean_overlap": 0.708,
+    "min_overlap": 0.343,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "low_sun_ops",
+    "target": "mons_mouton",
+    "top_cells": 931,
+    "mean_overlap": 0.798,
+    "min_overlap": 0.507,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "biosignatures",
+    "target": "jezero",
+    "top_cells": 525,
+    "mean_overlap": 0.91,
+    "min_overlap": 0.806,
+    "share_dense_vegetation": 0.0
+   },
+   {
+    "task": "biosignatures",
+    "target": "arcadia_planitia",
+    "top_cells": 525,
+    "mean_overlap": 0.925,
+    "min_overlap": 0.846,
+    "share_dense_vegetation": 0.0
+   }
+  ],
+  "by_task": {
+   "biosignatures": {
+    "mean_overlap": 0.917,
+    "share_dense_vegetation": 0.0
+   },
+   "eva_geology": {
+    "mean_overlap": 0.903,
+    "share_dense_vegetation": 0.0
+   },
+   "isru_ice": {
+    "mean_overlap": 0.992,
+    "share_dense_vegetation": 0.0
+   },
+   "landing": {
+    "mean_overlap": 0.959,
+    "share_dense_vegetation": 0.0
+   },
+   "low_sun_ops": {
+    "mean_overlap": 0.753,
+    "share_dense_vegetation": 0.0
+   },
+   "mobility": {
+    "mean_overlap": 0.951,
+    "share_dense_vegetation": 0.0
+   }
+  }
  }
 }

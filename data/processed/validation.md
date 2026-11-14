@@ -68,6 +68,21 @@ Each site is a cell of the 0.5 degree grid; its score is turned into a percentil
 | sp_crater | mobility | mons_mouton | 0.674 | 0.597 |  |
 | sp_crater | mobility | shackleton_ridge | 0.673 | 0.55 |  |
 
+## Stability when the weights change
+
+Every weight of a task was changed at random by up to +-25 % (30 draws). Share of the baseline top 5 % cells that stay in the top 5 % (1.0 = unchanged), and the share of those top cells under dense vegetation (NDVI over 0.4; should be near zero).
+
+| Task | stays in top 5 % | dense vegetation in top |
+|---|---|---|
+| biosignatures | 92% | 0% |
+| eva_geology | 90% | 0% |
+| isru_ice | 99% | 0% |
+| landing | 96% | 0% |
+| low_sun_ops | 75% | 0% |
+| mobility | 95% | 0% |
+
+No spatial hold-out is run: no weight or threshold is fitted to the known sites, so every site is already unseen by the method.
+
 ## How to read this
 
 - A cell is about 55 km across; a site is much smaller. A flat Martian plain (Arcadia) is rarely matched by a whole cell.

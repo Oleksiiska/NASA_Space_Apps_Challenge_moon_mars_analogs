@@ -27,6 +27,8 @@ button,select,input{font:inherit;color:inherit}
 .wrap{max-width:1500px;margin:0 auto}
 header{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:flex-end;justify-content:space-between;padding-block:16px 12px}
 header p{color:var(--muted);max-width:62ch}
+.disc{font-size:12px;border-left:3px solid var(--warn);padding-left:10px;max-width:90ch!important}
+details{margin-top:10px}summary{cursor:pointer;font-weight:500}details p{margin-top:6px;color:var(--muted);font-size:13px;max-width:70ch}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--surface)}
 .seg button{border:0;background:none;padding:5px 12px;cursor:pointer;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
@@ -101,6 +103,7 @@ footer{padding:8px 0 28px;color:var(--muted);font-size:12px;border-top:1px solid
     <h1 data-i="title">Moon–Mars Analog Finder</h1>
     <p data-i="sub">Where on Earth are the conditions of a lunar or Martian site closest? Pick a target and a task, weigh the criteria, and see which 55 km cells of the Earth match, and what they cannot reproduce.</p>
   </div>
+  <p class="disc" data-i="disc" style="flex-basis:100%"></p>
   <div class="seg" role="group" aria-label="Language"><button id="l-en" aria-pressed="true">EN</button><button id="l-uk" aria-pressed="false">УК</button></div>
 </header>
 
@@ -164,6 +167,15 @@ const I18N = {
     near:"Known analogs within 1,000 km",none:"none",gaps:"What Earth cannot reproduce",gaps_sub:"Shown next to every candidate, never mixed into the score.",q:"Quantity",earth:"Earth",not_rep:"not reproducible",partly:"partly",workaround:"Workaround",
     rel:"How far to trust this",rel_a:"Checked on known analog sites: a random site would score a median percentile of 0.5 and fall in the top 20 % one time in five.",
     sites:"scored site–task pairs",median:"median percentile",top20:"in the top 20 %",weights_not_tuned:"Weights are set by hand from the task, not tuned on the known analogs.",
+    disc:"Screening tool: it ranks where on Earth conditions look similar. It is not an engineering or site-selection recommendation.",
+    stab:"Stability",stab_in:"Stays in the top 10 % in",stab_of:"of 20 weight changes of up to ±25 %",stab_out:"Not in the top 10 % of this task",
+    newc:"New: no known analog within 1,000 km",knownc:"Near a known analog",thiscell:"This cell",tgt:"Target",tonly:"The target also has, and Earth cannot match",
+    f_slope:"Mean slope (1 km step)",f_relief:"Relief P5–P95",f_rough:"Roughness (median)",f_flat:"Share under 8° slope",f_tmin:"Coldest surface (annual mean)",f_ice:"Ice stable within 1 m",f_sun:"Highest Sun above a flat horizon",f_h2o:"Water in the top soil (GRS)",
+    how:"How it works",how1:"Every target gets a fingerprint from the same measures as every Earth cell: slope classes, relief and roughness at a ~1 km step (SRTM, MOLA and LOLA are brought to the same step), temperature, snow, vegetation, minerals and low-Sun hours.",
+    how2:"Each test task has hand-set weights (sliders) and hard filters. A cell’s score is the weighted mean of the criteria that have data; cells with under half of the weight in data get no score.",
+    how3:"Terrain criteria compare the cell with the target. Cold, day–night swing, low Sun, ground ice and minerals rank Earth cells in the useful direction, because Earth cannot reach lunar or Martian values.",
+    how4:"The known analog sites are only used to check the ranking, never to tune it. What Earth cannot reproduce is shown next to every candidate, not inside the score.",
+    srcs:"Data and sources",src1:"Earth: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) and MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth land.",src2:"Moon: LRO LOLA and Diviner polar resource product (NASA PDS Geosciences). Mars: MGS MOLA MEGDR and Mars Odyssey GRS (NASA PDS).",
     lim1:"A cell is about 55 km across; real analog sites are far smaller.",lim2:"Cold, thermal range and low Sun are ranked in the useful direction only; Earth cannot reach lunar or Martian values.",lim3:"No volcanic, impact or dryness layer yet: geology tasks lean on terrain, and caves cannot be ranked.",lim4:"Ground ice is a proxy from annual surface temperature and glaciers. Minerals exist only for bare ground between 55°N and 54.5°S.",
     nocell:"No cell has enough data for this task yet: ",ranked:"cells ranked",pct:"percentile",lat:"lat",lon:"lon",reg:"Region around",
     elev:"Mean elevation",relief:"Relief P5–P95",slope:"Mean slope",flat:"Share under 8° slope",tday:"Daytime surface, annual mean",tnight:"Coldest night month",swing:"Day–night swing",ndvi:"NDVI (greenness)",snow:"Snow-free months",lowsun:"Low-Sun hours per day (best month)",ice:"Glacier share",
@@ -180,6 +192,15 @@ const I18N = {
     near:"Відомі аналоги за 1000 км",none:"немає",gaps:"Чого Земля не відтворює",gaps_sub:"Показано біля кожного кандидата й не змішується з оцінкою.",q:"Величина",earth:"Земля",not_rep:"не відтворюється",partly:"частково",workaround:"Обхід",
     rel:"Наскільки цьому довіряти",rel_a:"Перевірено на відомих аналогах: випадкове місце мало б медіану перцентиля 0,5 і потрапляло б у топ-20 % раз із п’яти.",
     sites:"оцінених пар місце–задача",median:"медіана перцентиля",top20:"у топ-20 %",weights_not_tuned:"Ваги задані вручну з опису задачі, а не підібрані за відомими аналогами.",
+    disc:"Інструмент скринінгу: показує, де на Землі умови схожі. Це не інженерна рекомендація і не вибір місця посадки.",
+    stab:"Стабільність",stab_in:"Лишається в топ-10 % у",stab_of:"із 20 змін ваг до ±25 %",stab_out:"Не входить у топ-10 % цієї задачі",
+    newc:"Нове: відомих аналогів ближче за 1000 км немає",knownc:"Поруч із відомим аналогом",thiscell:"Ця клітинка",tgt:"Ціль",tonly:"Ціль має також те, чого Земля не відтворює",
+    f_slope:"Середній схил (крок 1 км)",f_relief:"Рельєф P5–P95",f_rough:"Шорсткість (медіана)",f_flat:"Частка зі схилом до 8°",f_tmin:"Найхолодніша поверхня (річне середнє)",f_ice:"Лід стабільний у межах 1 м",f_sun:"Найвище Сонце над рівним горизонтом",f_h2o:"Вода у верхньому ґрунті (GRS)",
+    how:"Як це працює",how1:"Кожна ціль і кожна клітинка Землі отримують «відбиток» з однакових вимірів: класи схилів, рельєф і шорсткість на кроці ~1 км (SRTM, MOLA і LOLA приведено до одного кроку), температура, сніг, рослинність, мінерали та години низького Сонця.",
+    how2:"Кожна тестова задача має задані вручну ваги (повзунки) і жорсткі фільтри. Оцінка клітинки — зважене середнє критеріїв, для яких є дані; клітинки, де даних менше ніж на половину ваги, оцінки не мають.",
+    how3:"Критерії рельєфу порівнюють клітинку з ціллю. Холод, різниця день–ніч, низьке Сонце, ґрунтовий лід і мінерали ранжують клітинки Землі в потрібному напрямку, бо Земля не досягає місячних чи марсіанських значень.",
+    how4:"Відомі аналоги лише перевіряють рейтинг і ніколи його не налаштовують. Те, чого Земля не відтворює, показано біля кандидата, а не всередині оцінки.",
+    srcs:"Дані та джерела",src1:"Земля: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) і MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth.",src2:"Місяць: LRO LOLA і полярний ресурсний продукт Diviner (NASA PDS Geosciences). Марс: MGS MOLA MEGDR і Mars Odyssey GRS (NASA PDS).",
     lim1:"Клітинка має близько 55 км, а справжні майданчики набагато менші.",lim2:"Холод, добовий діапазон і низьке Сонце ранжуються лише в потрібному напрямку: Земля не досягає місячних чи марсіанських значень.",lim3:"Шарів вулканів, імпактних структур і посушливості ще немає: геологічні задачі спираються на рельєф, а печери не ранжуються.",lim4:"Ґрунтовий лід — наближення за річною температурою поверхні та льодовиками. Мінерали є лише для голого ґрунту між 55° пн.ш. і 54,5° пд.ш.",
     nocell:"Для цієї задачі ще немає клітинок з достатніми даними: ",ranked:"клітинок ранжовано",pct:"перцентиль",lat:"шир.",lon:"довг.",reg:"Регіон навколо",
     elev:"Середня висота",relief:"Рельєф P5–P95",slope:"Середній схил",flat:"Частка зі схилом до 8°",tday:"Денна поверхня, річне середнє",tnight:"Найхолодніший нічний місяць",swing:"Різниця день–ніч",ndvi:"NDVI (зелень)",snow:"Місяців без снігу",lowsun:"Годин низького Сонця на добу (найкращий місяць)",ice:"Частка льодовиків",
@@ -391,6 +412,33 @@ function fillSliders(){
   $("unchecked").textContent=nc.length?T("unchecked")+nc.join(", "):"";
 }
 
+/* ---------- stability of the selected cell under +-25 % weight changes ---------- */
+let stabTimer=0;
+function scheduleStability(){clearTimeout(stabTimer); stabTimer=setTimeout(computeStability,150)}
+function computeStability(){
+  const el=$("stab"); if(!el||S.sel<0||!D) return;
+  const v=SC[S.sel]; if(!(v===v)){el.textContent=""; return}
+  if(pctOf(v)<0.9){el.textContent=T("stab")+": "+T("stab_out"); return}
+  const task=taskById(S.task), n=M.n, items=[]; let mask=0;
+  for(const name of Object.keys(task.weights)) if(available(name)&&(S.weights[name]??0)>0) items.push({w:S.weights[name],off:critOffset(name)});
+  for(const c of task.constraints||[]) if(S.on[c]&&M.constraint_bits[c]!==undefined) mask|=1<<M.constraint_bits[c];
+  let total=0; for(const name of Object.keys(task.weights)) total+=S.weights[name]??0;
+  const cOff=M.constraint_offset, minCov=M.min_coverage, DR=20; let seed=12345, hits=0;
+  const rnd=()=>{seed=(seed*1664525+1013904223)>>>0; return seed/4294967296};
+  const sc=new Float32Array(n);
+  for(let d=0;d<DR;d++){
+    const w=items.map(it=>it.w*(1+(rnd()*2-1)*0.25)); let tw=0; for(const x of w) tw+=x; const tot=total*(tw/items.reduce((a,b)=>a+b.w,0));
+    const bins=new Uint32Array(512); let cnt=0;
+    for(let i=0;i<n;i++){
+      let num=0,den=0;
+      for(let k=0;k<items.length;k++){const q=D[items[k].off+i]; if(q!==255){num+=w[k]*q;den+=w[k]}}
+      if(den>0&&den/tot>=minCov&&(D[cOff+i]&mask)===mask){const s=num/den/254; sc[i]=s; bins[Math.min(511,Math.floor(s*512))]++; cnt++} else sc[i]=-1;
+    }
+    let acc=0,b=511; for(;b>=0;b--){acc+=bins[b]; if(acc>=cnt*0.1) break}
+    if(sc[S.sel]>=b/512) hits++;
+  }
+  el.textContent=T("stab")+": "+T("stab_in")+" "+hits+" "+T("stab_of");
+}
 /* ---------- UI: results ---------- */
 function fmt(v){ if(typeof v!=="number") return String(v); const a=Math.abs(v); if(a!==0&&a<0.01) return v.toExponential(1); return v.toLocaleString(lang==="uk"?"uk-UA":"en-US",{maximumSignificantDigits:4}) }
 function nearbyAnalogs(i){const la=cellLat(i),lo=cellLon(i);
@@ -429,16 +477,29 @@ function renderCard(){
     return '<span class="chip '+(ok?"ok":"no")+'">'+TN("cons",c)+": "+(ok?T("pass"):T("fail"))+"</span>"});
   if(chips.length) h+='<p style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">'+chips.join("")+"</p>";
   const f=(n,d)=>{const x=raw(n,i); return x===x?x.toFixed(d):"–"};
-  h+='<h3 style="margin-top:14px">'+T("facts")+'</h3><div class="kv">'+
-    "<span>"+T("elev")+"</span><span>"+f("elev_mean_m",0)+" m</span>"+"<span>"+T("relief")+"</span><span>"+f("relief_m",0)+" m</span>"+
-    "<span>"+T("slope")+"</span><span>"+f("slope_mean_deg",1)+"°</span>"+"<span>"+T("flat")+"</span><span>"+(raw("slope_lt8",i)===raw("slope_lt8",i)?(raw("slope_lt8",i)*100).toFixed(0)+" %":"–")+"</span>"+
+  const tf=M.tfacts[S.target]||{}; const nv=(x,d,u)=>(x===null||x===undefined||x!==x)?"–":(+x).toFixed(d)+(u||"");
+  const fl=raw("slope_lt8",i);
+  h+='<h3 style="margin-top:14px">'+T("facts")+'</h3><table class="tbl"><thead><tr><th></th><th>'+T("thiscell")+'</th><th>'+T("tgt")+'</th></tr></thead><tbody>'+
+    "<tr><td>"+T("f_slope")+'</td><td class="n">'+f("slope_mean_deg",1)+'°</td><td class="n">'+nv(tf.slope,1,"°")+"</td></tr>"+
+    "<tr><td>"+T("f_relief")+'</td><td class="n">'+f("relief_m",0)+' m</td><td class="n">'+nv(tf.relief,0," m")+"</td></tr>"+
+    "<tr><td>"+T("f_rough")+'</td><td class="n">'+f("rough_p50_m",0)+' m</td><td class="n">'+nv(tf.rough,0," m")+"</td></tr>"+
+    "<tr><td>"+T("f_flat")+'</td><td class="n">'+(fl===fl?(fl*100).toFixed(0)+" %":"–")+'</td><td class="n">'+(tf.flat!==undefined&&tf.flat!==null?(tf.flat*100).toFixed(0)+" %":"–")+"</td></tr></tbody></table>"+
+    '<div class="kv" style="margin-top:8px">'+
+    "<span>"+T("elev")+"</span><span>"+f("elev_mean_m",0)+" m</span>"+
     "<span>"+T("tday")+"</span><span>"+f("lst_day_mean_k",0)+" K</span>"+"<span>"+T("tnight")+"</span><span>"+f("lst_night_min_k",0)+" K</span>"+
     "<span>"+T("swing")+"</span><span>"+f("lst_diurnal_k",0)+" K</span>"+"<span>"+T("ndvi")+"</span><span>"+f("ndvi_mean",2)+"</span>"+
     "<span>"+T("snow")+"</span><span>"+f("snow_free_months",0)+" / 12</span>"+"<span>"+T("lowsun")+"</span><span>"+f("lowsun_best_h",1)+" h</span>"+
     "<span>"+T("ice")+"</span><span>"+(raw("ice_frac",i)===raw("ice_frac",i)?(raw("ice_frac",i)*100).toFixed(0)+" %":"–")+"</span></div>";
+  const only=[]; if(tf.t_min!==undefined&&tf.t_min!==null) only.push([T("f_tmin"),nv(tf.t_min,0," K")]);
+  if(tf.ice1m!==undefined&&tf.ice1m!==null) only.push([T("f_ice"),(tf.ice1m*100).toFixed(0)+" %"]);
+  if(tf.sun_max!==undefined&&tf.sun_max!==null) only.push([T("f_sun"),nv(tf.sun_max,1,"°")]);
+  if(tf.h2o!==undefined&&tf.h2o!==null) only.push([T("f_h2o"),nv(tf.h2o,1," wt%")]);
+  if(only.length) h+='<h3 style="margin-top:14px">'+T("tonly")+'</h3><div class="kv">'+only.map(r=>"<span>"+r[0]+"</span><span>"+r[1]+"</span>").join("")+"</div>";
   const near=nearbyAnalogs(i);
   h+='<h3 style="margin-top:14px">'+T("near")+'</h3>'+(near.length?'<ul class="plain">'+near.map(x=>"<li><b>"+(lang==="uk"?x.a.name_uk:x.a.name)+"</b>, "+x.a.country+" · "+Math.round(x.d)+" km"+(x.a.validate?"":' <span class="chip">approx.</span>')+"</li>").join("")+"</ul>":'<p class="sub">'+T("none")+"</p>");
-  box.innerHTML=h;
+  const isNew=!nearbyAnalogs(i).length;
+  h=h.replace('<h3 style="margin-top:12px">'+T("crit")+'</h3>','<p style="margin:8px 0 0"><span class="chip '+(isNew?"ok":"part")+'">'+(isNew?T("newc"):T("knownc"))+'</span></p><p class="sub" id="stab" style="margin-top:6px"></p><h3 style="margin-top:12px">'+T("crit")+'</h3>');
+  box.innerHTML=h; scheduleStability();
 }
 function renderGaps(){
   const w=S.world; let h='<h2>'+T("gaps")+"</h2><p class=\"sub\">"+T("gaps_sub")+"</p>";
@@ -456,6 +517,10 @@ function renderRel(){
    "<span>"+T("sites")+"</span><span>"+v.scored+" / "+v.pairs+"</span><span>"+T("median")+"</span><span>"+v.median_percentile.toFixed(2)+"</span><span>"+T("top20")+"</span><span>"+Math.round(v.share_top20*100)+" %</span></div>";
   if(bt) h+='<p class="sub" style="margin-top:8px">'+tname(taskById(S.task))+": "+bt.scores_only.scored+" "+T("sites")+", "+T("median")+" "+bt.scores_only.median_percentile.toFixed(2)+", "+T("top20")+" "+Math.round(bt.scores_only.share_top20*100)+" %.</p>";
   h+='<ul class="plain sub"><li>'+T("weights_not_tuned")+"</li><li>"+T("lim1")+"</li><li>"+T("lim2")+"</li><li>"+T("lim3")+"</li><li>"+T("lim4")+"</li></ul>";
+  const se=M.sensitivity&&M.sensitivity[S.task];
+  if(se) h+='<p class="sub" style="margin-top:8px">'+T("stab")+": "+Math.round(se.mean_overlap*100)+" % "+(lang==="uk"?"верхніх 5 % клітинок лишаються при зміні ваг на ±25 %.":"of the top 5 % cells stay when the weights change by 25 %.")+"</p>";
+  h+='<details><summary>'+T("how")+'</summary><p>'+T("how1")+"</p><p>"+T("how2")+"</p><p>"+T("how3")+"</p><p>"+T("how4")+"</p></details>";
+  h+='<details><summary>'+T("srcs")+'</summary><p>'+T("src1")+"</p><p>"+T("src2")+"</p></details>";
   $("rel").innerHTML=h;
 }
 function select(i,center){
