@@ -101,3 +101,24 @@ def test_context_criteria_appear_only_with_their_features():
     assert sh["volcanic"][1] == pytest.approx(0.6 * np.exp(-1), rel=1e-3)
     assert (sh["impact"] == 1).all() and (sh["dryness"] == 1).all()
     assert scoring.no_data_yet(sh) == []
+
+
+def test_road_points_skip_ferries_and_densify():
+    data = {"features": [
+        {"properties": {"type": "Major Highway"}, "geometry": {"type": "LineString", "coordinates": [[0.0, 0.0], [1.0, 0.0]]}},
+        {"properties": {"type": "Ferry Route"}, "geometry": {"type": "LineString", "coordinates": [[10.0, 10.0], [11.0, 10.0]]}},
+        {"properties": {"type": "Road"}, "geometry": {"type": "MultiLineString", "coordinates": [[[20.0, 20.0], [20.05, 20.0]]]}}]}
+    pts = ec.road_points(data)
+    lons = sorted(p["lon"] for p in pts if abs(p["lat"] - 0.05) < 1e-9)
+    assert len(lons) >= 10 and lons[0] == pytest.approx(0.05) and lons[-1] == pytest.approx(1.05)   # 111 km densified, 0.1 deg bins
+    assert not any(9.9 < p["lat"] < 10.2 for p in pts)                                              # ferry left out
+    assert any(abs(p["lat"] - 20.05) < 1e-9 for p in pts)
+
+
+def test_road_access_filter_appears_with_the_road_layer():
+    from test_scoring import make_cells
+    cells = make_cells()
+    assert "road_access" not in scoring.constraints(cells)
+    cells.f["road_dist_km"] = np.array([0, 49, 51, 300, np.nan, 10], np.float32)
+    ok = scoring.constraints(cells)["road_access"]
+    assert ok.tolist() == [True, True, False, False, True, True]

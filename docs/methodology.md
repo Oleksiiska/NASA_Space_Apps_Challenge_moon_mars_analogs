@@ -30,7 +30,7 @@ training and useless for testing ice drills.
 | Slope classes, mean slope, relief, roughness, elevation | NASA SRTMGL30 | Same functions as for the targets, 60 × 60 pixels per cell |
 | Surface temperature (day and night means, hottest and coldest month, day–night swing) | MODIS MOD11C3, 12 months of 2023 | 10 × 10 blocks of 0.05 degree pixels; at least 6 valid months |
 | Greenness (NDVI mean and maximum) | MODIS MOD13C2, 12 months | Same |
-| Snow cover and snow-free months | MODIS MOD10CM, 12 months | Codes for night, cloud and water are treated as unknown |
+| Snow cover (annual mean and each month), snow-free months | MODIS MOD10CM, 12 months | Codes for night, cloud and water are treated as unknown |
 | Mineral abundances (11 minerals) | NASA EMIT L3 ASA | EMIT cells are a quarter cell off the grid and are averaged 2 × 2; only bare ground between 55 N and 54.5 S |
 | Hours per day with the Sun 0–5 degrees up | Solar geometry (`features/sun.py`, checked against pvlib) | Best month and annual mean |
 | Glacier share | Natural Earth glaciated areas | Share of the cell |
@@ -72,7 +72,7 @@ For task t and cell x:
 S_t(x) = Σ_i w_t,i · s_i(x) / Σ_i w_t,i, summed over the criteria that have data for x.
 
 - **Coverage** is the share of the task's weight that had data. A cell with coverage under 0.5 gets no score; the coverage is shown on its card.
-- **Hard filters** remove cells before ranking: `bare_ground_min` (mean NDVI above 0.25 fails), `flat_patch_exists` (under 5 % of the cell below 8 degrees fails), `ground_ice_present` (mean surface temperature at or above 0 °C and glacier share under 50 % fails), `snow_free_window` (no month with under 10 % snow fails). Unknown values pass, except for the snow window. Road access, safe access and protected areas have no data and are listed as not checked.
+- **Hard filters** remove cells before ranking: `bare_ground_min` (mean NDVI above 0.25 fails), `flat_patch_exists` (under 5 % of the cell below 8 degrees fails), `ground_ice_present` (mean surface temperature at or above 0 °C and glacier share under 50 % fails), `snow_free_window` (no month with under 10 % snow fails), `road_access` (no major road of Natural Earth 1:10M within 50 km of the cell centre fails; small and unpaved roads are not in that map). Unknown values pass, except for the snow window. Safe access and protected areas have no data and are listed as not checked.
 - The plan also mentions a weighted geometric mean as a switch; only the arithmetic mean is implemented.
 
 Weights (`pipeline/config/tasks.yaml`; the sliders on the page start from these):
@@ -102,9 +102,9 @@ one time in five.
 | Set | Pairs scored | Median percentile | In the top 20 % | In the top 10 % |
 | --- | --- | --- | --- | --- |
 | All tasks, scores only | 132 of 136 | 0.77 | 46 % | 33 % |
-| All tasks, with hard filters | 88 of 136 | 0.70 | 39 % | 27 % |
+| All tasks, with hard filters | 78 of 136 | 0.72 | 41 % | 30 % |
 | Without caves and EVA geology, scores only | 82 of 86 | 0.70 | 21 % | 6 % |
-| Without caves and EVA geology, with hard filters | 56 of 86 | 0.44 | 14 % | 7 % |
+| Without caves and EVA geology, with hard filters | 46 of 86 | 0.41 | 13 % | 7 % |
 
 By task (scores only): caves 0.99, EVA geology 0.92, low-Sun operations 0.76, mobility 0.75,
 ice mining 0.69, biosignatures 0.58.
@@ -113,7 +113,7 @@ How to read this:
 
 - **Caves and EVA geology** use the volcano and impact lists, and those lists contain many of the analog sites themselves (Craters of the Moon, Meteor Crater, Haughton). Their high percentiles show that the context layers work; they are not independent evidence that the method finds analogs.
 - **The other tasks** put known sites clearly above a random place (median 0.70 against 0.50), but not into the very top: only 21 % are in the top 20 %, about the rate of chance. The main reason is scale: a site is a few hundred metres to a few kilometres across, while a cell is 55 km and mixes the site with its surroundings. Flat targets such as Arcadia Planitia are rarely matched by a whole Earth cell.
-- **Hard filters** remove sites whose cell is mostly vegetated although the site itself is bare (Ries, Mistastin, Réunion). With filters the independent median falls to 0.44, below a random place.
+- **Hard filters** remove sites whose cell is mostly vegetated although the site itself is bare (Ries, Mistastin, Réunion), and for rover mobility the remote sites with no major road within 50 km (Haughton, Svalbard). With filters the independent median falls to 0.41, below a random place.
 
 **Stability.** Every weight of a task was changed at random by up to ±25 % (30 draws). The share of
 the baseline top 5 % cells that stays in the top 5 %: ice mining 99 %, landing 96 %, EVA geology
@@ -128,7 +128,21 @@ filter).
 threshold is fitted to the known sites, so every site is already unseen by the method and a
 hold-out would give the same numbers.
 
-## 7. What Earth cannot reproduce
+## 7. Getting there and checking a place
+
+- **Road access.** Natural Earth 1:10M roads (ferry routes left out) are densified to 5 km steps and binned at 0.1 degree; the distance from each cell centre to the nearest bin is the `road_dist_km` feature (capped at 300 km). It drives the `road_access` filter of the mobility task.
+- **Trip CO₂.** The card of a cell estimates one passenger's flight from an origin city (Kyiv unless the viewer picks another): great-circle distance + 8 %, times 68.0 g CO₂ per passenger-km under 3,700 km or 63.2 g above (economy class, UK DESNZ greenhouse gas conversion factors 2025, methodology paper, tables of passenger flights), and ×1.7 for the non-CO₂ effects of flight, the paper's central estimate. Ground travel is not included.
+- **Check a place.** The page has the 7,342 populated places of Natural Earth (`data/reference/cities.csv`). Picking one shows the score and percentile of its cell for every task with the default weights, or why it has none, and the nearest cell in the top 10 % for the current task.
+
+## 8. Low-Sun windows
+
+Hours per day with the Sun 0–5 degrees above a flat horizon depend only on latitude and date; they are
+computed for every grid row and month (`data/processed/lowsun_by_latitude.csv`, checked against pvlib). The
+page combines them with the monthly MODIS snow cover of 2023: a month counts for low-Sun work when its
+snow cover is under 10 %. The "Low-Sun window" map shows one month at a time; the card of a cell shows all
+twelve and names the best snow-free month.
+
+## 9. What Earth cannot reproduce
 
 `data/reference/environment_gaps.json` lists gravity, surface pressure, length of the solar day,
 spin-axis tilt, sunlight above the atmosphere, radiation dose and surface temperature for the
@@ -138,7 +152,7 @@ score. The card of a lunar target also lists the values of the target that no Ea
 the coldest surface (about 39 K at the ridge), the share where ice is stable within 1 m, and the
 highest Sun elevation.
 
-## 8. Known limits
+## 10. Known limits
 
 - Scale: 55 km cells against sites of a few kilometres. Smaller windows inside each cell are the main improvement left.
 - SRTMGL30 has no data south of 60 S, so Antarctic cells have no terrain criteria; north of 60 N the values come from a coarser source.
@@ -148,7 +162,7 @@ highest Sun elevation.
 - Sun elevations assume a flat horizon.
 - Coordinates of 11 known sites are approximate and 4 uses are still to be confirmed (marked in `known_analogs.csv`).
 
-## 9. Reproducing the result
+## 11. Reproducing the result
 
 ```powershell
 pip install -e "pipeline[geo,earth,formats,dev]"

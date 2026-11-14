@@ -7,15 +7,18 @@
    Type: Space Grotesk for names, IBM Plex Sans for text, IBM Plex Mono for numbers. */
 :root{
   --bg:#f3f5f8; --surface:#ffffff; --ink:#141a22; --muted:#566170; --line:#d8dde5; --accent:#0a6a86; --accent-ink:#ffffff;
-  --accent-soft:#dff0f5; --sea:#e4e9ef; --land:#c5ccd6; --good:#17743a; --warn:#a8530a; --bad:#a8261d; --pick:#141a22;
+  --accent-soft:#dff0f5; --sea:#eef2f6; --land:#a3adba; --good:#17743a; --warn:#a8530a; --bad:#a8261d; --pick:#141a22;
+  --s1:#2a78d6; --s2:#eb6834; --seq-lo:#a9cdf0; --seq-hi:#08306b; --spot:#c2410c;
   --display:"Space Grotesk","Segoe UI",system-ui,sans-serif; --text:"IBM Plex Sans","Segoe UI",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0d1117; --surface:#151b24; --ink:#e5e9ef; --muted:#93a0b0; --line:#273040; --accent:#52c3e0; --accent-ink:#06222b;
-  --accent-soft:#12303a; --sea:#0a0e14; --land:#262f3b; --good:#5ccf84; --warn:#f0a35c; --bad:#f08a80; --pick:#ffffff; color-scheme:dark}}
+  --accent-soft:#12303a; --sea:#0a0e14; --land:#3a4555; --good:#5ccf84; --warn:#f0a35c; --bad:#f08a80; --pick:#ffffff;
+  --s1:#3987e5; --s2:#d95926; --seq-lo:#1f4f7d; --seq-hi:#bfe0ff; --spot:#fb923c; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0d1117; --surface:#151b24; --ink:#e5e9ef; --muted:#93a0b0; --line:#273040; --accent:#52c3e0; --accent-ink:#06222b;
-  --accent-soft:#12303a; --sea:#0a0e14; --land:#262f3b; --good:#5ccf84; --warn:#f0a35c; --bad:#f08a80; --pick:#ffffff; color-scheme:dark}
+  --accent-soft:#12303a; --sea:#0a0e14; --land:#3a4555; --good:#5ccf84; --warn:#f0a35c; --bad:#f08a80; --pick:#ffffff;
+  --s1:#3987e5; --s2:#d95926; --seq-lo:#1f4f7d; --seq-hi:#bfe0ff; --spot:#fb923c; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--text);padding-block:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
@@ -56,6 +59,21 @@ select{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:6px
 .checks label{display:flex;gap:8px;align-items:flex-start;font-size:13px}
 .checks input{margin-top:3px;accent-color:var(--accent)}
 .sub{color:var(--muted);font-size:12px}
+.src{display:block;font-size:11px;color:var(--muted)}
+.chart{width:100%;height:auto;display:block;margin-top:6px}
+.chart text{fill:var(--muted);font:11px var(--text)}
+.chart .ax{stroke:var(--line)}
+.key{display:inline-flex;align-items:center;gap:6px;margin-right:12px;font-size:12px;color:var(--muted)}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px}
+.hatch{background:repeating-linear-gradient(135deg,var(--land) 0 3px,var(--muted) 3px 4px)}
+.spot{display:grid;gap:6px;margin-top:10px}
+.citybox{position:relative;margin-bottom:14px}
+.citybox input{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.sugg{position:absolute;left:0;right:0;top:100%;z-index:5;list-style:none;margin:2px 0 0;padding:4px 0;background:var(--surface);border:1px solid var(--line);border-radius:6px;max-height:260px;overflow:auto}
+.sugg li button{width:100%;text-align:left;border:0;background:none;padding:5px 10px;cursor:pointer}
+.sugg li button:hover,.sugg li button:focus-visible{background:var(--accent-soft)}
+.gl dt{font-weight:500;margin-top:6px}.gl dd{margin:2px 0 0;color:var(--muted);font-size:13px}
+.spot button{text-align:left}
 section.blk{border-top:1px solid var(--line);padding-top:14px;margin-top:16px}
 #canvaswrap{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--sea);height:clamp(340px,66vh,760px);touch-action:none}
 canvas{display:block;width:100%;height:100%;cursor:grab}
@@ -109,6 +127,9 @@ footer{padding:8px 0 28px;color:var(--muted);font-size:12px;border-top:1px solid
 
 <div class="layout">
   <div id="ctrl">
+    <div class="citybox"><label for="city" class="label" data-i="city_l">Check a place: type a city</label>
+      <input id="city" type="search" autocomplete="off" placeholder="Kyiv, Reykjavík, Tucson…" aria-controls="sugg">
+      <ul class="sugg" id="sugg" hidden></ul></div>
     <div class="world seg" role="group" aria-label="World"><button id="w-moon" aria-pressed="true" data-i="moon">Moon</button><button id="w-mars" aria-pressed="false" data-i="mars">Mars</button></div>
     <div class="field"><label for="target" data-i="target">Target to reproduce</label><select id="target"></select></div>
     <div class="field"><label for="task" data-i="task">Test task</label><select id="task"></select></div>
@@ -117,6 +138,7 @@ footer{padding:8px 0 28px;color:var(--muted);font-size:12px;border-top:1px solid
     <h3 data-i="filters">Hard filters</h3>
     <div class="checks" id="checks"></div>
     <p class="sub" id="unchecked"></p>
+    <div id="glossary"></div>
   </div>
 
   <div id="mapbox">
@@ -127,7 +149,11 @@ footer{padding:8px 0 28px;color:var(--muted);font-size:12px;border-top:1px solid
       <div class="empty" id="empty"><div id="emptytxt"></div></div>
     </div>
     <div class="legend">
-      <span><span data-i="lo">lower</span><span class="ramp" id="ramp"></span><span data-i="hi">higher similarity</span></span>
+      <div class="seg" role="group" aria-label="Map"><button id="m-score" aria-pressed="true" data-i="mode_score">Score</button><button id="m-sun" aria-pressed="false" data-i="mode_sun">Low-Sun window</button></div>
+      <select id="month" aria-label="Month" hidden style="width:auto;padding:3px 6px"></select>
+      <span><span id="lo-l" data-i="lo">lower</span><span class="ramp" id="ramp"></span><span id="hi-l" data-i="hi">higher similarity</span></span>
+      <span id="snowkey" hidden><span class="sw hatch"></span> <span data-i="snow_leg">snow ≥ 10 % that month</span></span>
+      <span><span class="dot" style="background:transparent;border-color:var(--spot)"></span><span data-i="spot_t">Spotlight</span></span>
       <span><span class="dot" style="background:var(--accent)"></span><span data-i="a_ok">known analog</span></span>
       <label style="display:inline-flex;gap:6px;align-items:center"><input type="checkbox" id="showan" checked style="accent-color:var(--accent)"><span data-i="show_an">show known analogs</span></label>
       <span id="count"></span>
@@ -137,11 +163,14 @@ footer{padding:8px 0 28px;color:var(--muted);font-size:12px;border-top:1px solid
   <div id="res">
     <div class="loading" id="loading" data-i="loading">Loading the grid of 88,883 land cells…</div>
     <div id="results" hidden>
-      <div class="row" style="justify-content:space-between"><h2 data-i="cands">Best regions</h2><button class="btn" id="copy" data-i="copy">Copy list</button></div>
+      <div class="row" style="justify-content:space-between"><h2 data-i="cands">Best regions</h2><span class="row"><button class="btn" id="copy" data-i="copy">Copy list</button><button class="btn" id="dl-csv" data-i="dl_csv">CSV</button><button class="btn" id="dl-geo" data-i="dl_geo">GeoJSON</button></span></div>
       <p class="sub" data-i="cands_sub">Best cell of each region (regions at least 600 km apart).</p>
       <ol class="cands" id="cands"></ol>
       <textarea id="copybox" readonly hidden style="width:100%;height:120px;margin-top:8px;font-family:var(--mono);font-size:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px"></textarea>
 
+      <p class="sub" data-i="dl_note" style="margin-top:6px"></p>
+      <section class="blk" id="citysec" hidden></section>
+      <section class="blk" id="spots"></section>
       <section class="blk" id="card"></section>
       <section class="blk" id="val"></section>
       <section class="blk" id="gaps"></section>
@@ -177,13 +206,25 @@ const I18N = {
     how3:"Terrain criteria compare the cell with the target. Cold, day–night swing, low Sun, ground ice and minerals rank Earth cells in the useful direction, because Earth cannot reach lunar or Martian values.",
     how4:"The known analog sites are only used to check the ranking, never to tune it. What Earth cannot reproduce is shown next to every candidate, not inside the score.",
     srcs:"Data and sources",src1:"Earth: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) and MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth land; volcanoes: Smithsonian Global Volcanism Program; impact structures: Earth Impact Database (PASSC, University of New Brunswick); precipitation: NASA POWER when built.",src2:"Moon: LRO LOLA and Diviner polar resource product (NASA PDS Geosciences). Mars: MGS MOLA MEGDR and Mars Odyssey GRS (NASA PDS).",
+    city_l:"Check a place: type a city",city_t:"How does this place do?",city_sub:"Scores of the city’s 55 km cell for every task of this world and target, with the default weights of each task.",city_task:"Task",city_score:"Score",city_pct:"Top",city_near:"Nearest cell in the top 10 % for the current task",city_show:"Show it",city_origin:"Use as trip origin",city_origin_set:"Trips are counted from this city",city_origin_hint:"The “Getting there” block of every cell card now gives the flight distance and CO₂ from here. Pick a cell on the map or a region in the list to see it.",city_origin_now:"Trips are now counted from",city_none:"No cell of the current task reaches the top 10 % yet.",city_far:"The city is not on the land grid; its nearest land cell is used.",
+    glos_t:"What the words mean",
+    glos:[["Cell","A square of 0.5 × 0.5 degrees, about 55 km across. Every number on this page describes a whole cell, not a single spot."],["Slope at a 1 km step","The steepness between points 1 km apart. The Moon, Mars and Earth are all measured at this same step, so their slopes compare."],["Low Sun","The Sun between 0 and 5 degrees above the horizon. At the lunar south pole it never climbs higher than about 2 degrees, so shadows are long all the time."],["Percentile","Where a cell stands among all ranked cells: 0.90 means it beats 90 % of them."],["Coverage","The share of the task’s weight that has data for this cell. Under 50 % there is no score."],["Hard filter","A yes/no condition, such as bare ground or road access, that removes a cell before ranking."],["Why Earth never gets to 39 K","Earth’s coldest surface is around 184 K (−89 °C, Antarctica). Permanently shadowed lunar craters are near 40 K, so cold criteria only rank Earth from warm to cold."]],
+    trip_t:"Getting there",trip_road:"Nearest major road",trip_from:"Flight from",trip_co2:"CO₂ one way, economy, per passenger",trip_rf:"with non-CO₂ effects of flight (×1.7)",trip_src:"Great-circle distance +8 %, economy CO₂ 68.0 g per passenger-km under 3,700 km and 63.2 g above (UK DESNZ greenhouse gas conversion factors 2025, methodology paper); ×1.7 is its central estimate for non-CO₂ effects. Ground travel is not included.",r_road:"filter: nearest major road",
+    r_data:"too little data",r_out:"not on the land grid",r_ndvi:"filter: green cell, NDVI",r_flat:"filter: flat share",r_ice:"filter: no ground ice, mean surface",r_snow:"filter: no snow-free month",
+    spot_t:"Spotlight",spot_sub:"A place the team proposes, not a known analog. It is not used in the validation.",spot_why:"Why this place",spot_src:"Source",
+    hist_t:"Slope classes at a 1 km step",hist_cell:"this cell",hist_tgt:"target",hist_src:"Cell: SRTMGL30. Target: LOLA 240 m averaged 4 × 4 (Moon) or MOLA MEGDR (Mars).",
+    cal_t:"Low-Sun calendar",cal_sub:"Hours per day with the Sun 0–5° above a flat horizon at this latitude (solar geometry). Months with 10 % snow cover or more (MODIS MOD10CM, 2023) are hatched.",cal_free:"snow-free month",cal_snow:"snow ≥ 10 %",cal_nd:"no snow data",cal_best:"Best snow-free month",cal_none:"No snow-free month with a low Sun.",
+    mode_score:"Score",mode_sun:"Low-Sun window",lo_sun:"0 h",hi_sun:"per day with the Sun 0–5° up",snow_leg:"snow ≥ 10 % that month",
+    dl_csv:"CSV",dl_geo:"GeoJSON",dl_note:"CSV and GeoJSON hold the 10 regions and the 100 best cells. Downloads work on the published site; inside a preview use Copy list.",
+    s_srtm:"SRTMGL30",s_lst:"MODIS MOD11C3",s_ndvi:"MODIS MOD13C2",s_snow:"MODIS MOD10CM",s_sun:"solar geometry",s_ne:"Natural Earth",s_gvp:"Smithsonian GVP",s_eid:"Earth Impact Database",s_power:"NASA POWER",
+    months:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
     lim1:"A cell is about 55 km across; real analog sites are far smaller.",lim2:"Cold, thermal range and low Sun are ranked in the useful direction only; Earth cannot reach lunar or Martian values.",lim3:"Volcanoes and impact structures enter as distance to the nearest listed point. The caves and EVA geology tasks rank known sites high partly because those lists contain the sites themselves.",lim_dry:"Dryness has no data yet: it needs the NASA POWER precipitation layer.",indep:"Without the tasks that use the volcano and impact lists",val_t:"Where the known analogs land",val_sub:"Percentile of each known site’s cell for this task and target, recomputed as you move the sliders. 1.00 = best cell on Earth, 0.50 = what a random place gets.",val_none:"No known site is listed for this task and world.",val_ns:"not ranked",val_other:"Other known sites of this world",val_med:"Median of the listed sites",f_volc:"Nearest basaltic volcano",f_volc_any:"Nearest Holocene volcano",f_imp:"Nearest impact structure (to its rim)",f_precip:"Annual precipitation",lim4:"Ground ice is a proxy from annual surface temperature and glaciers. Minerals exist only for bare ground between 55°N and 54.5°S.",
     nocell:"No cell has enough data for this task yet: ",ranked:"cells ranked",pct:"percentile",lat:"lat",lon:"lon",reg:"Region around",
     elev:"Mean elevation",relief:"Relief P5–P95",slope:"Mean slope",flat:"Share under 8° slope",tday:"Daytime surface, annual mean",tnight:"Coldest night month",swing:"Day–night swing",ndvi:"NDVI (greenness)",snow:"Snow-free months",lowsun:"Low-Sun hours per day (best month)",ice:"Glacier share",
     foot:"Data: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Smithsonian Global Volcanism Program; Earth Impact Database (PASSC); Natural Earth. Pipeline and page were built with Claude (Anthropic) from the team’s plan; every number comes from the files in the repository. Check validation.md before quoting a figure.",
     crit_names:{slope_hist:"Slope distribution",relief:"Relief",roughness:"Roughness",cold:"Cold",thermal_range:"Day–night swing",ground_ice:"Ground ice (proxy)",bare_ground:"Bare ground",composition:"Altered minerals",low_sun:"Low Sun",snow_free:"Snow-free months",dryness:"Dryness",volcanic:"Volcanic fields",impact:"Impact structures"},
     crit_tip:{slope_hist:"Match of the slope-class shares at a 1 km step with the target",relief:"Match of the 5–95 % elevation range",roughness:"Match of the median local roughness",cold:"Colder annual mean surface temperature ranks higher",thermal_range:"Larger day–night swing ranks higher",ground_ice:"Permafrost proxy (mean surface temperature under 0 °C) or glaciers",bare_ground:"Low NDVI: ground visible",composition:"Clays, sulfates, carbonates and iron oxides (EMIT); Mars only",low_sun:"Hours per day with the Sun 0–5° above the horizon",snow_free:"Months with a snow decision and under 10 % snow"},
-    cons:{bare_ground_min:"Enough bare ground (NDVI ≤ 0.25)",flat_patch_exists:"A flat patch exists (≥ 5 % under 8°)",ground_ice_present:"Ground ice or glacier present",snow_free_window:"At least one snow-free month"},
+    cons:{bare_ground_min:"Enough bare ground (NDVI ≤ 0.25)",flat_patch_exists:"A flat patch exists (≥ 5 % under 8°)",ground_ice_present:"Ground ice or glacier present",snow_free_window:"At least one snow-free month",road_access:"A major road within 50 km (Natural Earth)"},
     nr:{road_access:"road access",safe_access:"safe access",protected_ecosystem_flag:"protected areas"},
     role:{base_site:"base site"}},
   uk:{title:"Пошук земних аналогів Місяця та Марса",sub:"Де на Землі умови найближчі до місця на Місяці чи Марсі? Оберіть ціль і задачу, налаштуйте ваги критеріїв і побачте, які клітинки 55 км збігаються і чого вони не відтворюють.",
@@ -202,13 +243,25 @@ const I18N = {
     how3:"Критерії рельєфу порівнюють клітинку з ціллю. Холод, різниця день–ніч, низьке Сонце, ґрунтовий лід і мінерали ранжують клітинки Землі в потрібному напрямку, бо Земля не досягає місячних чи марсіанських значень.",
     how4:"Відомі аналоги лише перевіряють рейтинг і ніколи його не налаштовують. Те, чого Земля не відтворює, показано біля кандидата, а не всередині оцінки.",
     srcs:"Дані та джерела",src1:"Земля: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) і MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth; вулкани: Smithsonian Global Volcanism Program; імпактні структури: Earth Impact Database (PASSC); опади: NASA POWER, якщо шар збудовано.",src2:"Місяць: LRO LOLA і полярний ресурсний продукт Diviner (NASA PDS Geosciences). Марс: MGS MOLA MEGDR і Mars Odyssey GRS (NASA PDS).",
+    city_l:"Перевір місце: введіть місто",city_t:"Як тут з аналогами?",city_sub:"Оцінки клітинки 55 км навколо міста для кожної задачі цього світу й цілі, зі стандартними вагами кожної задачі.",city_task:"Задача",city_score:"Оцінка",city_pct:"Топ",city_near:"Найближча клітинка з топ-10 % для поточної задачі",city_show:"Показати",city_origin:"Звідси рахувати поїздку",city_origin_set:"Поїздки рахуються від цього міста",city_origin_hint:"Блок «Як дістатися» в картці кожної клітинки тепер показує відстань і CO₂ перельоту звідси. Оберіть клітинку на мапі або регіон у списку, щоб побачити.",city_origin_now:"Зараз поїздки рахуються від",city_none:"Для поточної задачі поки немає клітинок у топ-10 %.",city_far:"Місто не на сітці суходолу; взято найближчу клітинку суходолу.",
+    glos_t:"Що означають терміни",
+    glos:[["Клітинка","Квадрат 0,5 × 0,5 градуса, близько 55 км. Кожне число на сторінці описує всю клітинку, а не одну точку."],["Схил на кроці 1 км","Крутизна між точками, що стоять за 1 км одна від одної. Місяць, Марс і Земля виміряні на цьому ж кроці, тому їхні схили порівнянні."],["Низьке Сонце","Сонце на 0–5 градусів над горизонтом. На південному полюсі Місяця воно не піднімається вище ~2 градусів, тому тіні завжди довгі."],["Перцентиль","Місце клітинки серед усіх ранжованих: 0,90 — краща за 90 % із них."],["Покриття","Частка ваги задачі, для якої є дані в цій клітинці. Менше 50 % — оцінки немає."],["Жорсткий фільтр","Умова так/ні, як-от голий ґрунт чи доступ дорогою, що прибирає клітинку до ранжування."],["Чому Земля не дає 39 K","Найхолодніша поверхня Землі — близько 184 K (−89 °C, Антарктида). Вічно затінені кратери Місяця мають ~40 K, тож критерії холоду лише ранжують Землю від теплого до холодного."]],
+    trip_t:"Як дістатися",trip_road:"Найближча велика дорога",trip_from:"Переліт із",trip_co2:"CO₂ в один бік, економ, на пасажира",trip_rf:"з не-CO₂ ефектами авіації (×1,7)",trip_src:"Відстань по великому колу +8 %, CO₂ в економ-класі 68,0 г на пасажиро-км до 3700 км і 63,2 г понад (коефіцієнти парникових газів уряду Великої Британії DESNZ 2025, методологія); ×1,7 — її центральна оцінка не-CO₂ ефектів. Наземний шлях не враховано.",r_road:"фільтр: найближча велика дорога",
+    r_data:"замало даних",r_out:"поза сіткою суходолу",r_ndvi:"фільтр: зелена клітинка, NDVI",r_flat:"фільтр: частка рівного",r_ice:"фільтр: немає ґрунтового льоду, середня поверхня",r_snow:"фільтр: немає місяця без снігу",
+    spot_t:"У фокусі",spot_sub:"Місце, яке пропонує команда, а не відомий аналог. У валідації не використовується.",spot_why:"Чому це місце",spot_src:"Джерело",
+    hist_t:"Класи схилів на кроці 1 км",hist_cell:"ця клітинка",hist_tgt:"ціль",hist_src:"Клітинка: SRTMGL30. Ціль: LOLA 240 м, усереднення 4 × 4 (Місяць) або MOLA MEGDR (Марс).",
+    cal_t:"Календар низького Сонця",cal_sub:"Годин на добу, коли Сонце на 0–5° над рівним горизонтом на цій широті (сонячна геометрія). Місяці зі снігом від 10 % (MODIS MOD10CM, 2023) заштриховано.",cal_free:"місяць без снігу",cal_snow:"сніг ≥ 10 %",cal_nd:"немає даних про сніг",cal_best:"Найкращий місяць без снігу",cal_none:"Немає місяця без снігу з низьким Сонцем.",
+    mode_score:"Оцінка",mode_sun:"Вікно низького Сонця",lo_sun:"0 год",hi_sun:"на добу із Сонцем на 0–5°",snow_leg:"сніг ≥ 10 % цього місяця",
+    dl_csv:"CSV",dl_geo:"GeoJSON",dl_note:"CSV і GeoJSON містять 10 регіонів і 100 найкращих клітинок. Завантаження працює на опублікованому сайті; у попередньому перегляді скористайтеся «Копіювати список».",
+    s_srtm:"SRTMGL30",s_lst:"MODIS MOD11C3",s_ndvi:"MODIS MOD13C2",s_snow:"MODIS MOD10CM",s_sun:"сонячна геометрія",s_ne:"Natural Earth",s_gvp:"Smithsonian GVP",s_eid:"Earth Impact Database",s_power:"NASA POWER",
+    months:["січ","лют","бер","кві","тра","чер","лип","сер","вер","жов","лис","гру"],
     lim1:"Клітинка має близько 55 км, а справжні майданчики набагато менші.",lim2:"Холод, добовий діапазон і низьке Сонце ранжуються лише в потрібному напрямку: Земля не досягає місячних чи марсіанських значень.",lim3:"Вулкани й імпактні структури входять як відстань до найближчої точки зі списку. Задачі «печери» й «геологічні виходи» ставлять відомі місця високо частково тому, що ці списки містять самі ці місця.",lim_dry:"Посушливості ще немає: потрібен шар опадів NASA POWER.",indep:"Без задач, що використовують списки вулканів і кратерів",val_t:"Де опинилися відомі аналоги",val_sub:"Перцентиль клітинки кожного відомого місця для цієї задачі й цілі; перераховується, коли рухаєте повзунки. 1,00 — найкраща клітинка Землі, 0,50 — випадкове місце.",val_none:"Для цієї задачі й світу відомих місць немає.",val_ns:"не ранжується",val_other:"Інші відомі місця цього світу",val_med:"Медіана наведених місць",f_volc:"Найближчий базальтовий вулкан",f_volc_any:"Найближчий голоценовий вулкан",f_imp:"Найближча імпактна структура (до краю)",f_precip:"Опади за рік",lim4:"Ґрунтовий лід — наближення за річною температурою поверхні та льодовиками. Мінерали є лише для голого ґрунту між 55° пн.ш. і 54,5° пд.ш.",
     nocell:"Для цієї задачі ще немає клітинок з достатніми даними: ",ranked:"клітинок ранжовано",pct:"перцентиль",lat:"шир.",lon:"довг.",reg:"Регіон навколо",
     elev:"Середня висота",relief:"Рельєф P5–P95",slope:"Середній схил",flat:"Частка зі схилом до 8°",tday:"Денна поверхня, річне середнє",tnight:"Найхолодніший нічний місяць",swing:"Різниця день–ніч",ndvi:"NDVI (зелень)",snow:"Місяців без снігу",lowsun:"Годин низького Сонця на добу (найкращий місяць)",ice:"Частка льодовиків",
     foot:"Дані: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Smithsonian Global Volcanism Program; Earth Impact Database (PASSC); Natural Earth. Конвеєр і сторінку створено з Claude (Anthropic) за планом команди; кожне число береться з файлів репозиторію. Перед цитуванням цифр перегляньте validation.md.",
     crit_names:{slope_hist:"Розподіл схилів",relief:"Рельєф",roughness:"Шорсткість",cold:"Холод",thermal_range:"Різниця день–ніч",ground_ice:"Ґрунтовий лід (наближення)",bare_ground:"Голий ґрунт",composition:"Змінені мінерали",low_sun:"Низьке Сонце",snow_free:"Місяці без снігу",dryness:"Посушливість",volcanic:"Вулканічні поля",impact:"Імпактні структури"},
     crit_tip:{slope_hist:"Збіг часток класів схилу на кроці 1 км із ціллю",relief:"Збіг діапазону висот 5–95 %",roughness:"Збіг медіанної локальної шорсткості",cold:"Холодніша річна температура поверхні — вищий ранг",thermal_range:"Більша різниця день–ніч — вищий ранг",ground_ice:"Наближення мерзлоти (середня температура поверхні нижче 0 °C) або льодовики",bare_ground:"Низький NDVI: ґрунт видно",composition:"Глини, сульфати, карбонати й оксиди заліза (EMIT); лише Марс",low_sun:"Годин на добу із Сонцем 0–5° над горизонтом",snow_free:"Місяці зі снігом нижче 10 %"},
-    cons:{bare_ground_min:"Достатньо голого ґрунту (NDVI ≤ 0,25)",flat_patch_exists:"Є рівний майданчик (≥ 5 % зі схилом до 8°)",ground_ice_present:"Є ґрунтовий лід або льодовик",snow_free_window:"Принаймні один місяць без снігу"},
+    cons:{bare_ground_min:"Достатньо голого ґрунту (NDVI ≤ 0,25)",flat_patch_exists:"Є рівний майданчик (≥ 5 % зі схилом до 8°)",ground_ice_present:"Є ґрунтовий лід або льодовик",snow_free_window:"Принаймні один місяць без снігу",road_access:"Велика дорога ближче 50 км (Natural Earth)"},
     nr:{road_access:"доступ дорогами",safe_access:"безпечний доступ",protected_ecosystem_flag:"охоронні території"},
     role:{base_site:"місце бази"}}
 };
@@ -217,7 +270,7 @@ const T=k=>I18N[lang][k]??I18N.en[k]??k;
 const TN=(grp,k)=>(I18N[lang][grp]||{})[k]??(I18N.en[grp]||{})[k]??k;
 
 /* ---------- state ---------- */
-const S={world:"moon",target:null,task:"landing",weights:{},on:{},sel:-1,showAn:true,view:{cx:10,cy:20,s:1},fit:1};
+const S={world:"moon",target:null,task:"landing",weights:{},on:{},sel:-1,showAn:true,view:{cx:10,cy:20,s:1},fit:1,mode:"score",month:1,spot:null,city:null,origin:null};
 let D=null, ROWS=null, COLS=null, LUT=null;
 let SC=null, CV=null, SORTED=null, CANDS=[], RANGE=[0,1], NRANKED=0, CRIT={}, USED=[];
 const $=id=>document.getElementById(id);
@@ -300,7 +353,18 @@ for(let k=0;k<256;k++){const t=k/255*(STOPS.length-1),a=Math.min(Math.floor(t),S
   RAMP[k]="rgb("+STOPS[a].map((v,j)=>Math.round(v+(STOPS[a+1][j]-v)*f)).join(",")+")"}
 let CSSV={};
 function readCss(){const cs=getComputedStyle(document.documentElement);
-  for(const k of ["--sea","--land","--ink","--accent","--pick","--surface","--line"]) CSSV[k]=cs.getPropertyValue(k).trim();}
+  for(const k of ["--sea","--land","--ink","--accent","--pick","--surface","--line","--muted","--s1","--s2","--seq-lo","--seq-hi","--spot"]) CSSV[k]=cs.getPropertyValue(k).trim();
+  const h2r=h=>{h=h.replace("#",""); return [0,2,4].map(k=>parseInt(h.substr(k,2),16))};
+  const lo=h2r(CSSV["--seq-lo"]||"#dcebf9"), hi=h2r(CSSV["--seq-hi"]||"#0b4f9c");
+  for(let k=0;k<256;k++){const f=k/255; SEQ[k]="rgb("+lo.map((v,j)=>Math.round(v+(hi[j]-v)*f)).join(",")+")"}
+  const pc=document.createElement("canvas"); pc.width=pc.height=6; const g=pc.getContext("2d");
+  g.fillStyle=CSSV["--land"]; g.fillRect(0,0,6,6); g.strokeStyle=CSSV["--muted"]; g.lineWidth=1; g.beginPath(); g.moveTo(0,6); g.lineTo(6,0); g.stroke();
+  SNOWPAT=ctx.createPattern(pc,"repeat");}
+const SEQ=new Array(256); let SNOWPAT=null;
+function rawInfo(n){return M.raw.find(r=>r.name===n)}
+function sunHours(i,m){return M.lowsun[ROWS[i]][m-1]}
+function snowOf(i,m){const r=rawInfo("snow_m"+String(m).padStart(2,"0")); if(!r) return NaN; const q=D[r.offset+i]; return q===255?NaN:r.min+q/254*(r.max-r.min)}
+const SUNMAX=()=>{let mx=0; for(let i=0;i<M.n;i++){const v=M.lowsun[ROWS[i]][S.month-1]; if(v>mx) mx=v} return mx||1};
 
 /* ---------- map ---------- */
 const cv=$("map"), ctx=cv.getContext("2d");
@@ -323,14 +387,22 @@ function draw(){
   for(let lo=-180;lo<=180;lo+=30){const x=Math.round(X(lo))+.5; ctx.moveTo(x,0);ctx.lineTo(x,H)}
   for(let la=-60;la<=60;la+=30){const y=Math.round(Y(la))+.5; ctx.moveTo(0,y);ctx.lineTo(W,y)}
   ctx.stroke(); ctx.globalAlpha=1;
-  const inv=1/(RANGE[1]-RANGE[0]);
+  const inv=1/(RANGE[1]-RANGE[0]), sun=S.mode==="sun", m=S.month, smax=sun?SUNMAX():1;
+  const sr=sun?rawInfo("snow_m"+String(m).padStart(2,"0")):null;
   for(let i=0;i<M.n;i++){
     const x=X(-180+COLS[i]*0.5), y=Y(90-ROWS[i]*0.5);
     if(x<-cw||y<-cw||x>W||y>H+cw) continue;
-    const v=SC?SC[i]:NaN;
-    ctx.fillStyle=(v===v)?RAMP[Math.max(0,Math.min(255,Math.round((v-RANGE[0])*inv*255)))]:CSSV["--land"];
+    if(sun){
+      const q=sr?D[sr.offset+i]:255, sn=q===255?NaN:sr.min+q/254*(sr.max-sr.min);
+      ctx.fillStyle=sn!==sn?CSSV["--land"]:sn>=10?SNOWPAT:SEQ[Math.max(0,Math.min(255,Math.round(sunHours(i,m)/smax*255)))];
+    } else {
+      const v=SC?SC[i]:NaN;
+      ctx.fillStyle=(v===v)?RAMP[Math.max(0,Math.min(255,Math.round((v-RANGE[0])*inv*255)))]:CSSV["--land"];
+    }
     ctx.fillRect(x,y,cw+pad,cw+pad);
   }
+  for(const sp of M.spotlights||[]){const x=X(sp.lon),y=Y(sp.lat); if(x<0||y<0||x>W||y>H) continue;
+    ctx.beginPath(); ctx.arc(x,y,7,0,7); ctx.strokeStyle=CSSV["--spot"]; ctx.lineWidth=2.5; ctx.stroke()}
   if(S.showAn){
     for(const a of M.analogs){
       const x=X(a.lon),y=Y(a.lat); if(x<0||y<0||x>W||y>H) continue;
@@ -339,7 +411,7 @@ function draw(){
       ctx.fillRect(-4,-4,8,8); ctx.strokeRect(-4,-4,8,8); ctx.restore();
     }
   }
-  CANDS.forEach((i,k)=>{const x=X(cellLon(i)),y=Y(cellLat(i)); ctx.beginPath(); ctx.arc(x,y,9,0,7); ctx.fillStyle=CSSV["--surface"]; ctx.fill();
+  if(S.mode==="score") CANDS.forEach((i,k)=>{const x=X(cellLon(i)),y=Y(cellLat(i)); ctx.beginPath(); ctx.arc(x,y,9,0,7); ctx.fillStyle=CSSV["--surface"]; ctx.fill();
     ctx.strokeStyle=CSSV["--ink"]; ctx.lineWidth=1.5; ctx.stroke(); ctx.fillStyle=CSSV["--ink"]; ctx.font="600 10px "+getComputedStyle(document.body).fontFamily;
     ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(String(k+1),x,y+.5)});
   if(S.sel>=0){const x=X(-180+COLS[S.sel]*0.5),y=Y(90-ROWS[S.sel]*0.5); ctx.strokeStyle=CSSV["--pick"]; ctx.lineWidth=2.5; ctx.strokeRect(x-1,y-1,cw+2,cw+2)}
@@ -376,6 +448,7 @@ function hover(px,py){
   const tip=$("tip"), a=S.showAn?nearAnalog(px,py):null, i=cellAt(px,py);
   let html="";
   if(a){html="<b>"+(lang==="uk"?a.name_uk:a.name)+"</b> · "+a.country}
+  else if(i>=0&&S.mode==="sun"){const sn=snowOf(i,S.month); html=T("lat")+" "+cellLat(i).toFixed(2)+" · "+T("months")[S.month-1]+": "+sunHours(i,S.month).toFixed(1)+" h"+(sn===sn?" · "+(lang==="uk"?"сніг ":"snow ")+Math.round(sn)+" %":"")}
   else if(i>=0){const v=SC[i]; html=T("lat")+" "+cellLat(i).toFixed(2)+", "+T("lon")+" "+cellLon(i).toFixed(2)+(v===v?" · "+(v*100).toFixed(0)+"%":"")}
   if(!html){tip.style.display="none";return}
   tip.innerHTML=html; tip.style.display="block";
@@ -440,10 +513,209 @@ function computeStability(){
   }
   el.textContent=T("stab")+": "+T("stab_in")+" "+hits+" "+T("stab_of");
 }
+
+/* ---------- small charts in the card ---------- */
+function src(k){return '<span class="src">'+T(k)+'</span>'}
+const SLOPE_LABELS=["0–2","2–5","5–8","8–10","10–15","15–20","20–25","25–30","30+"];
+function slopeChart(i){
+  const tf=M.tfacts[S.target]||{}, th=tf.hist; if(!th||!hasRaw("slope_h0")) return "";
+  const ch=[]; for(let k=0;k<9;k++) ch.push(raw("slope_h"+k,i));
+  if(ch.some(v=>v!==v)) return '<h3 style="margin-top:14px">'+T("hist_t")+'</h3><p class="sub">'+(lang==="uk"?"Для цієї клітинки немає рельєфу (SRTM закінчується на 60° пд.ш.).":"No terrain for this cell (SRTM ends at 60 S).")+"</p>";
+  const W0=360,H0=150,L=34,R=6,T0=8,B=26, pw=W0-L-R, ph=H0-T0-B, gw=pw/9, bw=Math.min(12,(gw-6)/2);
+  const ymax=Math.max(0.1,Math.ceil(Math.max(...ch,...th)*10)/10), y=v=>T0+ph-v/ymax*ph;
+  let g='<line class="ax" x1="'+L+'" x2="'+(W0-R)+'" y1="'+(T0+ph)+'" y2="'+(T0+ph)+'"/>';
+  for(const t of [0,ymax/2,ymax]) g+='<line class="ax" stroke-dasharray="2 3" x1="'+L+'" x2="'+(W0-R)+'" y1="'+y(t)+'" y2="'+y(t)+'" opacity=".6"/><text x="'+(L-4)+'" y="'+(y(t)+3.5)+'" text-anchor="end">'+Math.round(t*100)+'%</text>';
+  for(let k=0;k<9;k++){
+    const x0=L+k*gw+(gw-2*bw-2)/2;
+    for(const [v,cls,nm] of [[ch[k],"--s1",T("hist_cell")],[th[k],"--s2",T("hist_tgt")]]){
+      const xx=cls==="--s1"?x0:x0+bw+2, hh=Math.max(0,T0+ph-y(v));
+      g+='<rect x="'+xx.toFixed(1)+'" y="'+(T0+ph-hh).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+hh.toFixed(1)+'" rx="2" fill="var('+cls+')"><title>'+nm+": "+Math.round(v*100)+" % · "+SLOPE_LABELS[k]+"°</title></rect>";
+    }
+    g+='<text x="'+(L+k*gw+gw/2).toFixed(1)+'" y="'+(H0-8)+'" text-anchor="middle">'+SLOPE_LABELS[k]+'</text>';
+  }
+  return '<h3 style="margin-top:14px">'+T("hist_t")+'</h3><div style="margin-top:6px"><span class="key"><span class="sw" style="background:var(--s1)"></span>'+T("hist_cell")+'</span><span class="key"><span class="sw" style="background:var(--s2)"></span>'+T("hist_tgt")+'</span></div>'+
+    '<svg class="chart" viewBox="0 0 '+W0+' '+H0+'" role="img" aria-label="'+T("hist_t")+'">'+g+'</svg>';
+}
+function sunCalendar(i){
+  if(!M.lowsun||!hasRaw("snow_m01")) return "";
+  const hrs=[], sn=[]; for(let m=1;m<=12;m++){hrs.push(sunHours(i,m)); sn.push(snowOf(i,m))}
+  const W0=360,H0=130,L=34,R=6,T0=8,B=22, pw=W0-L-R, ph=H0-T0-B, gw=pw/12, bw=Math.min(18,gw-4);
+  const ymax=Math.max(1,Math.ceil(Math.max(...hrs))), y=v=>T0+ph-v/ymax*ph;
+  let g='<defs><pattern id="hp" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--land)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--muted)" stroke-width="1.5"/></pattern></defs>';
+  g+='<line class="ax" x1="'+L+'" x2="'+(W0-R)+'" y1="'+(T0+ph)+'" y2="'+(T0+ph)+'"/>';
+  for(const t of [0,ymax/2,ymax]) g+='<line class="ax" stroke-dasharray="2 3" x1="'+L+'" x2="'+(W0-R)+'" y1="'+y(t)+'" y2="'+y(t)+'" opacity=".6"/><text x="'+(L-4)+'" y="'+(y(t)+3.5)+'" text-anchor="end">'+(+t.toFixed(1))+' h</text>';
+  let best=-1;
+  for(let m=0;m<12;m++){
+    const free=sn[m]===sn[m]&&sn[m]<10, fill=sn[m]!==sn[m]?"var(--line)":free?"var(--s1)":"url(#hp)";
+    if(free&&hrs[m]>0.05&&(best<0||hrs[m]>hrs[best])) best=m;
+    const hh=Math.max(hrs[m]>0?1:0,T0+ph-y(hrs[m])), xx=L+m*gw+(gw-bw)/2;
+    g+='<rect x="'+xx.toFixed(1)+'" y="'+(T0+ph-hh).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+hh.toFixed(1)+'" rx="2" fill="'+fill+'"><title>'+T("months")[m]+": "+hrs[m].toFixed(1)+" h"+(sn[m]===sn[m]?" · "+(lang==="uk"?"сніг ":"snow ")+Math.round(sn[m])+" %":" · "+T("cal_nd"))+"</title></rect>";
+    g+='<text x="'+(L+m*gw+gw/2).toFixed(1)+'" y="'+(H0-6)+'" text-anchor="middle">'+T("months")[m]+'</text>';
+  }
+  return '<h3 style="margin-top:14px">'+T("cal_t")+'</h3><p class="sub" style="margin-top:4px">'+T("cal_sub")+'</p>'+
+    '<div style="margin-top:6px"><span class="key"><span class="sw" style="background:var(--s1)"></span>'+T("cal_free")+'</span><span class="key"><span class="sw hatch"></span>'+T("cal_snow")+'</span><span class="key"><span class="sw" style="background:var(--line)"></span>'+T("cal_nd")+'</span></div>'+
+    '<svg class="chart" viewBox="0 0 '+W0+' '+H0+'" role="img" aria-label="'+T("cal_t")+'">'+g+'</svg>'+
+    '<p class="sub">'+(best>=0?T("cal_best")+": <b>"+T("months")[best]+"</b>, "+hrs[best].toFixed(1)+" h":T("cal_none"))+"</p>";
+}
+
+/* ---------- spotlight ---------- */
+function renderSpots(){
+  const box=$("spots"), sp=M.spotlights||[]; if(!sp.length){box.hidden=true; return}
+  box.innerHTML='<h2>'+T("spot_t")+'</h2><p class="sub" style="margin-top:4px">'+T("spot_sub")+'</p><div class="spot">'+
+    sp.map(x=>'<button class="btn" data-spot="'+x.id+'">'+(lang==="uk"?x.name_uk:x.name)+' <span class="sub">'+x.country+" · "+(x.world==="moon"?T("moon"):T("mars"))+"</span></button>").join("")+"</div>";
+  box.querySelectorAll("[data-spot]").forEach(b=>b.onclick=()=>{
+    const x=sp.find(y=>y.id===b.dataset.spot); if(x.world!==S.world) setWorld(x.world);
+    S.spot=x.id; const k=analogPos(x); if(k>=0) select(k,true);
+  });
+}
+
+/* ---------- export ---------- */
+function exportRows(){
+  const task=taskById(S.task), names=Object.keys(task.weights).filter(available);
+  const idx=[]; for(let i=0;i<M.n;i++) if(SC[i]===SC[i]) idx.push(i);
+  idx.sort((a,b)=>SC[b]-SC[a]);
+  const rows=[], seen=new Set();
+  const add=(i,kind,rank)=>{const n=nearbyAnalogs(i)[0], r={kind,rank,lat:+cellLat(i).toFixed(2),lon:+cellLon(i).toFixed(2),score:+SC[i].toFixed(3),coverage:+CV[i].toFixed(2),
+      task:S.task,target:S.target,nearest_known_analog:n?n.a.name:"",distance_km:n?Math.round(n.d):null,new_candidate:!n};
+    for(const c of names){const q=D[critOffset(c)+i]; r["c_"+c]=q===255?null:+(q/254).toFixed(3)} rows.push(r)};
+  CANDS.forEach((i,k)=>{add(i,"region",k+1); seen.add(i)});
+  idx.slice(0,100).forEach((i,k)=>add(i,"cell",k+1));
+  return rows;
+}
+function download(name,text,type){
+  try{const url=URL.createObjectURL(new Blob([text],{type})); const a=document.createElement("a"); a.href=url; a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000)}catch(e){}
+}
+function fileStem(){return "analogs_"+S.task+"_"+S.target}
+$("dl-csv").onclick=()=>{const rows=exportRows(); if(!rows.length) return; const cols=Object.keys(rows[0]);
+  const esc=v=>v===null||v===undefined?"":(typeof v==="string"&&/[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':String(v));
+  download(fileStem()+".csv",[cols.join(",")].concat(rows.map(r=>cols.map(c=>esc(r[c])).join(","))).join("\n"),"text/csv")};
+$("dl-geo").onclick=()=>{const rows=exportRows(); const fc={type:"FeatureCollection",features:rows.map(r=>({type:"Feature",geometry:{type:"Point",coordinates:[r.lon,r.lat]},properties:r}))};
+  download(fileStem()+".geojson",JSON.stringify(fc),"application/geo+json")};
+
+/* ---------- map mode ---------- */
+function fillMonths(){const sel=$("month"); const v=S.month; sel.innerHTML=T("months").map((m,k)=>'<option value="'+(k+1)+'">'+m+"</option>").join(""); sel.value=String(v)}
+function setMode(m){
+  S.mode=m; $("m-score").setAttribute("aria-pressed",m==="score"); $("m-sun").setAttribute("aria-pressed",m==="sun");
+  if(m==="sun"&&S.sel>=0){let best=-1,bh=0; for(let k=1;k<=12;k++){const sn=snowOf(S.sel,k), h=sunHours(S.sel,k); if(sn===sn&&sn<10&&h>bh){bh=h;best=k}}
+    if(best<0){const b=raw("lowsun_best_month",S.sel); if(b===b&&b>=1) best=Math.round(b)} if(best>0) S.month=best; fillMonths()}
+  $("month").hidden=m!=="sun"; $("snowkey").hidden=m!=="sun"; legend(); draw();
+}
+$("m-score").onclick=()=>setMode("score"); $("m-sun").onclick=()=>setMode("sun");
+$("month").onchange=e=>{S.month=+e.target.value; legend(); draw()};
+
+/* ---------- getting there (Ф12) ---------- */
+function originCity(){
+  if(S.origin) return S.origin;
+  try{const n=localStorage.getItem("mma_origin"); if(n){const c=CITIES.find(x=>x[0]===n); if(c) return S.origin=c}}catch(e){}
+  return S.origin=CITIES.find(x=>x[0]==="Kyiv")||CITIES[0];
+}
+function tripBlock(i){
+  let h='<h3 style="margin-top:14px">'+T("trip_t")+'</h3><div class="kv">';
+  if(hasRaw("road_dist_km")) h+="<span>"+T("trip_road")+src("s_ne")+"</span><span>"+distTxt(raw("road_dist_km",i))+"</span>";
+  const o=originCity();
+  if(o){
+    const d=km(o[3],o[4],cellLat(i),cellLon(i)), f=d<3700?0.068:0.0632, co2=d*1.08*f;
+    h+="<span>"+T("trip_from")+" "+(lang==="uk"&&o[1]?o[1]:o[0])+"</span><span>"+Math.round(d).toLocaleString()+" km</span>"+
+       "<span>"+T("trip_co2")+"</span><span>"+Math.round(co2)+" kg</span><span>"+T("trip_rf")+"</span><span>"+Math.round(co2*1.7)+" kg</span>";
+  }
+  return h+'</div><p class="sub" style="margin-top:4px">'+T("trip_src")+"</p>";
+}
+
+/* ---------- check a place (Ф13) ---------- */
+let CITIES=[];
+function norm(t){return (t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
+function suggest(q){
+  const box=$("sugg"); q=norm(q.trim()); if(q.length<2){box.hidden=true; return}
+  const hits=[]; for(const c of CITIES){ if(norm(c[0]).startsWith(q)||norm(c[1]).startsWith(q)) hits.push(c); if(hits.length>=8) break }
+  if(hits.length<8) for(const c of CITIES){ if(hits.length>=8) break; if(!hits.includes(c)&&(norm(c[0]).includes(q)||norm(c[1]).includes(q))) hits.push(c) }
+  if(!hits.length){box.hidden=true; return}
+  box.innerHTML=hits.map((c,k)=>'<li><button data-k="'+CITIES.indexOf(c)+'">'+(lang==="uk"&&c[1]?c[1]:c[0])+' <span class="sub">'+c[2]+"</span></button></li>").join("");
+  box.hidden=false;
+  box.querySelectorAll("button").forEach(b=>b.onclick=()=>{box.hidden=true; const c=CITIES[+b.dataset.k]; $("city").value=(lang==="uk"&&c[1]?c[1]:c[0]); pickCity(c)});
+}
+function cellOfPoint(lat,lon){
+  const r=Math.floor((90-lat)/0.5), c=Math.floor((lon+180)/0.5);
+  let best=-1,bd=1e9;
+  for(let dr=-2;dr<=2;dr++) for(let dc=-2;dc<=2;dc++){const rr=r+dr, cc=((c+dc)%720+720)%720; if(rr<0||rr>=M.grid.n_lat) continue;
+    const k=LUT[rr*M.grid.n_lon+cc]; if(k<0) continue; const d=km(lat,lon,cellLat(k),cellLon(k)); if(d<bd){bd=d;best=k}}
+  return best;
+}
+const TASKCACHE=new Map();
+function scoresFor(taskId){
+  const key=taskId+"|"+S.target+"|"+S.world; if(TASKCACHE.has(key)) return TASKCACHE.get(key);
+  const task=taskById(taskId), n=M.n, items=[]; let total=0, mask=0;
+  for(const [name,w] of Object.entries(task.weights)){total+=w; if(available(name)&&w>0) items.push({w,off:critOffset(name)})}
+  for(const c of task.constraints||[]) if(M.constraint_bits[c]!==undefined) mask|=1<<M.constraint_bits[c];
+  const sc=new Float32Array(n).fill(NaN), cv=new Float32Array(n);
+  for(let i=0;i<n;i++){let num=0,den=0; for(const it of items){const q=D[it.off+i]; if(q!==255){num+=it.w*q;den+=it.w}}
+    cv[i]=den/total; if(den>0&&cv[i]>=M.min_coverage&&(D[M.constraint_offset+i]&mask)===mask) sc[i]=num/den/254}
+  const srt=Float32Array.from(sc.filter(v=>v===v)).sort();
+  const out={sc,cv,srt}; TASKCACHE.set(key,out); return out;
+}
+function pctIn(srt,v){let lo=0,hi=srt.length; while(lo<hi){const m=(lo+hi)>>1; if(srt[m]<v) lo=m+1; else hi=m} return srt.length?lo/srt.length:NaN}
+function pickCity(c){
+  S.city=c; const k=cellOfPoint(c[3],c[4]); S.city.k=k; S.spot=null;
+  if(k>=0) select(k,true); renderCity();
+}
+function renderCity(){
+  const box=$("citysec"), c=S.city; if(!c){box.hidden=true; return}
+  const k=c.k; let h='<h2>'+T("city_t")+" "+(lang==="uk"&&c[1]?c[1]:c[0])+'</h2><p class="sub" style="margin-top:4px">'+T("city_sub")+"</p>";
+  if(k<0){box.innerHTML=h+'<p class="sub">'+T("r_out")+"</p>"; box.hidden=false; return}
+  const lat=cellLat(k),lon=cellLon(k);
+  if(km(c[3],c[4],lat,lon)>45) h+='<p class="sub">'+T("city_far")+"</p>";
+  h+='<div class="tblwrap"><table class="tbl"><thead><tr><th>'+T("city_task")+"</th><th>"+T("city_score")+"</th><th>"+T("pct")+"</th></tr></thead><tbody>";
+  for(const t of M.tasks.filter(t=>t.worlds.includes(S.world))){
+    const r=scoresFor(t.id), v=r.sc[k];
+    if(v===v){const p=pctIn(r.srt,v); h+="<tr><td>"+tname(t)+'</td><td class="n">'+Math.round(v*100)+' %</td><td class="n">'+p.toFixed(2)+"</td></tr>"}
+    else h+="<tr><td>"+tname(t)+'</td><td colspan="2" class="sub">'+whyNotFor(t,k,r.cv[k])+"</td></tr>";
+  }
+  h+="</tbody></table></div>";
+  // nearest strong cell for the current task (current sliders)
+  let best=-1,bd=1e9;
+  if(NRANKED){const thr=SORTED[Math.floor(NRANKED*0.9)]; for(let i=0;i<M.n;i++){const v=SC[i]; if(v===v&&v>=thr){const d=km(c[3],c[4],cellLat(i),cellLon(i)); if(d<bd){bd=d;best=i}}}}
+  h+='<p style="margin-top:8px">'+T("city_near")+" ("+tname(taskById(S.task))+"): "+(best>=0?"<b>"+Math.round(bd).toLocaleString()+" km</b>, "+Math.abs(cellLat(best)).toFixed(1)+(cellLat(best)<0?"°S":"°N")+", "+Math.abs(cellLon(best)).toFixed(1)+(cellLon(best)<0?"°W":"°E")+' <button class="btn" id="city-go">'+T("city_show")+"</button>":T("city_none"))+"</p>";
+  const o=originCity(), isO=o&&o[0]===c[0]&&o[3]===c[3];
+  h+='<p style="margin-top:10px">'+(isO?'<span class="chip ok">✓ '+T("city_origin_set")+'</span>':'<button class="btn" id="city-origin">'+T("city_origin")+'</button>')+'</p>'+
+     '<p class="sub" style="margin-top:4px">'+(isO?T("city_origin_hint"):T("city_origin_now")+" "+(lang==="uk"&&o&&o[1]?o[1]:(o?o[0]:"")))+"</p>";
+  box.innerHTML=h; box.hidden=false;
+  if(best>=0) $("city-go").onclick=()=>select(best,true);
+  if(!isO) $("city-origin").onclick=()=>{S.origin=c; try{localStorage.setItem("mma_origin",c[0])}catch(e){} renderCard(); renderCity()};
+}
+function whyNotFor(t,k,cov){
+  if(cov<M.min_coverage) return T("r_data")+" ("+Math.round(cov*100)+" %)";
+  const bits=D[M.constraint_offset+k], out=[];
+  for(const c of t.constraints||[]){ if(M.constraint_bits[c]===undefined||((bits>>M.constraint_bits[c])&1)) continue;
+    if(c==="bare_ground_min") out.push(T("r_ndvi")+" "+raw("ndvi_mean",k).toFixed(2));
+    else if(c==="flat_patch_exists") out.push(T("r_flat")+" "+Math.round(raw("slope_lt8",k)*100)+" %");
+    else if(c==="ground_ice_present") out.push(T("r_ice")+" "+Math.round((raw("lst_day_mean_k",k)+raw("lst_night_mean_k",k))/2)+" K");
+    else if(c==="snow_free_window") out.push(T("r_snow"));
+    else if(c==="road_access") out.push(T("r_road")+" "+Math.round(raw("road_dist_km",k))+" km");}
+  return out.join("; ")||T("val_ns");
+}
+function renderGlossary(){
+  const g=T("glos"); $("glossary").innerHTML='<details><summary>'+T("glos_t")+'</summary><dl class="gl">'+g.map(x=>"<dt>"+x[0]+"</dt><dd>"+x[1]+"</dd>").join("")+"</dl></details>";
+}
+$("city").addEventListener("input",e=>suggest(e.target.value));
+$("city").addEventListener("keydown",e=>{if(e.key==="Enter"){const b=$("sugg").querySelector("button"); if(b){e.preventDefault(); b.click()}} if(e.key==="Escape") $("sugg").hidden=true});
+document.addEventListener("click",e=>{if(!e.target.closest(".citybox")) $("sugg").hidden=true});
 /* ---------- UI: results ---------- */
 function fmt(v){ if(typeof v!=="number") return String(v); const a=Math.abs(v); if(a!==0&&a<0.01) return v.toExponential(1); return v.toLocaleString(lang==="uk"?"uk-UA":"en-US",{maximumSignificantDigits:4}) }
 function nearbyAnalogs(i){const la=cellLat(i),lo=cellLon(i);
   return M.analogs.map(a=>({a,d:km(la,lo,a.lat,a.lon)})).filter(x=>x.d<1000).sort((p,q)=>p.d-q.d).slice(0,4)}
+function whyNot(i){
+  if(i<0) return T("r_out");
+  if(CV[i]<M.min_coverage) return T("r_data")+" ("+Math.round(CV[i]*100)+" %)";
+  const task=taskById(S.task), bits=D[M.constraint_offset+i], out=[];
+  for(const c of task.constraints||[]){
+    if(!S.on[c]||M.constraint_bits[c]===undefined||((bits>>M.constraint_bits[c])&1)) continue;
+    if(c==="bare_ground_min") out.push(T("r_ndvi")+" "+raw("ndvi_mean",i).toFixed(2)+" > 0.25");
+    else if(c==="flat_patch_exists") out.push(T("r_flat")+" "+Math.round(raw("slope_lt8",i)*100)+" % < 5 %");
+    else if(c==="ground_ice_present") out.push(T("r_ice")+" "+Math.round((raw("lst_day_mean_k",i)+raw("lst_night_mean_k",i))/2)+" K");
+    else if(c==="snow_free_window") out.push(T("r_snow"));
+    else if(c==="road_access") out.push(T("r_road")+" "+Math.round(raw("road_dist_km",i))+" km > "+(M.road_max_km||50)+" km");
+  }
+  return out.join("; ")||T("val_ns");
+}
 function renderCands(){
   const ol=$("cands"); ol.innerHTML=""; const task=taskById(S.task);
   $("count").textContent=NRANKED.toLocaleString()+" "+T("ranked");
@@ -468,7 +740,7 @@ function renderCard(){
   if(v===v){h+='<div class="row" style="margin:8px 0;gap:16px"><div><div class="label">'+T("score")+'</div><div class="big">'+(v*100).toFixed(0)+'%</div></div>'+
     '<div><div class="label">'+T("top")+'</div><div class="big">'+Math.max(0.1,(1-pctOf(v))*100).toFixed(1)+'%</div><div class="sub">'+T("of_ranked")+'</div></div>'+
     '<div><div class="label">'+T("coverage")+'</div><div class="big">'+Math.round(CV[i]*100)+'%</div></div></div>'}
-  else{h+='<p class="sub" style="margin:8px 0">'+(lang==="uk"?"Ця клітинка не ранжується: мало даних або не проходить фільтр.":"This cell is not ranked: too little data or a filter removes it.")+"</p>"}
+  else{h+='<p class="sub" style="margin:8px 0">'+(lang==="uk"?"Ця клітинка не ранжується: ":"This cell is not ranked: ")+whyNot(i)+".</p>"}
   h+='<h3 style="margin-top:12px">'+T("crit")+'</h3>';
   for(const name of used){
     const w=S.weights[name]??0, off=available(name)?critOffset(name):undefined, q=off!==undefined?D[off+i]:255;
@@ -484,22 +756,25 @@ function renderCard(){
     "<tr><td>"+T("f_slope")+'</td><td class="n">'+f("slope_mean_deg",1)+'°</td><td class="n">'+nv(tf.slope,1,"°")+"</td></tr>"+
     "<tr><td>"+T("f_relief")+'</td><td class="n">'+f("relief_m",0)+' m</td><td class="n">'+nv(tf.relief,0," m")+"</td></tr>"+
     "<tr><td>"+T("f_rough")+'</td><td class="n">'+f("rough_p50_m",0)+' m</td><td class="n">'+nv(tf.rough,0," m")+"</td></tr>"+
-    "<tr><td>"+T("f_flat")+'</td><td class="n">'+(fl===fl?(fl*100).toFixed(0)+" %":"–")+'</td><td class="n">'+(tf.flat!==undefined&&tf.flat!==null?(tf.flat*100).toFixed(0)+" %":"–")+"</td></tr></tbody></table>"+
+    "<tr><td>"+T("f_flat")+'</td><td class="n">'+(fl===fl?(fl*100).toFixed(0)+" %":"–")+'</td><td class="n">'+(tf.flat!==undefined&&tf.flat!==null?(tf.flat*100).toFixed(0)+" %":"–")+"</td></tr></tbody></table>"+'<p class="sub" style="margin-top:4px">'+T("hist_src")+"</p>"+
     '<div class="kv" style="margin-top:8px">'+
-    "<span>"+T("elev")+"</span><span>"+f("elev_mean_m",0)+" m</span>"+
-    (hasRaw("volc_basalt_dist_km")?"<span>"+T("f_volc")+"</span><span>"+distTxt(raw("volc_basalt_dist_km",i))+"</span>":"")+
-    (hasRaw("volc_dist_km")?"<span>"+T("f_volc_any")+"</span><span>"+distTxt(raw("volc_dist_km",i))+"</span>":"")+
-    (hasRaw("impact_dist_km")?"<span>"+T("f_imp")+"</span><span>"+distTxt(raw("impact_dist_km",i))+impDiam(i)+"</span>":"")+
-    (hasRaw("precip_mm_yr")?"<span>"+T("f_precip")+"</span><span>"+f("precip_mm_yr",0)+" mm</span>":"")+
-    "<span>"+T("tday")+"</span><span>"+f("lst_day_mean_k",0)+" K</span>"+"<span>"+T("tnight")+"</span><span>"+f("lst_night_min_k",0)+" K</span>"+
-    "<span>"+T("swing")+"</span><span>"+f("lst_diurnal_k",0)+" K</span>"+"<span>"+T("ndvi")+"</span><span>"+f("ndvi_mean",2)+"</span>"+
-    "<span>"+T("snow")+"</span><span>"+f("snow_free_months",0)+" / 12</span>"+"<span>"+T("lowsun")+"</span><span>"+f("lowsun_best_h",1)+" h</span>"+
-    "<span>"+T("ice")+"</span><span>"+(raw("ice_frac",i)===raw("ice_frac",i)?(raw("ice_frac",i)*100).toFixed(0)+" %":"–")+"</span></div>";
+    "<span>"+T("elev")+src("s_srtm")+"</span><span>"+f("elev_mean_m",0)+" m</span>"+
+    (hasRaw("volc_basalt_dist_km")?"<span>"+T("f_volc")+src("s_gvp")+"</span><span>"+distTxt(raw("volc_basalt_dist_km",i))+"</span>":"")+
+    (hasRaw("volc_dist_km")?"<span>"+T("f_volc_any")+src("s_gvp")+"</span><span>"+distTxt(raw("volc_dist_km",i))+"</span>":"")+
+    (hasRaw("impact_dist_km")?"<span>"+T("f_imp")+src("s_eid")+"</span><span>"+distTxt(raw("impact_dist_km",i))+impDiam(i)+"</span>":"")+
+    (hasRaw("precip_mm_yr")?"<span>"+T("f_precip")+src("s_power")+"</span><span>"+f("precip_mm_yr",0)+" mm</span>":"")+
+    "<span>"+T("tday")+src("s_lst")+"</span><span>"+f("lst_day_mean_k",0)+" K</span>"+"<span>"+T("tnight")+src("s_lst")+"</span><span>"+f("lst_night_min_k",0)+" K</span>"+
+    "<span>"+T("swing")+src("s_lst")+"</span><span>"+f("lst_diurnal_k",0)+" K</span>"+"<span>"+T("ndvi")+src("s_ndvi")+"</span><span>"+f("ndvi_mean",2)+"</span>"+
+    "<span>"+T("snow")+src("s_snow")+"</span><span>"+f("snow_free_months",0)+" / 12</span>"+"<span>"+T("lowsun")+src("s_sun")+"</span><span>"+f("lowsun_best_h",1)+" h</span>"+
+    "<span>"+T("ice")+src("s_ne")+"</span><span>"+(raw("ice_frac",i)===raw("ice_frac",i)?(raw("ice_frac",i)*100).toFixed(0)+" %":"–")+"</span></div>";
   const only=[]; if(tf.t_min!==undefined&&tf.t_min!==null) only.push([T("f_tmin"),nv(tf.t_min,0," K")]);
   if(tf.ice1m!==undefined&&tf.ice1m!==null) only.push([T("f_ice"),(tf.ice1m*100).toFixed(0)+" %"]);
   if(tf.sun_max!==undefined&&tf.sun_max!==null) only.push([T("f_sun"),nv(tf.sun_max,1,"°")]);
   if(tf.h2o!==undefined&&tf.h2o!==null) only.push([T("f_h2o"),nv(tf.h2o,1," wt%")]);
   if(only.length) h+='<h3 style="margin-top:14px">'+T("tonly")+'</h3><div class="kv">'+only.map(r=>"<span>"+r[0]+"</span><span>"+r[1]+"</span>").join("")+"</div>";
+  h+=tripBlock(i)+slopeChart(i)+sunCalendar(i);
+  const sp=(M.spotlights||[]).find(x=>x.id===S.spot&&analogPos(x)===i);
+  if(sp) h+='<h3 style="margin-top:14px">'+T("spot_why")+'</h3><p style="margin-top:4px">'+(lang==="uk"?sp.why_uk:sp.why)+'</p><p class="sub" style="margin-top:4px">'+T("spot_src")+": "+sp.source+"</p>";
   const near=nearbyAnalogs(i);
   h+='<h3 style="margin-top:14px">'+T("near")+'</h3>'+(near.length?'<ul class="plain">'+near.map(x=>"<li><b>"+(lang==="uk"?x.a.name_uk:x.a.name)+"</b>, "+x.a.country+" · "+Math.round(x.d)+" km"+(x.a.validate?"":' <span class="chip">approx.</span>')+"</li>").join("")+"</ul>":'<p class="sub">'+T("none")+"</p>");
   const isNew=!nearbyAnalogs(i).length;
@@ -515,9 +790,9 @@ function renderVal(){
   for(const a of M.analogs){
     if(a.world!==S.world&&a.world!=="both") continue;
     const k=analogPos(a), v=k>=0?SC[k]:NaN, p=v===v?pctOf(v):NaN;
-    (a.tasks.includes(S.task)&&a.validate?mine:other).push({a,p});
+    (a.tasks.includes(S.task)&&a.validate?mine:other).push({a,p,k});
   }
-  const row=x=>'<tr><td>'+(lang==="uk"?x.a.name_uk:x.a.name)+' <span class="sub">'+x.a.country+'</span></td><td class="n">'+(x.p===x.p?x.p.toFixed(2):'<span class="sub">'+T("val_ns")+'</span>')+'</td><td>'+
+  const row=x=>'<tr><td>'+(lang==="uk"?x.a.name_uk:x.a.name)+' <span class="sub">'+x.a.country+'</span></td><td class="n">'+(x.p===x.p?x.p.toFixed(2):'<span class="sub">'+whyNot(x.k)+'</span>')+'</td><td>'+
     (x.p===x.p?'<span class="chip '+(x.p>=0.8?"ok":x.p>=0.5?"part":"no")+'">'+(x.p>=0.8?"top 20 %":x.p>=0.5?"> 0.50":"< 0.50")+'</span>':"")+'</td></tr>';
   mine.sort((a,b)=>(b.p===b.p?b.p:-1)-(a.p===a.p?a.p:-1)); other.sort((a,b)=>(b.p===b.p?b.p:-1)-(a.p===a.p?a.p:-1));
   let h='<h2>'+T("val_t")+'</h2><p class="sub" style="margin:4px 0 8px">'+T("val_sub")+'</p>';
@@ -563,12 +838,16 @@ function applyStatic(){
   $("l-en").setAttribute("aria-pressed",lang==="en"); $("l-uk").setAttribute("aria-pressed",lang==="uk");
   $("w-moon").setAttribute("aria-pressed",S.world==="moon"); $("w-mars").setAttribute("aria-pressed",S.world==="mars");
   document.title=T("title");
+  legend();
 }
 function refresh(rebuildControls){
   if(rebuildControls){fillTargets();fillTasks();fillSliders()}
-  compute(); renderCands(); renderCard(); renderVal(); renderGaps(); renderRel(); draw();
+  compute(); renderCands(); renderSpots(); renderCard(); renderCity(); renderVal(); renderGaps(); renderRel(); renderGlossary(); draw();
 }
-function legend(){ $("ramp").style.background="linear-gradient(90deg,"+STOPS.map(s=>"rgb("+s.join(",")+")").join(",")+")" }
+function legend(){
+  if(S.mode==="sun"){$("ramp").style.background="linear-gradient(90deg,var(--seq-lo),var(--seq-hi))"; $("lo-l").textContent=T("lo_sun"); $("hi-l").textContent=(D?SUNMAX().toFixed(1)+(lang==="uk"?" год ":" h "):"")+T("hi_sun")}
+  else{$("ramp").style.background="linear-gradient(90deg,"+STOPS.map(s=>"rgb("+s.join(",")+")").join(",")+")"; $("lo-l").textContent=T("lo"); $("hi-l").textContent=T("hi")}
+}
 
 $("w-moon").onclick=()=>setWorld("moon"); $("w-mars").onclick=()=>setWorld("mars");
 function setWorld(w){S.world=w; S.sel=-1; fillTargets(); fillTasks(); resetWeights(); fillSliders(); applyStatic(); refresh(false)}
@@ -576,7 +855,7 @@ $("target").onchange=e=>{S.target=e.target.value; S.sel=-1; fillSliders(); refre
 $("task").onchange=e=>{S.task=e.target.value; S.sel=-1; resetWeights(); fillSliders(); refresh(false)};
 $("reset").onclick=()=>{resetWeights(); fillSliders(); refresh(false)};
 $("showan").onchange=e=>{S.showAn=e.target.checked; draw()};
-$("l-en").onclick=()=>{lang="en"; applyStatic(); refresh(true)}; $("l-uk").onclick=()=>{lang="uk"; applyStatic(); refresh(true)};
+$("l-en").onclick=()=>{lang="en"; applyStatic(); fillMonths(); legend(); refresh(true)}; $("l-uk").onclick=()=>{lang="uk"; applyStatic(); fillMonths(); legend(); refresh(true)};
 $("copy").onclick=async()=>{
   const lines=["rank,lat,lon,score_pct,nearest_known_analog"]; CANDS.forEach((i,k)=>{const n=nearbyAnalogs(i)[0]; lines.push([k+1,cellLat(i).toFixed(2),cellLon(i).toFixed(2),(SC[i]*100).toFixed(0),n?'"'+n.a.name+" ("+Math.round(n.d)+' km)"':""].join(","))});
   const text=lines.join("\n"), box=$("copybox");
@@ -587,9 +866,10 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>draw())
 new MutationObserver(()=>draw()).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
 
 (async function init(){
-  legend(); applyStatic();
+  applyStatic(); legend(); fillMonths();
   try{ await load(); }catch(e){ $("loading").textContent="Could not read the embedded data: "+e.message; return }
   $("loading").hidden=true; $("results").hidden=false;
+  CITIES=M.cities||[];
   S.world="moon"; S.target=(M.targets.find(t=>t.world==="moon"&&t.mvp)||M.targets[0]).id; S.task="landing";
   fillTargets(); fillTasks(); resetWeights(); fillSliders(); resize(); refresh(false);
   if(CANDS.length) select(CANDS[0]);

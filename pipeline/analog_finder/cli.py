@@ -13,7 +13,7 @@
   reference               write the map layers of targets and known analogs
   terrain                 terrain features of Earth cells from the SRTMGL30 tiles
   surface                 temperature, NDVI, snow and mineral layers from MODIS and EMIT
-  context                 volcano, impact and dryness layers
+  context                 volcano, impact, dryness and road layers
   merge                   add the computed Earth layers to data/processed/grid.bin
   score                   validate on known analogs, export the scores for the web page
   web                     build webapp/index.html from data/processed
@@ -55,7 +55,8 @@ def _cmd_fetch(args) -> int:
         results = pds.fetch_world(world, ids=args.only, dry_run=args.dry_run)
     elif what == "aux":
         from .fetch import pds
-        results = pds.fetch_datasets(config.datasets(ids=["earth_naturalearth_land", "earth_volcanoes", "earth_impacts"]),
+        results = pds.fetch_datasets(config.datasets(ids=["earth_naturalearth_land", "earth_volcanoes", "earth_impacts",
+                                                           "earth_naturalearth_roads", "earth_naturalearth_places"]),
                                      dry_run=args.dry_run)
     elif what == "power-grid":
         from .fetch import earth
@@ -190,8 +191,8 @@ def main(argv=None) -> int:
     sf = sub.add_parser("surface", help="temperature, NDVI, snow and mineral features from MODIS and EMIT")
     sf.add_argument("--only", nargs="+", choices=["lst", "ndvi", "snow", "emit"], help="restrict to these products")
     sf.set_defaults(func=_cmd_surface)
-    cx = sub.add_parser("context", help="volcano, impact and dryness layers")
-    cx.add_argument("--only", nargs="+", choices=["volcanic", "impact", "dryness"], help="restrict to these layers")
+    cx = sub.add_parser("context", help="volcano, impact, dryness and road layers")
+    cx.add_argument("--only", nargs="+", choices=["volcanic", "impact", "dryness", "roads"], help="restrict to these layers")
     cx.set_defaults(func=_cmd_context)
     sub.add_parser("web", help="build webapp/index.html from data/processed").set_defaults(func=_cmd_web)
     al = sub.add_parser("all", help="run every step that is not done yet, then score and build the page")

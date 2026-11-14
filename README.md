@@ -28,6 +28,18 @@ This is a screening tool, not an engineering assessment or a site-selection reco
   20 %: the 55 km cell is much larger than a real site. See `docs/methodology.md`, section 6.
 - Changing every weight by up to ±25 % keeps 75–99 % of the top 5 % cells in place.
 
+## What the page does
+
+- Map of all land cells coloured by the score of the chosen task and target; 10 best regions (at least 600 km apart); sliders for every weight and switches for the hard filters.
+- **Low-Sun window** map mode: for any month, hours per day with the Sun 0–5 degrees up, with cells under snow that month hatched.
+- Card of any cell: score, rank, data coverage, contribution of each criterion, stability under ±25 % weight changes, the cell's values with their source, its slope classes next to the target's, a 12-month low-Sun calendar, nearby known analogs, and "new" when none is within 1,000 km. A cell without a score says why (which filter, or how little data).
+- "Where the known analogs land": the percentile of every known site for the current settings.
+- "What Earth cannot reproduce" next to every candidate, never inside the score.
+- **Check a place**: type any of 7,342 cities to see how its cell scores for every task, why it fails, and the nearest strong candidate; a short glossary explains the terms.
+- **Getting there**: distance to the nearest major road (also a hard filter for rover mobility) and the CO₂ of one passenger's flight from a chosen city (UK DESNZ 2025 factors).
+- Spotlight: the Volyn anorthosite massif of the Korosten pluton (Ukraine), a match to the lunar highlands in rock type but not in landscape.
+- Export of the 10 regions and the 100 best cells as CSV or GeoJSON (on the published site), English and Ukrainian, light and dark themes, phone layout.
+
 ## Layout
 
 ```
@@ -46,15 +58,16 @@ pipeline/
     pipeline_all.py      the `all` command
     export/              compact binary grid
   scripts/               generator of docs/data_sources.md
-  tests/                 77 tests; they need no downloads
+  tests/                 80 tests; they need no downloads
 webapp/
   template.html          the page; build_app.py embeds data/processed into index.html
 data/
   raw/                   downloads (not committed, except the land mask and the two context tables)
   interim/               intermediate layers (not committed)
   processed/             grid, target profiles, criteria and validation: everything the page reads
-  reference/             known analogs, targets, what Earth cannot reproduce
+  reference/             known analogs, targets, spotlight places, what Earth cannot reproduce
 docs/                    methodology.md, data_sources.md
+.github/workflows/ci.yml tests and a full `all` run on every push
 ```
 
 ## Quick start (Windows)
@@ -156,7 +169,7 @@ python -m analog_finder web
 
 ## What is not done yet
 
-- No detail below the 55 km cell (smaller windows, 30 m DEMs for the top candidates), no side-by-side images of Earth and target, no road access or protected-area layers.
+- No detail below the 55 km cell (smaller windows, 30 m DEMs for the top candidates), no side-by-side images of Earth and target, no protected-area layer (the WDPA data may not be redistributed), no machine-learning layer.
 - No maps of the Moon and Mars on the page; targets are chosen from a list.
 
 ## Use of AI

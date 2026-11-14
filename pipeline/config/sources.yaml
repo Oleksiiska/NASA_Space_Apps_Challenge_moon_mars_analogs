@@ -153,6 +153,38 @@ datasets:
     citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
     license: Public domain
 
+  - id: earth_naturalearth_roads
+    world: earth
+    title: Natural Earth 1:10M roads (logistics; distance to a major road)
+    official_resource: none (auxiliary, public domain)
+    agency: Natural Earth
+    access: open
+    provider: http
+    base_url: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/
+    dest: data/raw/earth/naturalearth
+    format: geojson
+    used_for: [road_access]
+    files:
+      - {name: ne_10m_roads.geojson, bytes: 50474096}
+    citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
+    license: Public domain
+
+  - id: earth_naturalearth_places
+    world: earth
+    title: Natural Earth 1:10M populated places (city search of the web page)
+    official_resource: none (auxiliary, public domain)
+    agency: Natural Earth
+    access: open
+    provider: http
+    base_url: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/
+    dest: data/raw/earth/naturalearth
+    format: geojson
+    used_for: [city_search]
+    files:
+      - {name: ne_10m_populated_places.geojson, bytes: 19359003}
+    citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
+    license: Public domain
+
   - id: earth_srtmgl30
     world: earth
     title: NASA SRTM Global 30 arc second (about 926 m), 90N to 60S

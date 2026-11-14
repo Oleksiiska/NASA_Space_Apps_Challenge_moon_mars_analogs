@@ -255,7 +255,54 @@ def build_dryness(src_dir: Optional[Path] = None, log: Callable[[str], None] = p
     return layers.save_layer("earth_dryness", items, CELL_DEG)
 
 
-BUILDERS = {"volcanic": build_volcanic, "impact": build_impacts, "dryness": build_dryness}
+# --------------------------------------------------------------------------- roads (logistics)
+
+ROAD_SOURCE = "Natural Earth 1:10M roads (public domain); computed by features/earth_context.py"
+ROAD_BIN_DEG = 0.1          # road vertices are binned to 0.1 degree before the distance search
+ROAD_STEP_KM = 5.0          # long segments are densified to this step
+
+
+def road_points(data: dict, bin_deg: float = ROAD_BIN_DEG, step_km: float = ROAD_STEP_KM) -> list[dict]:
+    """Points along every road (ferry routes excluded), one per occupied bin of ``bin_deg`` degrees."""
+    bins: set[tuple[int, int]] = set()
+    for ft in data.get("features", []):
+        props = ft.get("properties") or {}
+        if "ferry" in str(props.get("type", "")).lower() or "ferry" in str(props.get("featurecla", "")).lower():
+            continue
+        geom = ft.get("geometry") or {}
+        lines = geom.get("coordinates") or []
+        if geom.get("type") == "LineString":
+            lines = [lines]
+        for line in lines:
+            for (lo0, la0, *_), (lo1, la1, *_) in zip(line[:-1], line[1:]):
+                dlon = (lo1 - lo0) * math.cos(math.radians((la0 + la1) / 2))
+                n = max(1, int(math.hypot(dlon, la1 - la0) * 111.2 / step_km))
+                for k in range(n + 1):
+                    la, lo = la0 + (la1 - la0) * k / n, lo0 + (lo1 - lo0) * k / n
+                    bins.add((int(math.floor(la / bin_deg)), int(math.floor(lo / bin_deg))))
+    return [{"lat": (i + 0.5) * bin_deg, "lon": (j + 0.5) * bin_deg} for i, j in bins]
+
+
+def build_roads(src_dir: Optional[Path] = None, log: Callable[[str], None] = print) -> Path:
+    path = _src("earth_naturalearth_roads", "ne_10m_roads.geojson", src_dir)
+    pts = road_points(json.loads(path.read_text(encoding="utf-8")))
+    d, _ = nearest(pts, max_km=MAX_KM)
+    problems = []
+    for name, lat, lon, ok in (("Paris", 48.86, 2.35, lambda v: v < 30), ("Kyiv", 50.45, 30.52, lambda v: v < 30),
+                               ("Denver", 39.74, -104.99, lambda v: v < 30), ("Greenland ice sheet", 72.0, -40.0, lambda v: v > 250)):
+        v = cell_value(d, lat, lon)
+        if not ok(v):
+            problems.append(f"{name}: {v:.0f} km to the nearest road is not plausible")
+    if problems:
+        raise RuntimeError("Road self-check failed:\n  " + "\n  ".join(problems))
+    log(f"Roads: {len(pts)} road points (0.1 degree bins); self-check ok (Paris, Kyiv, Denver, Greenland)")
+    items = [layers.LayerFeature("road_dist_km", d, 0.0, MAX_KM, "km",
+                                 "Distance from the cell centre to the nearest major road of Natural Earth 1:10M (capped at 300 km); small and unpaved roads are not in the map",
+                                 ROAD_SOURCE)]
+    return layers.save_layer("earth_roads", items, CELL_DEG)
+
+
+BUILDERS = {"volcanic": build_volcanic, "impact": build_impacts, "dryness": build_dryness, "roads": build_roads}
 
 
 def build_all(which: Optional[list[str]] = None, log: Callable[[str], None] = print) -> list[Path]:

@@ -238,13 +238,14 @@
   "bare_ground_min": 0,
   "flat_patch_exists": 1,
   "ground_ice_present": 2,
-  "snow_free_window": 3
+  "snow_free_window": 3,
+  "road_access": 4
  },
  "constraints_not_checked": [
-  "road_access",
   "safe_access",
   "protected_ecosystem_flag"
  ],
+ "road_max_km": 50.0,
  "constraint_offset": 4088618,
  "min_coverage": 0.5,
  "no_data_yet": [],

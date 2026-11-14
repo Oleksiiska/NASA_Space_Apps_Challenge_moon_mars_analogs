@@ -139,7 +139,7 @@ def report_markdown(result: dict) -> str:
              f"- Scores only: {a['scored']} of {a['pairs']} site-task-target pairs scored, median percentile {a['median_percentile']}, "
              f"top 20 % in {a['share_top20']:.0%}, top 10 % in {a['share_top10']:.0%}.",
              f"- With the hard filters of each task: {f['scored']} pairs left, median {f['median_percentile']}, top 20 % in {f['share_top20']:.0%}. "
-             "Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands).",
+             "Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands), and remote sites with no major road within 50 km for rover mobility.",
              f"- Independent part: the tasks {', '.join(s.get('context_tasks', [])) or '(none)'} use the volcano and impact lists, and those lists contain many "
              "of the analog sites themselves, so their high percentiles show that the layers work, not that the method finds analogs on its own. "
              f"Without them: {s['independent']['scores_only']['scored']} pairs, median percentile {s['independent']['scores_only']['median_percentile']}, "
@@ -201,7 +201,8 @@ def export_scores(cells: scoring.Cells, profiles: dict, out_dir: Optional[Path] 
         bits |= (cons[c].astype(np.uint8) << i)
     blocks.append(bits)
     doc = {"schema": SCHEMA, "n_cells": cells.n, "scale": "uint8 0..254 -> 0..1, 255 no data", "criteria": meta,
-           "constraint_bits": {c: i for i, c in enumerate(names)}, "constraints_not_checked": list(scoring.NOT_CHECKED),
+           "constraint_bits": {c: i for i, c in enumerate(names)}, "constraints_not_checked": [c for c in scoring.NOT_CHECKED if c not in cons],
+           "road_max_km": scoring.ROAD_MAX_KM,
            "constraint_offset": len(meta) * cells.n, "min_coverage": scoring.MIN_COVERAGE,
            "no_data_yet": scoring.no_data_yet(shared), "composition_worlds": ["mars"],
            "tasks": config.tasks()["tasks"]}

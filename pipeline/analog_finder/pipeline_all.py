@@ -58,7 +58,8 @@ def run_all(force: list[str] | None = None, fetch: bool = False, log: Callable[[
         from .fetch import earth, pds
         head("fetch", "PDS (Moon, Mars), Natural Earth, volcano and impact tables, Earthdata, NASA POWER grid")
         pds.fetch_world(None)
-        pds.fetch_datasets(config.datasets(ids=["earth_naturalearth_land", "earth_volcanoes", "earth_impacts"]))
+        pds.fetch_datasets(config.datasets(ids=["earth_naturalearth_land", "earth_volcanoes", "earth_impacts",
+                                                "earth_naturalearth_roads", "earth_naturalearth_places"]))
         earth.fetch_earthdata(ids=["earth_srtmgl30", "earth_mod11c3", "earth_mod13c2", "earth_mod10cm", "earth_emit_l3asa"])
         earth.fetch_power_grid()
     else:
@@ -99,8 +100,12 @@ def run_all(force: list[str] | None = None, fetch: bool = False, log: Callable[[
         head("terrain", "skipped: no SRTMGL30 tiles (fetch earth)")
 
     # 5. MODIS and EMIT
-    if {"lst_day_mean_k", "ndvi_mean", "snow_free_months", "min_calcite"} <= feats and "surface" not in force:
+    if {"lst_day_mean_k", "ndvi_mean", "snow_free_months", "min_calcite", "snow_m01"} <= feats and "surface" not in force:
         head("surface", "done (temperature, NDVI, snow and minerals are in grid.bin)")
+    elif {"lst_day_mean_k", "ndvi_mean", "snow_free_months", "min_calcite"} <= feats and "surface" not in force:
+        head("surface", "adding the monthly snow cover (low-Sun calendar)")
+        from .features import earth_surface
+        built_layers |= bool(earth_surface.build_all(["snow"]))
     else:
         head("surface", "computing from MODIS and EMIT")
         from .features import earth_surface
@@ -115,6 +120,8 @@ def run_all(force: list[str] | None = None, fetch: bool = False, log: Callable[[
         todo.append("impact")
     if ("precip_mm_yr" not in feats or "context" in force) and _has_files("earth_power_precip_grid", "box_*.json"):
         todo.append("dryness")
+    if ("road_dist_km" not in feats or "context" in force) and _has_files("earth_naturalearth_roads", "ne_10m_roads.geojson"):
+        todo.append("roads")
     if todo:
         head("context", "building " + ", ".join(todo))
         built_layers |= bool(earth_context.build_all(todo))

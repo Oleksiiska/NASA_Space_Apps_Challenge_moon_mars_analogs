@@ -9,7 +9,7 @@
    "in_grid": true,
    "coverage": 0.9,
    "percentile": 0.673,
-   "percentile_filtered": 0.55,
+   "percentile_filtered": 0.551,
    "failed_filters": []
   },
   {
@@ -20,7 +20,7 @@
    "in_grid": true,
    "coverage": 0.9,
    "percentile": 0.844,
-   "percentile_filtered": 0.808,
+   "percentile_filtered": 0.807,
    "failed_filters": []
   },
   {
@@ -31,8 +31,10 @@
    "in_grid": true,
    "coverage": 0.9,
    "percentile": 0.757,
-   "percentile_filtered": 0.684,
-   "failed_filters": []
+   "percentile_filtered": null,
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "mcmurdo_dry_valleys",
@@ -43,7 +45,9 @@
    "coverage": 0.0,
    "percentile": null,
    "percentile_filtered": null,
-   "failed_filters": []
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "hi_seas",
@@ -118,7 +122,8 @@
    "percentile": 0.841,
    "percentile_filtered": null,
    "failed_filters": [
-    "bare_ground_min"
+    "bare_ground_min",
+    "road_access"
    ]
   },
   {
@@ -129,7 +134,7 @@
    "in_grid": true,
    "coverage": 0.9,
    "percentile": 0.674,
-   "percentile_filtered": 0.597,
+   "percentile_filtered": 0.598,
    "failed_filters": []
   },
   {
@@ -140,7 +145,7 @@
    "in_grid": true,
    "coverage": 0.9,
    "percentile": 0.829,
-   "percentile_filtered": 0.802,
+   "percentile_filtered": 0.798,
    "failed_filters": []
   },
   {
@@ -151,8 +156,10 @@
    "in_grid": true,
    "coverage": 0.9,
    "percentile": 0.706,
-   "percentile_filtered": 0.635,
-   "failed_filters": []
+   "percentile_filtered": null,
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "mcmurdo_dry_valleys",
@@ -163,7 +170,9 @@
    "coverage": 0.0,
    "percentile": null,
    "percentile_filtered": null,
-   "failed_filters": []
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "hi_seas",
@@ -199,7 +208,7 @@
    "in_grid": true,
    "coverage": 0.9,
    "percentile": 0.615,
-   "percentile_filtered": 0.529,
+   "percentile_filtered": 0.531,
    "failed_filters": []
   },
   {
@@ -238,7 +247,8 @@
    "percentile": 0.785,
    "percentile_filtered": null,
    "failed_filters": [
-    "bare_ground_min"
+    "bare_ground_min",
+    "road_access"
    ]
   },
   {
@@ -249,8 +259,10 @@
    "in_grid": true,
    "coverage": 0.9,
    "percentile": 0.595,
-   "percentile_filtered": 0.565,
-   "failed_filters": []
+   "percentile_filtered": null,
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "mcmurdo_dry_valleys",
@@ -261,7 +273,9 @@
    "coverage": 0.0,
    "percentile": null,
    "percentile_filtered": null,
-   "failed_filters": []
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "hi_seas",
@@ -297,7 +311,7 @@
    "in_grid": true,
    "coverage": 0.9,
    "percentile": 0.746,
-   "percentile_filtered": 0.724,
+   "percentile_filtered": 0.703,
    "failed_filters": []
   },
   {
@@ -334,8 +348,10 @@
    "in_grid": true,
    "coverage": 1.0,
    "percentile": 0.775,
-   "percentile_filtered": 0.751,
-   "failed_filters": []
+   "percentile_filtered": null,
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "death_valley",
@@ -345,7 +361,7 @@
    "in_grid": true,
    "coverage": 1.0,
    "percentile": 0.736,
-   "percentile_filtered": 0.713,
+   "percentile_filtered": 0.692,
    "failed_filters": []
   },
   {
@@ -356,8 +372,10 @@
    "in_grid": true,
    "coverage": 1.0,
    "percentile": 0.986,
-   "percentile_filtered": 0.961,
-   "failed_filters": []
+   "percentile_filtered": null,
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "makgadikgadi",
@@ -367,8 +385,10 @@
    "in_grid": true,
    "coverage": 1.0,
    "percentile": 0.162,
-   "percentile_filtered": 0.072,
-   "failed_filters": []
+   "percentile_filtered": null,
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "qaidam",
@@ -378,7 +398,7 @@
    "in_grid": true,
    "coverage": 1.0,
    "percentile": 0.998,
-   "percentile_filtered": 0.994,
+   "percentile_filtered": 0.992,
    "failed_filters": []
   },
   {
@@ -389,8 +409,10 @@
    "in_grid": true,
    "coverage": 0.9,
    "percentile": 0.922,
-   "percentile_filtered": 0.789,
-   "failed_filters": []
+   "percentile_filtered": null,
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "mcmurdo_dry_valleys",
@@ -401,7 +423,9 @@
    "coverage": 0.0,
    "percentile": null,
    "percentile_filtered": null,
-   "failed_filters": []
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "hi_seas",
@@ -437,7 +461,7 @@
    "in_grid": true,
    "coverage": 0.9,
    "percentile": 0.403,
-   "percentile_filtered": 0.347,
+   "percentile_filtered": 0.391,
    "failed_filters": []
   },
   {
@@ -474,8 +498,10 @@
    "in_grid": true,
    "coverage": 1.0,
    "percentile": 0.17,
-   "percentile_filtered": 0.13,
-   "failed_filters": []
+   "percentile_filtered": null,
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "death_valley",
@@ -485,7 +511,7 @@
    "in_grid": true,
    "coverage": 1.0,
    "percentile": 0.173,
-   "percentile_filtered": 0.133,
+   "percentile_filtered": 0.131,
    "failed_filters": []
   },
   {
@@ -496,8 +522,10 @@
    "in_grid": true,
    "coverage": 1.0,
    "percentile": 0.262,
-   "percentile_filtered": 0.224,
-   "failed_filters": []
+   "percentile_filtered": null,
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "makgadikgadi",
@@ -507,8 +535,10 @@
    "in_grid": true,
    "coverage": 1.0,
    "percentile": 0.614,
-   "percentile_filtered": 0.508,
-   "failed_filters": []
+   "percentile_filtered": null,
+   "failed_filters": [
+    "road_access"
+   ]
   },
   {
    "analog": "qaidam",
@@ -518,7 +548,7 @@
    "in_grid": true,
    "coverage": 1.0,
    "percentile": 0.31,
-   "percentile_filtered": 0.269,
+   "percentile_filtered": 0.296,
    "failed_filters": []
   },
   {
@@ -1604,11 +1634,11 @@
    },
    "with_filters": {
     "pairs": 136,
-    "scored": 88,
-    "median_percentile": 0.699,
-    "share_top20": 0.386,
-    "share_top10": 0.273,
-    "share_above_median": 0.614
+    "scored": 78,
+    "median_percentile": 0.716,
+    "share_top20": 0.41,
+    "share_top10": 0.295,
+    "share_above_median": 0.603
    }
   },
   "context_tasks": [
@@ -1717,11 +1747,11 @@
     },
     "with_filters": {
      "pairs": 44,
-     "scored": 22,
-     "median_percentile": 0.581,
-     "share_top20": 0.182,
-     "share_top10": 0.091,
-     "share_above_median": 0.727
+     "scored": 12,
+     "median_percentile": 0.576,
+     "share_top20": 0.167,
+     "share_top10": 0.083,
+     "share_above_median": 0.75
     }
    }
   },
@@ -1736,11 +1766,11 @@
    },
    "with_filters": {
     "pairs": 86,
-    "scored": 56,
-    "median_percentile": 0.44,
-    "share_top20": 0.143,
-    "share_top10": 0.071,
-    "share_above_median": 0.429
+    "scored": 46,
+    "median_percentile": 0.411,
+    "share_top20": 0.13,
+    "share_top10": 0.065,
+    "share_above_median": 0.37
    }
   }
  },
@@ -1784,33 +1814,33 @@
    {
     "task": "mobility",
     "target": "shackleton_ridge",
-    "top_cells": 1175,
-    "mean_overlap": 0.984,
-    "min_overlap": 0.965,
+    "top_cells": 518,
+    "mean_overlap": 0.993,
+    "min_overlap": 0.977,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "mobility",
     "target": "mons_mouton",
-    "top_cells": 1175,
-    "mean_overlap": 0.98,
+    "top_cells": 518,
+    "mean_overlap": 0.976,
     "min_overlap": 0.954,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "mobility",
     "target": "jezero",
-    "top_cells": 1175,
-    "mean_overlap": 0.937,
-    "min_overlap": 0.889,
+    "top_cells": 518,
+    "mean_overlap": 0.95,
+    "min_overlap": 0.917,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "mobility",
     "target": "arcadia_planitia",
-    "top_cells": 1175,
-    "mean_overlap": 0.903,
-    "min_overlap": 0.807,
+    "top_cells": 518,
+    "mean_overlap": 0.953,
+    "min_overlap": 0.898,
     "share_dense_vegetation": 0.0
    },
    {
@@ -1841,8 +1871,8 @@
     "task": "isru_ice",
     "target": "mons_mouton",
     "top_cells": 2295,
-    "mean_overlap": 0.993,
-    "min_overlap": 0.991,
+    "mean_overlap": 0.992,
+    "min_overlap": 0.99,
     "share_dense_vegetation": null
    },
    {
@@ -1850,14 +1880,14 @@
     "target": "jezero",
     "top_cells": 2295,
     "mean_overlap": 0.992,
-    "min_overlap": 0.991,
+    "min_overlap": 0.99,
     "share_dense_vegetation": null
    },
    {
     "task": "isru_ice",
     "target": "arcadia_planitia",
     "top_cells": 2295,
-    "mean_overlap": 0.993,
+    "mean_overlap": 0.992,
     "min_overlap": 0.99,
     "share_dense_vegetation": null
    },
@@ -1952,7 +1982,7 @@
     "share_dense_vegetation": 0.0
    },
    "mobility": {
-    "mean_overlap": 0.951,
+    "mean_overlap": 0.968,
     "share_dense_vegetation": 0.0
    }
   }

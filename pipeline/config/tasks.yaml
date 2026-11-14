@@ -75,7 +75,7 @@ tasks:
 constraints:
   bare_ground_min: Vegetation low enough to see the ground (NDVI threshold, to be tuned).
   flat_patch_exists: A patch with slopes under 8 degrees of the required size exists.
-  road_access: A road within a set distance (OpenStreetMap), optional layer.
+  road_access: A major road of Natural Earth 1:10M within 50 km of the cell centre (small and unpaved roads are not in that map).
   safe_access: No access restrictions or hazards that rule out field work.
   ground_ice_present: Permafrost or ground ice is present in the cell.
   snow_free_window: At least one month with a low Sun and no snow cover.

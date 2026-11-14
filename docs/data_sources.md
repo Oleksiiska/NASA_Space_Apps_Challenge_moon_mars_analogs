@@ -91,6 +91,22 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 - Citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
 - Licence: Public domain.
 
+**Natural Earth 1:10M roads (logistics; distance to a major road)** (`earth_naturalearth_roads`)
+
+- Official resource: none (auxiliary, public domain). Agency: Natural Earth. Access: `open`.
+- Source: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/
+- Size: 1 file(s), 50.5 MB. Saved to `data/raw/earth/naturalearth`. Used for: road_access.
+- Citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
+- Licence: Public domain.
+
+**Natural Earth 1:10M populated places (city search of the web page)** (`earth_naturalearth_places`)
+
+- Official resource: none (auxiliary, public domain). Agency: Natural Earth. Access: `open`.
+- Source: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/
+- Size: 1 file(s), 19.4 MB. Saved to `data/raw/earth/naturalearth`. Used for: city_search.
+- Citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
+- Licence: Public domain.
+
 **NASA SRTM Global 30 arc second (about 926 m), 90N to 60S** (`earth_srtmgl30`)
 
 - Official resource: NASA Earthdata Search. Agency: NASA. Access: `earthdata_login`.

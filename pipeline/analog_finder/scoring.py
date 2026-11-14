@@ -155,11 +155,16 @@ def constraints(cells: Cells) -> dict[str, np.ndarray]:
         flat_ok = ~(f["slope_lt8"] < 0.05)
         ice_ok = ~((f["lst_day_mean_k"] + f["lst_night_mean_k"]) / 2.0 >= 273.15) | (f["ice_frac"] > 0.5)
         snow_ok = f["snow_free_months"] >= 1
-    return {"bare_ground_min": ndvi_ok, "flat_patch_exists": flat_ok, "ground_ice_present": ice_ok,
-            "snow_free_window": np.asarray(snow_ok)}
+    out = {"bare_ground_min": ndvi_ok, "flat_patch_exists": flat_ok, "ground_ice_present": ice_ok,
+           "snow_free_window": np.asarray(snow_ok)}
+    if "road_dist_km" in f:
+        with np.errstate(invalid="ignore"):
+            out["road_access"] = ~(f["road_dist_km"] > ROAD_MAX_KM)
+    return out
 
 
 NOT_CHECKED = ("road_access", "safe_access", "protected_ecosystem_flag")
+ROAD_MAX_KM = 50.0        # road_access: a major road within 50 km of the cell centre
 
 
 def task_score(task: dict, crit: dict[str, np.ndarray], world: str, cells: Cells,
