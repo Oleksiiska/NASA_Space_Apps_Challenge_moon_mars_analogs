@@ -2,7 +2,7 @@
 
 Run from the pipeline folder:  python ../webapp/build_app.py [processed_dir] [out.html]
 """
-import base64, gzip, json, sys
+import base64, csv, gzip, json, sys
 from pathlib import Path
 import numpy as np
 
@@ -12,7 +12,11 @@ from analog_finder import config  # noqa: E402
 from analog_finder.prep import reference  # noqa: E402
 
 RAW = ["elev_mean_m", "relief_m", "slope_mean_deg", "slope_lt8", "rough_p50_m", "lst_day_mean_k", "lst_night_min_k", "lst_diurnal_k",
-       "ndvi_mean", "snow_free_months", "lowsun_best_h", "ice_frac"]
+       "ndvi_mean", "snow_free_months", "lowsun_best_h", "ice_frac",
+       "volc_dist_km", "volc_basalt_dist_km", "impact_dist_km", "impact_diam_km", "precip_mm_yr",
+       "volcano_dist_km", "holocene_volcano_dist_km", "precip_log_mm", "bare_px_frac",
+       "lst_night_mean_k", "lowsun_best_month", "road_dist_km"] + [f"slope_h{k}" for k in range(9)] + [f"snow_m{m:02d}" for m in range(1, 13)]
+# features missing from grid.json are skipped
 
 
 def fmt_temp(d):
@@ -36,7 +40,9 @@ def build(pdir: Path, out: Path):
     raw_meta = []
     off = cbytes.size
     for name in RAW:
-        f = next(x for x in grid["features"] if x["name"] == name)
+        f = next((x for x in grid["features"] if x["name"] == name), None)
+        if f is None:
+            continue
         blocks.append(gbytes[f["offset"]: f["offset"] + n])
         raw_meta.append({"name": name, "offset": off, "min": f["min"], "max": f["max"], "unit": f.get("unit", "")})
         off += n
@@ -61,7 +67,7 @@ def build(pdir: Path, out: Path):
     for k, t in prof.items():
         tt = t.get("terrain_1km", {})
         d = {"slope": tt.get("slope_mean_deg"), "relief": tt.get("relief_p5_p95_m"), "rough": tt.get("roughness_rms_p50_m"),
-             "flat": tt.get("frac_slope_lt8")}
+             "flat": tt.get("frac_slope_lt8"), "hist": [round(float(x), 4) for x in tt.get("slope_hist", [])] or None}
         if "thermal_ice" in t:
             ti = t["thermal_ice"]
             d |= {"t_mean": ti.get("temp_avg_mean_K"), "t_min": ti.get("temp_avg_min_K"), "ice1m": ti.get("frac_ice_stable_within_1m")}
@@ -70,6 +76,25 @@ def build(pdir: Path, out: Path):
         if "water" in t:
             d["h2o"] = t["water"].get("h2o_weight_percent")
         tfacts[k] = d
+    lowsun = []
+    lp = pdir / "lowsun_by_latitude.csv"
+    if lp.exists():
+        with open(lp, encoding="utf-8") as f:
+            rows_ls = list(csv.DictReader(f))
+        if len(rows_ls) == grid["grid"]["n_lat"]:
+            lowsun = [[round(float(r[f"m{m:02d}"]), 2) for m in range(1, 13)] for r in rows_ls]
+    spots = []
+    sp_path = HERE.parent / "data" / "reference" / "spotlights.csv"
+    if sp_path.exists():
+        with open(sp_path, encoding="utf-8-sig") as f:
+            for r in csv.DictReader(f):
+                spots.append({k: r[k] for k in ("id", "name", "name_uk", "country", "world", "why", "why_uk", "source")}
+                             | {"lat": float(r["lat"]), "lon": float(r["lon"])})
+    cities = []
+    cp = HERE.parent / "data" / "reference" / "cities.csv"
+    if cp.exists():
+        with open(cp, encoding="utf-8") as f:
+            cities = [[r["name"], r["name_uk"], r["country"], float(r["lat"]), float(r["lon"]), int(r["pop"])] for r in csv.DictReader(f)]
     gaps = json.loads((HERE.parent / "data" / "reference" / "environment_gaps.json").read_text(encoding="utf-8"))
     quant = []
     for q in gaps["quantities"]:
@@ -85,7 +110,7 @@ def build(pdir: Path, out: Path):
             "min_coverage": crit["min_coverage"], "no_data_yet": crit["no_data_yet"], "tasks": crit["tasks"],
             "constraints_doc": config.tasks().get("constraints", {}), "raw": raw_meta, "rc_offset": rc_off,
             "targets": [t for t in targets if t["has_profile"]], "analogs": analogs, "gaps": quant,
-            "tfacts": tfacts, "sensitivity": val.get("sensitivity", {}).get("by_task", {}), "validation": val["summary"], "validation_skipped": val["skipped_tasks"]}
+            "tfacts": tfacts, "lowsun": lowsun, "spotlights": spots, "cities": cities, "road_max_km": crit.get("road_max_km", 50), "sensitivity": val.get("sensitivity", {}).get("by_task", {}), "validation": val["summary"], "validation_skipped": val["skipped_tasks"]}
     html = (HERE / "template.html").read_text(encoding="utf-8")
     html = html.replace("/*META*/null", json.dumps(meta, ensure_ascii=False, separators=(",", ":")))
     html = html.replace("/*BLOB*/\"\"", '"' + base64.b64encode(blob).decode() + '"')

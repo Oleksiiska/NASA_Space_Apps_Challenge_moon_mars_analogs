@@ -12,7 +12,7 @@ Government sources the data-use terms of that source apply.
 
 | Official resource | What the project takes from it | Role |
 | --- | --- | --- |
-| NASA Earthdata Search | SRTMGL30 (terrain), MOD11C3 (surface temperature), MOD13C2 (NDVI), MOD10CM (snow), MCD12C1 (land cover), EMIT L3ASA (minerals) | Core: features of every Earth cell |
+| NASA Earthdata Search | SRTMGL30 (terrain), MOD11C3 (surface temperature), MOD13C2 (NDVI), MOD10CM (snow), EMIT L3ASA (minerals); MCD12C1 (land cover) is downloaded but not used | Core: features of every Earth cell |
 | NASA Worldview | GIBS imagery layers: true colour, temperature, snow | Map background and visual check of the top candidates; nothing is downloaded into the pipeline |
 | NASA Planetary Data System (PDS) | Mars: MOLA MEGDR topography, Odyssey GRS water map | Core: fingerprints of the Martian targets |
 | NASA Lunar Reconnaissance Orbiter (PDS Geosciences) | LOLA gridded data: south polar elevation, slope and roughness maps | Core: terrain of the lunar targets |
@@ -94,26 +94,34 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 **Smithsonian Global Volcanism Program, Volcanoes of the World (Holocene and Pleistocene volcanoes)** (`earth_gvp_volcanoes`)
 
 - Official resource: none (auxiliary context layer). Agency: Smithsonian Institution. Access: `open`.
-- Source: GVP GeoServer WFS, layers `Smithsonian_VOTW_Holocene_Volcanoes` and `Smithsonian_VOTW_Pleistocene_Volcanoes` (GeoJSON).
-- Size: 2 file(s), about 3.7 MB. Saved to `data/raw/earth/context`. Used for: volcanic.
+- Source: Earthdata short name `None`, version None
+- Size: 2 file(s), 0.0 MB. Saved to `data/raw/earth/context`. Used for: volcanic.
 - Citation: Global Volcanism Program (2024). Volcanoes of the World (v. 5.2.x). Smithsonian Institution. doi:10.5479/si.GVP.VOTW5-2024.5.2
 - Licence: Smithsonian terms of use; cite the Global Volcanism Program.
 
-**Confirmed impact structures on Earth** (`earth_impact_structures`)
+**Confirmed impact structures on Earth (Wikipedia list based on the Earth Impact Database, and Wikidata)** (`earth_impact_structures`)
 
 - Official resource: none (auxiliary context layer). Agency: Wikipedia / Wikidata. Access: `open`.
-- Source: raw wikitext of the Wikipedia article "List of impact structures on Earth" (compiled from the Earth Impact Database) and a Wikidata SPARQL query for items that are instances of "impact crater" (Q55818) with coordinates on Earth. Only structures in the confirmed tables of the article are kept; Wikidata only fills in missing coordinates by name.
-- Size: 2 file(s), about 0.2 MB. Saved to `data/raw/earth/context`. Used for: impact.
-- Citation: Wikipedia contributors, "List of impact structures on Earth" (CC BY-SA 4.0); Earth Impact Database, Planetary and Space Science Centre, University of New Brunswick; Wikidata (CC0).
+- Source: Earthdata short name `None`, version None
+- Size: 2 file(s), 0.0 MB. Saved to `data/raw/earth/context`. Used for: impact.
+- Citation: Wikipedia contributors, "List of impact structures on Earth" (CC BY-SA 4.0), compiled from the Earth Impact Database (Planetary and Space Science Centre, University of New Brunswick); Wikidata (CC0), items that are instances of "impact crater" (Q55818) with coordinates on Earth.
 - Licence: CC BY-SA 4.0 (Wikipedia), CC0 (Wikidata).
 
-**GPM IMERG Final Precipitation, monthly, 0.1 degree (GPM_3IMERGM)** (`earth_imerg_monthly`)
+**Natural Earth 1:10M roads (logistics; distance to a major road)** (`earth_naturalearth_roads`)
 
-- Official resource: NASA Earthdata Search. Agency: NASA. Access: `earthdata_login`.
-- Source: Earthdata short name `GPM_3IMERGM`, version 07
-- Size: 12 monthly files of 2023, about 214 MB. Saved to `data/raw/earth/imerg`. Used for: dryness.
-- Citation: Huffman, G.J., E.F. Stocker, D.T. Bolvin, E.J. Nelkin, J. Tan (2023). GPM IMERG Final Precipitation L3 1 month 0.1 degree x 0.1 degree V07. GES DISC. doi:10.5067/GPM/IMERG/3B-MONTH/07
-- Licence: NASA EOSDIS open data policy.
+- Official resource: none (auxiliary, public domain). Agency: Natural Earth. Access: `open`.
+- Source: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/
+- Size: 1 file(s), 50.5 MB. Saved to `data/raw/earth/naturalearth`. Used for: road_access.
+- Citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
+- Licence: Public domain.
+
+**Natural Earth 1:10M populated places (city search of the web page)** (`earth_naturalearth_places`)
+
+- Official resource: none (auxiliary, public domain). Agency: Natural Earth. Access: `open`.
+- Source: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/
+- Size: 1 file(s), 19.4 MB. Saved to `data/raw/earth/naturalearth`. Used for: city_search.
+- Citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
+- Licence: Public domain.
 
 **NASA SRTM Global 30 arc second (about 926 m), 90N to 60S** (`earth_srtmgl30`)
 
@@ -155,6 +163,14 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 - Citation: Friedl, M. and Sulla-Menashe, D. (2022). MODIS/Terra+Aqua Land Cover Type Yearly L3 Global 0.05Deg CMG V061. NASA EOSDIS LP DAAC. doi:10.5067/MODIS/MCD12C1.061
 - Licence: NASA EOSDIS open data policy.
 
+**GPM IMERG Final Precipitation, monthly, 0.1 degree (GPM_3IMERGM)** (`earth_imerg_monthly`)
+
+- Official resource: NASA Earthdata Search. Agency: NASA. Access: `earthdata_login`.
+- Source: Earthdata short name `GPM_3IMERGM`, version 07
+- Size: chosen at download time. Saved to `data/raw/earth/imerg`. Used for: dryness.
+- Citation: Huffman, G.J., E.F. Stocker, D.T. Bolvin, E.J. Nelkin, J. Tan (2023). GPM IMERG Final Precipitation L3 1 month 0.1 degree x 0.1 degree V07. Goddard Earth Sciences Data and Information Services Center (GES DISC). doi:10.5067/GPM/IMERG/3B-MONTH/07
+- Licence: NASA EOSDIS open data policy.
+
 **EMIT L3 Aggregated Mineral Spectral Abundance, 0.5 degree, 52N to 52S** (`earth_emit_l3asa`)
 
 - Official resource: NASA Earthdata Search. Agency: NASA. Access: `earthdata_login`.
@@ -170,6 +186,30 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 - Size: chosen at download time. Saved to `data/raw/earth/power`. Used for: climate_of_sites.
 - Citation: NASA Langley Research Center (LaRC) POWER Project, funded through the NASA Earth Science/Applied Science Program.
 - Licence: NASA open data.
+
+**NASA POWER precipitation climatology on the whole land grid (dryness criterion)** (`earth_power_precip_grid`)
+
+- Official resource: none (NASA, outside the challenge list). Agency: NASA. Access: `open`.
+- Source: https://power.larc.nasa.gov/api/temporal/climatology/regional
+- Size: chosen at download time. Saved to `data/raw/earth/power_grid`. Used for: dryness.
+- Citation: NASA Langley Research Center (LaRC) POWER Project, funded through the NASA Earth Science/Applied Science Program. Precipitation from MERRA-2 (corrected), long-term climatology.
+- Licence: NASA open data.
+
+**Holocene volcanoes of the world (location and type), Smithsonian Global Volcanism Program** (`earth_volcanoes`)
+
+- Official resource: none (geological context, outside the challenge list). Agency: Smithsonian Institution. Access: `open`.
+- Source: https://raw.githubusercontent.com/plotly/datasets/master/
+- Size: 1 file(s), 0.1 MB. Saved to `data/raw/earth/context`. Used for: volcanic.
+- Citation: Global Volcanism Program, Smithsonian Institution. Volcanoes of the World, list of Holocene volcanoes (an earlier version of the database, 1,571 volcanoes, as copied in the plotly/datasets repository on GitHub). Current version: https://volcano.si.edu
+- Licence: Free use with citation of the Global Volcanism Program (check the terms on volcano.si.edu).
+
+**Confirmed impact structures (Earth Impact Database, 189 structures)** (`earth_impacts`)
+
+- Official resource: none (geological context, outside the challenge list). Agency: Planetary and Space Science Centre, University of New Brunswick. Access: `open`.
+- Source: https://raw.githubusercontent.com/cjwinchester/earth-impact-data/main/
+- Size: 1 file(s), 0.0 MB. Saved to `data/raw/earth/context`. Used for: impact.
+- Citation: Earth Impact Database, Planetary and Space Science Centre, University of New Brunswick (http://www.passc.net/EarthImpactDatabase), table as compiled in the cjwinchester/earth-impact-data repository on GitHub.
+- Licence: Terms of the Earth Impact Database apply; cite PASSC.
 
 **Copernicus DEM GLO-90 tiles (terrain of Antarctic sites and detail views)** (`earth_copdem_glo90`)
 
@@ -187,9 +227,6 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 | `data/reference/known_analogs.csv` | Site list and coordinates: the Wikipedia articles "Terrestrial analogue site" and "List of impact structures on Earth" and the articles of single sites (text under CC BY-SA 4.0), Cavalazzi et al. 2019 (Astrobiology 19:553) for Dallol. Uses: USGS, NASA NTRS, Europlanet, CORDIS and National Park Service pages. Each row names its own sources in `coord_source` and `use_source`. |
 | `pipeline/config/targets.yaml`, `data/reference/targets.geojson` | Coordinates from the USGS Gazetteer of Planetary Nomenclature, the LROC site, the PDS Orbital Data Explorer landing-site table and Wikipedia; the source of each target is in its `source` field. |
 | `data/reference/environment_gaps.json` | NASA Planetary Fact Sheets (NSSDCA); Hassler et al. 2014 (Science 343, 1244797) for Mars radiation; Zhang et al. 2020 (Science Advances 6, eaaz1334) for lunar radiation; UNSCEAR 2008 for the Earth background. |
-| `data/reference/volcanoes.csv` | Written by `python -m analog_finder context` from the Smithsonian GVP lists (`earth_gvp_volcanoes`): name, position, Holocene or Pleistocene, volcano type. |
-| `data/reference/impact_structures.csv` | Written by `python -m analog_finder context` from the confirmed tables of the Wikipedia list (`earth_impact_structures`); coordinates missing there are taken from Wikidata by name, and structures still without coordinates are left out (the command lists them). |
-| `data/reference/negative_sites.csv` | Hand-picked places that are clearly not Moon or Mars analogs (rainforest, farmland, wetland), used only by `python -m analog_finder evaluate`. |
 | `data/processed/grid.*`, `lowsun_by_latitude.csv` | Land and ice masks from Natural Earth; the low-Sun hours are computed from solar geometry in `features/sun.py` and were checked against the pvlib library. |
 
 ### Columns of known_analogs.csv
@@ -212,7 +249,10 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 
 - The Natural Earth ice mask (1:50 million) is too coarse for small ice-free areas: the cell of the McMurdo Dry Valleys comes out as fully ice-covered. Use the MODIS snow and land-cover products for such places.
 - SRTMGL30 covers 90 N to 60 S. North of 60 N, where real SRTM ends, the values come from a coarser source (GTOPO30, to be confirmed), so Arctic terrain is smoother than elsewhere. Antarctica (south of 60 S) has no terrain: use Copernicus DEM for single sites such as the McMurdo Dry Valleys.
-- EMIT L3ASA covers about 52 N to 52 S and concentrates on arid regions.
+- EMIT L3ASA: the file covers 55 N to 54.5 S and only bare, dust-source surfaces; elsewhere the mineral features are empty. Its cell centres sit a quarter cell away from the project grid and are averaged 2 x 2.
+- The volcano list is an earlier version of the Global Volcanism Program database (1,571 volcanoes, 1,420 on land). A volcanic field is one point, so distance to it is only a proxy for volcanic terrain nearby.
+- The impact table lists 189 confirmed structures; the distance is measured to a circular rim of the listed diameter.
+- NASA POWER precipitation comes from the MERRA-2 reanalysis on a 0.5 x 0.625 degree grid and is least reliable in mountains and over small deserts.
 - The GRS water map has 5 degree bins, about 300 km on Mars: it describes a region, not a landing site.
 - The LOLA files of the manifest cover 75 S to the pole, which is enough for the lunar targets of `targets.yaml` and nothing else.
 - Sun elevations assume a flat horizon. Real horizons at the lunar pole and in mountains change the lighting a lot.
@@ -220,6 +260,6 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 ## Short form for the submission
 
 Data: NASA PDS (LRO LOLA, LRO Diviner, MGS MOLA, Mars Odyssey GRS); NASA EOSDIS LP DAAC
-and NSIDC DAAC through Earthdata (SRTMGL30, MOD11C3, MOD13C2, MOD10CM, MCD12C1, EMIT
-L3ASA); NASA POWER; Copernicus DEM GLO-90 (European Union and ESA); Natural Earth. List
-only the datasets the final project really uses.
+and NSIDC DAAC through Earthdata (SRTMGL30, MOD11C3, MOD13C2, MOD10CM, EMIT L3ASA); NASA
+POWER (precipitation, if the dryness layer was built); Smithsonian Global Volcanism
+Program; Earth Impact Database (PASSC, University of New Brunswick); Natural Earth.

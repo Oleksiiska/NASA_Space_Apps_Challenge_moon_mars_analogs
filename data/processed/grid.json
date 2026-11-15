@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_utc": "2026-11-14T17:00:42Z",
+  "created_utc": "2026-11-15T13:30:12Z",
   "grid": {
     "cell_deg": 0.5,
     "n_lat": 360,
@@ -472,6 +472,123 @@
       "max": 1.0,
       "unit": "fraction",
       "description": "Share of the 0.05 degree (about 5 km) pixels of the cell with at least one snow-free month: snow-free lowland next to a glacier still counts.",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "road_dist_km",
+      "offset": 4444150,
+      "min": 0.0,
+      "max": 300.0,
+      "unit": "km",
+      "description": "Distance from the cell centre to the nearest major road of Natural Earth 1:10M (capped at 300 km); small and unpaved roads are not in the map",
+      "source": "Natural Earth 1:10M roads (public domain); computed by features/earth_context.py"
+    },
+    {
+      "name": "snow_m01",
+      "offset": 4533033,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 1 of 2023 (MODIS); missing in polar night and under cloud",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_m02",
+      "offset": 4621916,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 2 of 2023 (MODIS); missing in polar night and under cloud",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_m03",
+      "offset": 4710799,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 3 of 2023 (MODIS); missing in polar night and under cloud",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_m04",
+      "offset": 4799682,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 4 of 2023 (MODIS); missing in polar night and under cloud",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_m05",
+      "offset": 4888565,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 5 of 2023 (MODIS); missing in polar night and under cloud",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_m06",
+      "offset": 4977448,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 6 of 2023 (MODIS); missing in polar night and under cloud",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_m07",
+      "offset": 5066331,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 7 of 2023 (MODIS); missing in polar night and under cloud",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_m08",
+      "offset": 5155214,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 8 of 2023 (MODIS); missing in polar night and under cloud",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_m09",
+      "offset": 5244097,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 9 of 2023 (MODIS); missing in polar night and under cloud",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_m10",
+      "offset": 5332980,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 10 of 2023 (MODIS); missing in polar night and under cloud",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_m11",
+      "offset": 5421863,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 11 of 2023 (MODIS); missing in polar night and under cloud",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_m12",
+      "offset": 5510746,
+      "min": 0.0,
+      "max": 100.0,
+      "unit": "percent",
+      "description": "Snow cover in month 12 of 2023 (MODIS); missing in polar night and under cloud",
       "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
     }
   ],

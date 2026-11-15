@@ -3,7 +3,8 @@
 Each site is a cell of the 0.5 degree grid; its score is turned into a percentile among all ranked cells (1.0 = best cell on Earth for that task and target). A random site would get a median of 0.5 and land in the top 20 % one time in five. Known analogs were not used to set any weight or threshold.
 
 - Scores only: 132 of 136 site-task-target pairs scored, median percentile 0.771, top 20 % in 43%, top 10 % in 34%.
-- With the hard filters of each task: 116 pairs left, median 0.778, top 20 % in 47%. Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands).
+- With the hard filters of each task: 116 pairs left, median 0.778, top 20 % in 47%. Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands) and the ice-sheet cell of the McMurdo Dry Valleys. The road filter of rover mobility is off by default and not applied here.
+- Independent part: the tasks caves, eva_geology use the volcano and impact lists, and those lists contain many of the analog sites themselves, so their high percentiles show that the layers work, not that the method finds analogs on its own. Without them: 82 pairs, median percentile 0.692, top 20 % in 16%, top 10 % in 4%.
 
 | Task | pairs | median percentile | top 20 % | top 10 % |
 |---|---|---|---|---|
@@ -175,4 +176,4 @@ No spatial hold-out is run: no weight or threshold is fitted to the known sites,
 
 - A cell is about 55 km across; a site is much smaller. A flat Martian plain (Arcadia) is rarely matched by a whole cell.
 - Earth cannot reach lunar or Martian cold, vacuum or radiation. Cold, thermal range and low Sun are ranked in the useful direction only.
-- Volcanic, impact and dryness layers are not in the data yet, so geology tasks lean on terrain; the caves task cannot be ranked.
+- Volcanic fields and impact structures enter as distance to the nearest listed point or rim; dryness comes from NASA POWER precipitation when its layer was built.

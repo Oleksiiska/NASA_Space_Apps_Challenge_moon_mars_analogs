@@ -16,7 +16,9 @@ import math
 import time
 from pathlib import Path
 from typing import Callable, Iterable, Optional
+from urllib.parse import urlencode
 
+import numpy as np
 import requests
 
 from .. import config
@@ -148,7 +150,7 @@ def fetch_power(points: Iterable[dict], dry_run: bool = False, pause_s: float = 
         params = {"parameters": ",".join(ds["parameters"]), "community": ds["community"],
                   "longitude": f"{p['lon']:.4f}", "latitude": f"{p['lat']:.4f}", "format": "JSON"}
         if dry_run:
-            log(f"  planned  {p['id']}  {ds['base_url']}?{requests.compat.urlencode(params)}")
+            log(f"  planned  {p['id']}  {ds['base_url']}?{urlencode(params)}")
             results.append(Result(out.name, "planned"))
             continue
         try:
@@ -172,6 +174,76 @@ def power_annual(json_path: str | Path) -> dict:
         data = json.load(f)
     params = data.get("properties", {}).get("parameter", {})
     return {name: months.get("ANN") for name, months in params.items()}
+
+
+def power_boxes(box_deg: float = 10.0, land_index: Optional[np.ndarray] = None, n_lon: int = 720,
+                cell_deg: float = 0.5) -> list[tuple[float, float]]:
+    """South-west corners of the boxes of the POWER grid download; only boxes with land cells when an index is given."""
+    if land_index is None:
+        return [(la, lo) for la in np.arange(-90, 90, box_deg) for lo in np.arange(-180, 180, box_deg)]
+    idx = np.asarray(land_index, dtype=np.int64)
+    lat = 90.0 - (idx // n_lon + 0.5) * cell_deg
+    lon = -180.0 + (idx % n_lon + 0.5) * cell_deg
+    keys = sorted(set(zip((np.floor(lat / box_deg) * box_deg).tolist(), (np.floor(lon / box_deg) * box_deg).tolist())))
+    return [(float(a), float(b)) for a, b in keys]
+
+
+def fetch_power_grid(dry_run: bool = False, pause_s: float = 1.0, retries: int = 3, log: Callable[[str], None] = print,
+                     session=None) -> list[Result]:
+    """Precipitation climatology for every 10 x 10 degree box with land, from the POWER regional API (no login).
+
+    One JSON file per box; boxes already on disk are skipped, so the command can be stopped and run again.
+    """
+    ds = config.dataset("earth_power_precip_grid")
+    dest = config.resolve(ds["dest"])
+    dest.mkdir(parents=True, exist_ok=True)
+    box = float(ds.get("box_deg", 10))
+    index_path = config.processed_dir() / "grid_index.bin"
+    land = np.fromfile(index_path, dtype="<u4") if index_path.exists() else None
+    boxes = power_boxes(box, land)
+    log(f"{len(boxes)} box(es) of {box:g} x {box:g} degrees" + (" with land" if land is not None else ""))
+    s = session or requests.Session()
+    results = []
+    for k, (la, lo) in enumerate(boxes, 1):
+        out = dest / f"box_{int(la):+03d}_{int(lo):+04d}.json"
+        if out.exists():
+            results.append(Result(out.name, "present", out.stat().st_size))
+            continue
+        params = {"latitude-min": f"{la:g}", "latitude-max": f"{min(la + box - 0.01, 90):g}",
+                  "longitude-min": f"{lo:g}", "longitude-max": f"{min(lo + box - 0.01, 180):g}",
+                  "parameters": ",".join(ds["parameters"]), "community": ds["community"], "format": "JSON"}
+        if dry_run:
+            if k <= 3:
+                log(f"  planned  {out.name}  {ds['base_url']}?{urlencode(params)}")
+            results.append(Result(out.name, "planned"))
+            continue
+        last = ""
+        for attempt in range(1, retries + 1):
+            try:
+                r = s.get(ds["base_url"], params=params, headers={"User-Agent": USER_AGENT}, timeout=(20, 300))
+                if r.status_code >= 400:
+                    last = f"HTTP {r.status_code}: {r.text[:300]}"
+                    if r.status_code < 500:
+                        break
+                else:
+                    data = r.json()
+                    tmp = out.with_suffix(".part")
+                    tmp.write_text(json.dumps(data), encoding="utf-8")
+                    tmp.replace(out)
+                    results.append(Result(out.name, "downloaded", out.stat().st_size))
+                    log(f"  [{k}/{len(boxes)}] ok   {out.name}")
+                    last = ""
+                    break
+            except (requests.RequestException, ValueError) as e:
+                last = str(e)
+            time.sleep(pause_s * attempt * 2)
+        if last:
+            results.append(Result(out.name, "failed", 0, last))
+            log(f"  [{k}/{len(boxes)}] ERR  {out.name}: {last}")
+        time.sleep(pause_s)
+    if dry_run and len(boxes) > 3:
+        log(f"  ... and {len(boxes) - 3} more")
+    return results
 
 
 # ----------------------------------------------------------------------------- Copernicus DEM

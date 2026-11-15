@@ -52,6 +52,7 @@ def test_snow_features_count_free_months_and_need_six_months():
     f = es.snow_features(months)
     assert f["snow_free_months"][0, 0] == 6 and f["snow_cover_pct"][0, 0] == 0
     assert np.isnan(f["snow_free_months"][0, 1]) and np.isnan(f["snow_cover_pct"][0, 1])
+    assert np.isnan(f["snow_m01"][0, 0]) and f["snow_m07"][0, 0] == 0 and f["snow_m12"][0, 1] == 90
 
 
 def test_lst_features_annual_stats():

@@ -193,6 +193,37 @@ datasets:
       Database (Planetary and Space Science Centre, University of New Brunswick); Wikidata (CC0), items that are
       instances of "impact crater" (Q55818) with coordinates on Earth.
     license: CC BY-SA 4.0 (Wikipedia), CC0 (Wikidata)
+  - id: earth_naturalearth_roads
+    world: earth
+    title: Natural Earth 1:10M roads (logistics; distance to a major road)
+    official_resource: none (auxiliary, public domain)
+    agency: Natural Earth
+    access: open
+    provider: http
+    base_url: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/
+    dest: data/raw/earth/naturalearth
+    format: geojson
+    used_for: [road_access]
+    files:
+      - {name: ne_10m_roads.geojson, bytes: 50474096}
+    citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
+    license: Public domain
+
+  - id: earth_naturalearth_places
+    world: earth
+    title: Natural Earth 1:10M populated places (city search of the web page)
+    official_resource: none (auxiliary, public domain)
+    agency: Natural Earth
+    access: open
+    provider: http
+    base_url: https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/
+    dest: data/raw/earth/naturalearth
+    format: geojson
+    used_for: [city_search]
+    files:
+      - {name: ne_10m_populated_places.geojson, bytes: 19359003}
+    citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
+    license: Public domain
 
   - id: earth_srtmgl30
     world: earth
@@ -338,6 +369,63 @@ datasets:
       NASA Langley Research Center (LaRC) POWER Project, funded through the NASA Earth
       Science/Applied Science Program.
     license: NASA open data
+
+  - id: earth_power_precip_grid
+    world: earth
+    title: NASA POWER precipitation climatology on the whole land grid (dryness criterion)
+    official_resource: none (NASA, outside the challenge list)
+    agency: NASA
+    access: open
+    provider: power_regional
+    base_url: https://power.larc.nasa.gov/api/temporal/climatology/regional
+    parameters: [PRECTOTCORR]
+    community: AG
+    box_deg: 10
+    dest: data/raw/earth/power_grid
+    format: json, one file per 10 x 10 degree box with land
+    used_for: [dryness]
+    citation: >-
+      NASA Langley Research Center (LaRC) POWER Project, funded through the NASA Earth
+      Science/Applied Science Program. Precipitation from MERRA-2 (corrected), long-term climatology.
+    license: NASA open data
+
+  - id: earth_volcanoes
+    world: earth
+    title: Holocene volcanoes of the world (location and type), Smithsonian Global Volcanism Program
+    official_resource: none (geological context, outside the challenge list)
+    agency: Smithsonian Institution
+    access: open
+    provider: http
+    base_url: https://raw.githubusercontent.com/plotly/datasets/master/
+    dest: data/raw/earth/context
+    format: csv
+    used_for: [volcanic]
+    files:
+      - {name: volcano_db.csv, bytes: 136976}
+    citation: >-
+      Global Volcanism Program, Smithsonian Institution. Volcanoes of the World, list of Holocene
+      volcanoes (an earlier version of the database, 1,571 volcanoes, as copied in the plotly/datasets
+      repository on GitHub). Current version: https://volcano.si.edu
+    license: Free use with citation of the Global Volcanism Program (check the terms on volcano.si.edu)
+
+  - id: earth_impacts
+    world: earth
+    title: Confirmed impact structures (Earth Impact Database, 189 structures)
+    official_resource: none (geological context, outside the challenge list)
+    agency: Planetary and Space Science Centre, University of New Brunswick
+    access: open
+    provider: http
+    base_url: https://raw.githubusercontent.com/cjwinchester/earth-impact-data/main/
+    dest: data/raw/earth/context
+    format: csv
+    used_for: [impact]
+    files:
+      - {name: earth-impact-craters.csv, bytes: 29944}
+    citation: >-
+      Earth Impact Database, Planetary and Space Science Centre, University of New Brunswick
+      (http://www.passc.net/EarthImpactDatabase), table as compiled in the cjwinchester/earth-impact-data
+      repository on GitHub.
+    license: Terms of the Earth Impact Database apply; cite PASSC
 
   - id: earth_copdem_glo90
     world: earth

@@ -2,8 +2,9 @@
 
   sources                 list datasets and what is already on disk
   fetch pds|moon|mars     download Moon and Mars files from NASA PDS (no login)
-  fetch aux               download the Natural Earth land mask
-  fetch context           download the volcano (Smithsonian GVP) and impact structure lists
+  fetch aux               download the Natural Earth land mask, roads, places and the volcano and impact tables
+  fetch context           download the current volcano list (Smithsonian GVP) and the impact structure list
+  fetch power-grid        NASA POWER precipitation for every land box (alternative dryness; no login, about an hour)
   fetch earth             download Earthdata products (asks for your Earthdata Login)
   fetch power             NASA POWER climatology for the points of a CSV
   fetch copdem            Copernicus DEM tiles around the points of a CSV
@@ -12,10 +13,13 @@
   profiles                compute the Moon and Mars target fingerprints
   reference               write the map layers of targets and known analogs
   terrain                 terrain features of Earth cells from the SRTMGL30 tiles
-  context                 distance to the nearest volcano and impact structure for every cell
+  surface                 temperature, NDVI, snow and mineral layers from MODIS and EMIT
+  context                 volcano and impact distances (GVP, impact list); --only adds road and alternative layers
   merge                   add the computed Earth layers to data/processed/grid.bin
-  score                   validate on known analogs and export the scores for the web app
+  score                   validate on known analogs, export the scores for the web page
   evaluate                metrics with confidence intervals, compared with a saved baseline
+  web                     build webapp/index.html from data/processed
+  all                     run every step that is not done yet, then score and build the page
   inspect FILE            show the variables inside an HDF4 / NetCDF file
 """
 from __future__ import annotations
@@ -53,10 +57,15 @@ def _cmd_fetch(args) -> int:
         results = pds.fetch_world(world, ids=args.only, dry_run=args.dry_run)
     elif what == "aux":
         from .fetch import pds
-        results = pds.fetch_datasets(config.datasets(ids=["earth_naturalearth_land"]), dry_run=args.dry_run)
+        results = pds.fetch_datasets(config.datasets(ids=["earth_naturalearth_land", "earth_volcanoes", "earth_impacts",
+                                                           "earth_naturalearth_roads", "earth_naturalearth_places"]),
+                                     dry_run=args.dry_run)
     elif what == "context":
         from .fetch import pds
         results = pds.fetch_datasets(config.datasets(ids=["earth_gvp_volcanoes", "earth_impact_structures"]), dry_run=args.dry_run)
+    elif what == "power-grid":
+        from .fetch import earth
+        results = earth.fetch_power_grid(dry_run=args.dry_run)
     elif what == "earth":
         from .fetch import earth
         results = earth.fetch_earthdata(ids=args.only, year=args.year, dry_run=args.dry_run)
@@ -118,11 +127,39 @@ def _cmd_surface(args) -> int:
     return 0
 
 
+CONTEXT_DEFAULT = ["gvp"]
+
+
 def _cmd_context(args) -> int:
-    from .features import context
-    path = context.build_layer()
-    print(f"Layer saved: {path}\nNext: python -m analog_finder merge")
+    """``gvp``: our layer (features/context.py: volcano_dist_km, holocene_volcano_dist_km, impact_dist_km).
+    ``volcanic``, ``impact``, ``dryness``, ``roads``: the layers of features/earth_context.py. Its ``impact`` layer writes
+    impact_dist_km too, so build either ``gvp`` or ``impact``, not both."""
+    which = list(args.only or CONTEXT_DEFAULT)
+    if "gvp" in which and "impact" in which:
+        print("gvp and impact both write impact_dist_km: choose one.")
+        return 2
+    paths = []
+    if "gvp" in which:
+        from .features import context
+        paths.append(context.build_layer())
+    rest = [w for w in which if w != "gvp"]
+    if rest:
+        from .features import earth_context
+        paths += earth_context.build_all(rest)
+    if paths:
+        print("Layers saved: " + ", ".join(p.name for p in paths) + "\nNext: python -m analog_finder merge")
     return 0
+
+
+def _cmd_web(args) -> int:
+    from . import pipeline_all
+    pipeline_all.build_web()
+    return 0
+
+
+def _cmd_all(args) -> int:
+    from . import pipeline_all
+    return pipeline_all.run_all(force=args.force, fetch=args.fetch)
 
 
 def _cmd_score(args) -> int:
@@ -158,7 +195,7 @@ def main(argv=None) -> int:
     sub.add_parser("sources", help="list datasets and local status").set_defaults(func=_cmd_sources)
 
     f = sub.add_parser("fetch", help="download data")
-    f.add_argument("what", choices=["pds", "moon", "mars", "aux", "context", "earth", "power", "copdem"])
+    f.add_argument("what", choices=["pds", "moon", "mars", "aux", "context", "earth", "power", "power-grid", "copdem"])
     f.add_argument("--dry-run", action="store_true", help="show what would be downloaded")
     f.add_argument("--only", nargs="+", metavar="DATASET_ID", help="restrict to these dataset ids")
     f.add_argument("--year", type=int, default=2023, help="year of the monthly Earth products (default 2023)")
@@ -181,7 +218,15 @@ def main(argv=None) -> int:
     sf = sub.add_parser("surface", help="temperature, NDVI, snow and mineral features from MODIS and EMIT")
     sf.add_argument("--only", nargs="+", choices=["lst", "ndvi", "snow", "emit", "landcover", "precip"], help="restrict to these products")
     sf.set_defaults(func=_cmd_surface)
-    sub.add_parser("context", help="distance to the nearest volcano and impact structure (after fetch context)").set_defaults(func=_cmd_context)
+    cx = sub.add_parser("context", help="volcano and impact distances; --only for road and alternative layers")
+    cx.add_argument("--only", nargs="+", choices=["gvp", "volcanic", "impact", "dryness", "roads"],
+                    help="layers to build (default: gvp)")
+    cx.set_defaults(func=_cmd_context)
+    sub.add_parser("web", help="build webapp/index.html from data/processed").set_defaults(func=_cmd_web)
+    al = sub.add_parser("all", help="run every step that is not done yet, then score and build the page")
+    al.add_argument("--fetch", action="store_true", help="also download missing data (PDS, Earthdata with login, POWER)")
+    al.add_argument("--force", nargs="+", default=[], metavar="STEP", help="redo these steps even if done (or: all)")
+    al.set_defaults(func=_cmd_all)
     sub.add_parser("score", help="validate the ranking on known analogs and export scores for the web app").set_defaults(func=_cmd_score)
     ev = sub.add_parser("evaluate", help="metrics of the ranking with confidence intervals; compare with a saved baseline")
     ev.add_argument("--save-baseline", action="store_true", help="store the current metrics as the baseline")

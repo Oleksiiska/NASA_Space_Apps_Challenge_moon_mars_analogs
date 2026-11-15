@@ -39,17 +39,17 @@
    "offset": 533298
   },
   {
-   "name": "dryness",
+   "name": "volcanic",
    "target": null,
    "offset": 622181
   },
   {
-   "name": "volcanic",
+   "name": "impact",
    "target": null,
    "offset": 711064
   },
   {
-   "name": "impact",
+   "name": "dryness",
    "target": null,
    "offset": 799947
   },
@@ -239,13 +239,14 @@
   "flat_patch_exists": 1,
   "ground_ice_present": 2,
   "snow_free_window": 3,
-  "not_ice_sheet": 4
+  "not_ice_sheet": 4,
+  "road_access": 5
  },
  "constraints_not_checked": [
-  "road_access",
   "safe_access",
   "protected_ecosystem_flag"
  ],
+ "road_max_km": 50.0,
  "constraint_offset": 4088618,
  "min_coverage": 0.5,
  "no_data_yet": [],
@@ -294,6 +295,9 @@
     "bare_ground_min",
     "road_access",
     "not_ice_sheet"
+   ],
+   "constraints_off": [
+    "road_access"
    ]
   },
   {

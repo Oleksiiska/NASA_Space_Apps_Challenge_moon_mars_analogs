@@ -38,6 +38,9 @@ tasks:
     worlds: [moon, mars]
     weights: {slope_hist: 0.40, roughness: 0.30, relief: 0.10, bare_ground: 0.10, composition: 0.10}
     constraints: [bare_ground_min, road_access, not_ice_sheet]
+    # The road filter removes remote known analogs (MDRS, Haughton, Atacama): pos_pct 0.615 -> 0.577, paired
+    # change -0.039 [-0.085, -0.005]. It stays a switch on the page, off by default.
+    constraints_off: [road_access]
 
   - id: eva_geology
     name: Surface EVA and field geology
@@ -81,7 +84,7 @@ tasks:
 constraints:
   bare_ground_min: Mean NDVI of the cell at most 0.25, or at least 10 % of its 5 km pixels with NDVI at most 0.25.
   flat_patch_exists: A patch with slopes under 8 degrees of the required size exists.
-  road_access: A road within a set distance (OpenStreetMap), optional layer.
+  road_access: A major road of Natural Earth 1:10M within 50 km of the cell centre (small and unpaved roads are not in that map).
   safe_access: No access restrictions or hazards that rule out field work.
   not_ice_sheet: Less than half of the cell under glaciers or ice sheets (field work needs ground, not ice).
   ground_ice_present: Permafrost or ground ice is present in the cell.

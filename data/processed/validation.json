@@ -1567,6 +1567,10 @@
     "share_above_median": 0.698
    }
   },
+  "context_tasks": [
+   "caves",
+   "eva_geology"
+  ],
   "by_task": {
    "biosignatures": {
     "scores_only": {
@@ -1675,6 +1679,24 @@
      "share_top10": 0.059,
      "share_above_median": 0.735
     }
+   }
+  },
+  "independent": {
+   "scores_only": {
+    "pairs": 86,
+    "scored": 82,
+    "median_percentile": 0.692,
+    "share_top20": 0.159,
+    "share_top10": 0.037,
+    "share_above_median": 0.78
+   },
+   "with_filters": {
+    "pairs": 86,
+    "scored": 66,
+    "median_percentile": 0.504,
+    "share_top20": 0.167,
+    "share_top10": 0.091,
+    "share_above_median": 0.5
    }
   }
  },

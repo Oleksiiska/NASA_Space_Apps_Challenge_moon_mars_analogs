@@ -285,7 +285,14 @@ def snow_features(monthly: dict[int, np.ndarray]) -> dict[str, np.ndarray]:
     with np.errstate(invalid="ignore"):
         free = (np.isfinite(s) & (s < SNOW_FREE_BELOW)).sum(axis=0).astype(np.float32)
     free[np.isfinite(s).sum(axis=0) < MIN_MONTHS] = np.nan
-    return {"snow_cover_pct": _reduce(s, np.nanmean), "snow_free_months": free}
+    out = {"snow_cover_pct": _reduce(s, np.nanmean), "snow_free_months": free}
+    for m in range(1, 13):                       # monthly cover for the low-Sun calendar; NaN = no decision that month
+        out[f"snow_m{m:02d}"] = monthly[m].astype(np.float32) if m in monthly else np.full(s.shape[1:], np.nan, np.float32)
+    return out
+
+
+SNOW_MONTH_SPEC = {f"snow_m{m:02d}": (0.0, 100.0, "percent", f"Snow cover in month {m} of 2023 (MODIS); missing in polar night and under cloud")
+                   for m in range(1, 13)}
 
 
 def build_snow(src_dir: Optional[Path] = None, log: Callable[[str], None] = print) -> Path:
@@ -313,7 +320,8 @@ def build_snow(src_dir: Optional[Path] = None, log: Callable[[str], None] = prin
     _check(problems, "Snow", feats["snow_free_months"], 25.0, 10.0, lambda v: v >= 11, "Sahara snow-free months")
     _fail(problems, "Snow")
     log("Snow self-check: ok (Greenland snowy, Sahara free)")
-    items = [_item(k, feats[k], *SNOW_SPEC[k], SNOW_SOURCE) for k in SNOW_SPEC]
+    spec = {**SNOW_SPEC, **SNOW_MONTH_SPEC}
+    items = [_item(k, feats[k], *spec[k], SNOW_SOURCE) for k in spec]
     return layers.save_layer("earth_snow", items, _cd())
 
 

@@ -4,10 +4,13 @@
 data/raw/**
 !data/raw/**/
 !data/raw/**/.gitkeep
-!data/raw/earth/naturalearth/*.geojson
+!data/raw/earth/naturalearth/ne_50m_land.geojson
+!data/raw/earth/naturalearth/ne_50m_glaciated_areas.geojson
+!data/raw/earth/context/*.csv
 data/interim/**
 !data/interim/.gitkeep
 *.part
+.dodsrc
 
 # Python
 __pycache__/
@@ -31,7 +34,6 @@ dist/
 .idea/
 .DS_Store
 Thumbs.db
-.dodsrc
 
 # Experimental grids of other cell sizes (ANALOG_CELL_DEG), rebuilt from the raw data
 data/processed_*/
