@@ -10,6 +10,11 @@ Two kinds of criteria:
   crater), so these rank Earth cells by how far they go in the useful direction: percentile among Earth land cells, or an
   absolute scale where one exists. What stays different is listed in data/reference/environment_gaps.json.
 
+Low Sun is computed like the other direction criteria but no task weights it: it depends only on latitude and season, so
+it is the *when* of a field test, not a property of the place. ``sun_window`` gives every cell its usable low-Sun window
+(hours per day with the Sun 0-5 deg up in a snow-free month, and that month); the web app shows it next to the score, and
+the ``sun_window`` constraint keeps only cells with at least ``SUN_WINDOW_MIN_H`` hours of it.
+
 A task score is the weighted mean of the criteria that exist for the cell. ``coverage`` is the share of the task weight that
 had data; cells under ``MIN_COVERAGE`` get no score. Hard constraints are boolean masks; a cell that fails one is not ranked.
 Volcanic, impact and dryness exist only when their layers are in the grid (``context``, ``surface --only precip``); a
@@ -169,8 +174,36 @@ def shared_criteria(cells: Cells) -> dict[str, np.ndarray]:
     return out
 
 
+SNOW_MAX_PCT = 10.0       # a month is snow-free when its snow cover is under 10 % (the same line as the web map)
+SUN_WINDOW_MIN_H = 2.0    # sun_window: at least 2 h a day with the Sun 0-5 deg up in one snow-free month
+
+
+def sun_window(cells: Cells) -> tuple[np.ndarray, np.ndarray]:
+    """Usable low-Sun window of every cell: the most hours per day with the Sun 0-5 deg up in a month with snow cover
+    under 10 %, and that month (1-12). NaN and month 0 where no month is known to be snow-free (unknown snow does not count).
+
+    Hours come from the same latitude table as the web page (rounded to 0.01 h), so both apply the filter alike.
+    """
+    cached = getattr(cells, "_sun_window", None)
+    if cached is not None:
+        return cached
+    from .features import sun
+    g = cells.meta["grid"]
+    table = np.round(sun.low_sun_table(g["cell_deg"])["monthly_hours"], 2)      # (n_lat, 12), north to south
+    hours = table[np.asarray(cells.index) // g["n_lon"]]
+    snow = np.stack([cells.f[f"snow_m{m:02d}"] for m in range(1, 13)], axis=1)
+    with np.errstate(invalid="ignore"):
+        usable = np.where(snow < SNOW_MAX_PCT, hours, -1.0)
+    best = usable.max(axis=1)
+    month = (usable.argmax(axis=1) + 1).astype(np.int8)
+    month[best < 0] = 0
+    out = (np.where(best < 0, np.nan, best).astype(np.float32), month)
+    cells._sun_window = out
+    return out
+
+
 def constraints(cells: Cells) -> dict[str, np.ndarray]:
-    """Hard filters that can be checked with the data in the grid. Unknown values pass, except for the snow window."""
+    """Hard filters that can be checked with the data in the grid. Unknown values pass, except for the snow and Sun windows."""
     f = cells.f
     with np.errstate(invalid="ignore"):
         ndvi_ok = ~(f["ndvi_mean"] > 0.25)
@@ -182,6 +215,9 @@ def constraints(cells: Cells) -> dict[str, np.ndarray]:
         no_ice_sheet = ~(f["ice_frac"] > 0.5)
     out = {"bare_ground_min": ndvi_ok, "flat_patch_exists": flat_ok, "ground_ice_present": ice_ok,
            "snow_free_window": np.asarray(snow_ok), "not_ice_sheet": np.asarray(no_ice_sheet)}
+    if all(f"snow_m{m:02d}" in f for m in range(1, 13)) and "grid" in cells.meta:
+        best, _ = sun_window(cells)
+        out["sun_window"] = np.nan_to_num(best, nan=-1.0) >= SUN_WINDOW_MIN_H
     if "road_dist_km" in f:
         with np.errstate(invalid="ignore"):
             out["road_access"] = ~(f["road_dist_km"] > ROAD_MAX_KM)
@@ -217,10 +253,7 @@ def task_score(task: dict, crit: dict[str, np.ndarray], world: str, cells: Cells
     unchecked = []
     if check_constraints:
         cons = constraints(cells)
-        off = set(task.get("constraints_off", []))   # listed for the page switch, but off by default
         for c in task.get("constraints", []):
-            if c in off:
-                continue
             if c in cons:
                 score[~cons[c]] = np.nan
             else:

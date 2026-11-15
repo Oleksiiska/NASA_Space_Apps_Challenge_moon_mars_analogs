@@ -58,7 +58,7 @@ never turned into 0.
 
 - `cold`: percentile of the annual mean surface temperature, coldest first.
 - `thermal_range`: percentile of the mean day–night swing, largest first.
-- `low_sun`: percentile of the low-Sun hours per day in the best month.
+- `low_sun`: percentile of the low-Sun hours per day in the best month. It is exported for reference, but no task weights it: low Sun depends only on latitude and season, so the page shows it as a window next to the score (section 8).
 - `ground_ice`: max(clip((273.15 K − T_mean) / 20 K, 0, 1), glacier share). A mean surface temperature under 0 °C is a common permafrost indicator; it is a proxy, not a measurement of ice.
 - `bare_ground`: clip(1 − (NDVI − 0.05) / 0.25, 0, 1): 1 for bare ground, 0 at NDVI 0.30 and above.
 - `snow_free`: snow-free months / 12.
@@ -81,17 +81,19 @@ Weights (`pipeline/config/tasks.yaml`; the sliders on the page start from these)
 
 | Task | Worlds | Weights | Hard filters |
 | --- | --- | --- | --- |
-| Landing and descent navigation | Moon, Mars | slope classes 0.35, roughness 0.30, relief 0.10, low Sun 0.15, bare ground 0.10 | bare ground, flat patch, not an ice sheet, snow-free window |
-| Rover mobility | Moon, Mars | slope classes 0.40, roughness 0.30, relief 0.10, bare ground 0.10, minerals 0.10 | bare ground, not an ice sheet; road access as a switch, off by default |
-| Surface EVA and field geology | Moon | relief 0.15, slope classes 0.10, volcanic 0.20, impact 0.15, minerals 0.10, low Sun 0.10, bare ground 0.20 | not an ice sheet (safe access not checked) |
+| Landing and descent navigation | Moon, Mars | slope classes 0.35, roughness 0.30, relief 0.10, bare ground 0.10 | bare ground, flat patch, not an ice sheet, snow-free window; low-Sun window offered, off by default |
+| Rover mobility | Moon, Mars | slope classes 0.40, roughness 0.30, relief 0.10, bare ground 0.10, minerals 0.10 | bare ground, not an ice sheet; road access offered, off by default |
+| Surface EVA and field geology | Moon | relief 0.15, slope classes 0.10, volcanic 0.20, impact 0.15, minerals 0.10, bare ground 0.20 | not an ice sheet (safe access not checked); low-Sun window offered, off by default |
 | Ice mining (ISRU) | Moon, Mars | ground ice 0.40, cold 0.30, bare ground 0.10, minerals 0.10, slope classes 0.10 | ground ice present |
-| Operations under a low Sun | Moon | low Sun 0.45, relief 0.20, snow-free 0.20, bare ground 0.15 | snow-free window, bare ground, not an ice sheet |
+| Operations under a low Sun | Moon | relief 0.20, snow-free 0.20, bare ground 0.15 | low-Sun window (at least 2 h a day in a snow-free month), bare ground, not an ice sheet |
 | Caves and shelters | Moon, Mars | volcanic 0.60, bare ground 0.20, relief 0.20 | not an ice sheet (safe access not checked) |
 | Search for biosignatures | Mars | dryness 0.35, minerals 0.30, bare ground 0.15, day–night swing 0.10, cold 0.10 | bare ground, not an ice sheet (protected areas not checked) |
 
 The weights were set by hand from the description of each test. The filters and the EVA geology
 weights were then adjusted while looking at the evaluation of section 6, so the known sites are no longer
-fully unseen; the hold-out sites of section 6 are.
+fully unseen; the hold-out sites of section 6 are. The score is a weighted mean, so only the ratios matter;
+low Sun was taken out of the weights (it was 0.15, 0.10 and 0.45 in landing, EVA geology and low-Sun
+operations) and the other weights kept their values.
 
 ## 6. Validation
 
@@ -104,23 +106,27 @@ one time in five.
 
 | Set | Pairs scored | Median percentile | In the top 20 % | In the top 10 % |
 | --- | --- | --- | --- | --- |
-| All tasks, scores only | 132 of 136 | 0.77 | 43 % | 34 % |
-| All tasks, with hard filters | 116 of 136 | 0.78 | 47 % | 41 % |
-| Without caves and EVA geology, scores only | 82 of 86 | 0.69 | 16 % | 4 % |
+| All tasks, scores only | 128 of 136 | 0.77 | 44 % | 35 % |
+| All tasks, with hard filters | 116 of 136 | 0.77 | 47 % | 41 % |
+| Without caves and EVA geology, scores only | 78 of 86 | 0.66 | 17 % | 4 % |
 | Without caves and EVA geology, with hard filters | 66 of 86 | 0.50 | 17 % | 9 % |
 
-By task (scores only): caves 0.99, EVA geology 0.97, low-Sun operations 0.76, mobility 0.75,
-ice mining 0.69, biosignatures 0.54.
+By task (scores only): caves 0.99, EVA geology 0.97, mobility 0.75, ice mining 0.69, biosignatures 0.54,
+low-Sun operations 0.45. Before low Sun left the score, low-Sun operations read 0.76: that task was found
+mostly through latitude. Its light is now a filter, so its scores alone are at chance level; with the filter
+the one site that keeps a snow-free low-Sun month (Haughton, Devon Island) lands at 0.93. On the evaluation
+below the change is neutral (pos_pct 0.615 before and after).
 
 How to read this:
 
 - **Caves and EVA geology** use the volcano and impact lists, and those lists contain many of the analog sites themselves (Craters of the Moon, Meteor Crater, Haughton). Their high percentiles show that the context layers work; they are not independent evidence that the method finds analogs.
-- **The other tasks** put known sites clearly above a random place (median 0.69 against 0.50), but not into the very top: only 16 % are in the top 20 %, about the rate of chance. The main reason is scale: a site is a few hundred metres to a few kilometres across, while a cell is 55 km and mixes the site with its surroundings. Flat targets such as Arcadia Planitia are rarely matched by a whole Earth cell.
-- **Hard filters** now keep most sites whose cell is green around a bare site (Ries, Mistastin and Réunion pass through the share of bare 5 km pixels); they still remove Rio Tinto (green cell) and the McMurdo Dry Valleys (ice-sheet cell). With filters the independent median is 0.50, the level of a random place.
+- **The other tasks** put known sites clearly above a random place (median 0.66 against 0.50), but not into the very top: only 17 % are in the top 20 %, about the rate of chance. The main reason is scale: a site is a few hundred metres to a few kilometres across, while a cell is 55 km and mixes the site with its surroundings. Flat targets such as Arcadia Planitia are rarely matched by a whole Earth cell.
+- **Hard filters** now keep most sites whose cell is green around a bare site (Ries, Mistastin and Réunion pass through the share of bare 5 km pixels); they still remove Rio Tinto (green cell), the McMurdo Dry Valleys (ice-sheet cell) and, for low-Sun
+operations, the cells with snow in every month (Svalbard, Concordia). With filters the independent median is 0.50, the level of a random place.
 
 **Stability.** Every weight of a task was changed at random by up to ±25 % (30 draws). The share of
-the baseline top 5 % cells that stays in the top 5 %: ice mining 99 %, caves 96 %, mobility 95 %,
-landing 95 %, biosignatures 92 %, EVA geology 88 %, low-Sun operations 78 %. The page shows the
+the baseline top 5 % cells that stays in the top 5 %: ice mining 99 %, landing 97 %, caves 96 %,
+mobility 95 %, biosignatures 92 %, EVA geology 90 %, low-Sun operations 86 %. The page shows the
 same test for the selected cell (20 draws, top 10 %).
 
 **Sanity.** Share of the top 5 % cells under dense vegetation (NDVI over 0.4): 0 % for every task
@@ -174,8 +180,19 @@ filter of rover mobility as a default (removes MDRS, Haughton and the Atacama).
 Hours per day with the Sun 0–5 degrees above a flat horizon depend only on latitude and date; they are
 computed for every grid row and month (`data/processed/lowsun_by_latitude.csv`, checked against pvlib). The
 page combines them with the monthly MODIS snow cover of 2023: a month counts for low-Sun work when its
-snow cover is under 10 %. The "Low-Sun window" map shows one month at a time; the card of a cell shows all
-twelve and names the best snow-free month.
+snow cover is under 10 %. The "Low-Sun window" map shows one month at a time (and can play the twelve);
+the card of a cell shows all twelve and names the best snow-free month.
+
+Low Sun is not part of any score. It is the same for every place at one latitude and changes with the
+season, so it says *when* to test, not *where*: weighting it pulled every ranking towards the poles
+(for Mars landing, 96 % of the top 1 % cells of Jezero lay poleward of 55 degrees). Instead every cell
+gets its usable window, the most hours per day with the Sun 0-5 degrees up in a snow-free month, and that
+month (`scoring.sun_window`). Tasks that need lunar-like light (`show_sun_window` in `tasks.yaml`) show
+it next to every candidate; the `sun_window` filter keeps cells with at least 2 h of it. It is required
+for operations under a low Sun and offered, unchecked, for landing and EVA geology. The window is shown
+only when the Sun at the target itself gets low: the noon Sun there spans 90 - |latitude| -/+ the axial
+tilt (1.54 degrees for the Moon, 25.19 for Mars), so every lunar south-pole target qualifies (Shackleton
+ridge: -1.2 to 1.9 degrees), Phoenix does on Mars and Jezero does not.
 
 ## 9. What Earth cannot reproduce
 

@@ -61,8 +61,7 @@ def validate(cells: scoring.Cells, profiles: dict, analogs: list[dict], tasks: O
                            "coverage": round(float(cov[k]), 2) if k >= 0 else None}
                     for tag, p in (("percentile", p_free), ("percentile_filtered", p_filt)):
                         rec[tag] = round(float(p[k]), 3) if k >= 0 and np.isfinite(p[k]) else None
-                    rec["failed_filters"] = [c for c in task.get("constraints", []) if c in cons and c not in task.get("constraints_off", [])
-                                             and k >= 0 and not cons[c][k]]
+                    rec["failed_filters"] = [c for c in task.get("constraints", []) if c in cons and k >= 0 and not cons[c][k]]
                     records.append(rec)
     ctx = sorted(t for t, d in tasks.items() if any(d["weights"].get(c, 0) > 0 for c in CONTEXT_CRITERIA))
     return {"schema": SCHEMA, "records": records, "skipped_tasks": skipped, "summary": summarize(records, ctx)}
@@ -139,7 +138,10 @@ def report_markdown(result: dict) -> str:
              f"- Scores only: {a['scored']} of {a['pairs']} site-task-target pairs scored, median percentile {a['median_percentile']}, "
              f"top 20 % in {a['share_top20']:.0%}, top 10 % in {a['share_top10']:.0%}.",
              f"- With the hard filters of each task: {f['scored']} pairs left, median {f['median_percentile']}, top 20 % in {f['share_top20']:.0%}. "
-             "Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands) and the ice-sheet cell of the McMurdo Dry Valleys. The road filter of rover mobility is off by default and not applied here.",
+             "Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands), the ice-sheet cell of the McMurdo Dry Valleys, "
+             "and, for operations under a low Sun, cells without a snow-free month that has at least 2 h a day of low Sun (glaciated cells such as Svalbard and the Antarctic sites). "
+             "Optional filters (the road filter of rover mobility, the Sun window of landing and EVA geology) are off by default and not applied here.",
+             "- Low Sun is not part of any score: it depends only on latitude and season, so the page shows it as a separate window (hours per day with the Sun 0-5 degrees up in a snow-free month, and which month).",
              f"- Independent part: the tasks {', '.join(s.get('context_tasks', [])) or '(none)'} use the volcano and impact lists, and those lists contain many "
              "of the analog sites themselves, so their high percentiles show that the layers work, not that the method finds analogs on its own. "
              f"Without them: {s['independent']['scores_only']['scored']} pairs, median percentile {s['independent']['scores_only']['median_percentile']}, "

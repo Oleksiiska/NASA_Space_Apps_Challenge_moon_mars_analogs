@@ -2,17 +2,18 @@
 
 Each site is a cell of the 0.5 degree grid; its score is turned into a percentile among all ranked cells (1.0 = best cell on Earth for that task and target). A random site would get a median of 0.5 and land in the top 20 % one time in five. Known analogs were not used to set any weight or threshold.
 
-- Scores only: 132 of 136 site-task-target pairs scored, median percentile 0.771, top 20 % in 43%, top 10 % in 34%.
-- With the hard filters of each task: 116 pairs left, median 0.778, top 20 % in 47%. Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands) and the ice-sheet cell of the McMurdo Dry Valleys. The road filter of rover mobility is off by default and not applied here.
-- Independent part: the tasks caves, eva_geology use the volcano and impact lists, and those lists contain many of the analog sites themselves, so their high percentiles show that the layers work, not that the method finds analogs on its own. Without them: 82 pairs, median percentile 0.692, top 20 % in 16%, top 10 % in 4%.
+- Scores only: 128 of 136 site-task-target pairs scored, median percentile 0.771, top 20 % in 44%, top 10 % in 35%.
+- With the hard filters of each task: 116 pairs left, median 0.765, top 20 % in 47%. Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands), the ice-sheet cell of the McMurdo Dry Valleys, and, for operations under a low Sun, cells without a snow-free month that has at least 2 h a day of low Sun (glaciated cells such as Svalbard and the Antarctic sites). Optional filters (the road filter of rover mobility, the Sun window of landing and EVA geology) are off by default and not applied here.
+- Low Sun is not part of any score: it depends only on latitude and season, so the page shows it as a separate window (hours per day with the Sun 0-5 degrees up in a snow-free month, and which month).
+- Independent part: the tasks caves, eva_geology use the volcano and impact lists, and those lists contain many of the analog sites themselves, so their high percentiles show that the layers work, not that the method finds analogs on its own. Without them: 78 pairs, median percentile 0.657, top 20 % in 17%, top 10 % in 4%.
 
 | Task | pairs | median percentile | top 20 % | top 10 % |
 |---|---|---|---|---|
 | biosignatures | 20 | 0.54 | 0% | 0% |
 | caves | 12 | 0.985 | 100% | 100% |
-| eva_geology | 38 | 0.97 | 84% | 79% |
+| eva_geology | 38 | 0.974 | 82% | 79% |
 | isru_ice | 14 | 0.694 | 0% | 0% |
-| low_sun_ops | 8 | 0.758 | 0% | 0% |
+| low_sun_ops | 4 | 0.447 | 0% | 0% |
 | mobility | 40 | 0.75 | 32% | 8% |
 
 ## Per site
@@ -51,44 +52,44 @@ Each site is a cell of the 0.5 degree grid; its score is turned into a percentil
 | lanzarote_timanfaya | caves | jezero | 0.987 | 0.986 |  |
 | lanzarote_timanfaya | caves | mons_mouton | 0.99 | 0.991 |  |
 | lanzarote_timanfaya | caves | shackleton_ridge | 0.989 | 0.99 |  |
-| askja | eva_geology | mons_mouton | 0.997 | 0.998 |  |
-| askja | eva_geology | shackleton_ridge | 0.996 | 0.997 |  |
-| craters_of_the_moon | eva_geology | mons_mouton | 0.989 | 0.991 |  |
-| craters_of_the_moon | eva_geology | shackleton_ridge | 0.989 | 0.991 |  |
-| etna | eva_geology | mons_mouton | 0.927 | 0.932 |  |
-| etna | eva_geology | shackleton_ridge | 0.933 | 0.937 |  |
-| gros_morne | eva_geology | mons_mouton | 0.404 | 0.42 |  |
-| gros_morne | eva_geology | shackleton_ridge | 0.394 | 0.409 |  |
-| haughton | eva_geology | mons_mouton | 0.991 | 0.992 |  |
-| haughton | eva_geology | shackleton_ridge | 0.991 | 0.992 |  |
-| hi_seas | eva_geology | mons_mouton | 0.977 | 0.979 |  |
-| hi_seas | eva_geology | shackleton_ridge | 0.977 | 0.979 |  |
-| kilauea | eva_geology | mons_mouton | 0.91 | 0.915 |  |
-| kilauea | eva_geology | shackleton_ridge | 0.921 | 0.925 |  |
-| kilbourne_hole | eva_geology | mons_mouton | 0.967 | 0.97 |  |
-| kilbourne_hole | eva_geology | shackleton_ridge | 0.967 | 0.969 |  |
-| lanzarote_timanfaya | eva_geology | mons_mouton | 0.98 | 0.982 |  |
-| lanzarote_timanfaya | eva_geology | shackleton_ridge | 0.978 | 0.98 |  |
-| lmas_reunion | eva_geology | mons_mouton | 0.933 | 0.937 |  |
-| lmas_reunion | eva_geology | shackleton_ridge | 0.948 | 0.951 |  |
-| meteor_crater | eva_geology | mons_mouton | 0.996 | 0.997 |  |
-| meteor_crater | eva_geology | shackleton_ridge | 0.996 | 0.997 |  |
-| mistastin | eva_geology | mons_mouton | 0.829 | 0.86 |  |
-| mistastin | eva_geology | shackleton_ridge | 0.819 | 0.85 |  |
-| ries | eva_geology | mons_mouton | 0.75 | 0.779 |  |
-| ries | eva_geology | shackleton_ridge | 0.749 | 0.778 |  |
-| rio_grande_del_norte | eva_geology | mons_mouton | 0.986 | 0.987 |  |
-| rio_grande_del_norte | eva_geology | shackleton_ridge | 0.983 | 0.985 |  |
-| sp_crater | eva_geology | mons_mouton | 0.988 | 0.989 |  |
-| sp_crater | eva_geology | shackleton_ridge | 0.987 | 0.988 |  |
-| sudbury | eva_geology | mons_mouton | 0.708 | 0.735 |  |
-| sudbury | eva_geology | shackleton_ridge | 0.711 | 0.739 |  |
-| svalbard | eva_geology | mons_mouton | 0.975 | 0.977 |  |
-| svalbard | eva_geology | shackleton_ridge | 0.976 | 0.977 |  |
-| sw_nevada_vf | eva_geology | mons_mouton | 0.97 | 0.973 |  |
-| sw_nevada_vf | eva_geology | shackleton_ridge | 0.967 | 0.969 |  |
-| teide | eva_geology | mons_mouton | 0.963 | 0.965 |  |
-| teide | eva_geology | shackleton_ridge | 0.971 | 0.973 |  |
+| askja | eva_geology | mons_mouton | 0.996 | 0.997 |  |
+| askja | eva_geology | shackleton_ridge | 0.995 | 0.996 |  |
+| craters_of_the_moon | eva_geology | mons_mouton | 0.989 | 0.99 |  |
+| craters_of_the_moon | eva_geology | shackleton_ridge | 0.989 | 0.99 |  |
+| etna | eva_geology | mons_mouton | 0.939 | 0.941 |  |
+| etna | eva_geology | shackleton_ridge | 0.943 | 0.944 |  |
+| gros_morne | eva_geology | mons_mouton | 0.403 | 0.418 |  |
+| gros_morne | eva_geology | shackleton_ridge | 0.394 | 0.41 |  |
+| haughton | eva_geology | mons_mouton | 0.985 | 0.985 |  |
+| haughton | eva_geology | shackleton_ridge | 0.984 | 0.985 |  |
+| hi_seas | eva_geology | mons_mouton | 0.986 | 0.987 |  |
+| hi_seas | eva_geology | shackleton_ridge | 0.987 | 0.987 |  |
+| kilauea | eva_geology | mons_mouton | 0.95 | 0.951 |  |
+| kilauea | eva_geology | shackleton_ridge | 0.953 | 0.954 |  |
+| kilbourne_hole | eva_geology | mons_mouton | 0.974 | 0.975 |  |
+| kilbourne_hole | eva_geology | shackleton_ridge | 0.973 | 0.974 |  |
+| lanzarote_timanfaya | eva_geology | mons_mouton | 0.985 | 0.986 |  |
+| lanzarote_timanfaya | eva_geology | shackleton_ridge | 0.984 | 0.985 |  |
+| lmas_reunion | eva_geology | mons_mouton | 0.962 | 0.964 |  |
+| lmas_reunion | eva_geology | shackleton_ridge | 0.969 | 0.971 |  |
+| meteor_crater | eva_geology | mons_mouton | 0.997 | 0.998 |  |
+| meteor_crater | eva_geology | shackleton_ridge | 0.997 | 0.997 |  |
+| mistastin | eva_geology | mons_mouton | 0.843 | 0.848 |  |
+| mistastin | eva_geology | shackleton_ridge | 0.798 | 0.829 |  |
+| ries | eva_geology | mons_mouton | 0.737 | 0.766 |  |
+| ries | eva_geology | shackleton_ridge | 0.735 | 0.764 |  |
+| rio_grande_del_norte | eva_geology | mons_mouton | 0.987 | 0.988 |  |
+| rio_grande_del_norte | eva_geology | shackleton_ridge | 0.985 | 0.986 |  |
+| sp_crater | eva_geology | mons_mouton | 0.99 | 0.99 |  |
+| sp_crater | eva_geology | shackleton_ridge | 0.989 | 0.989 |  |
+| sudbury | eva_geology | mons_mouton | 0.681 | 0.707 |  |
+| sudbury | eva_geology | shackleton_ridge | 0.684 | 0.71 |  |
+| svalbard | eva_geology | mons_mouton | 0.957 | 0.958 |  |
+| svalbard | eva_geology | shackleton_ridge | 0.958 | 0.959 |  |
+| sw_nevada_vf | eva_geology | mons_mouton | 0.976 | 0.977 |  |
+| sw_nevada_vf | eva_geology | shackleton_ridge | 0.973 | 0.974 |  |
+| teide | eva_geology | mons_mouton | 0.974 | 0.975 |  |
+| teide | eva_geology | shackleton_ridge | 0.978 | 0.979 |  |
 | haughton | isru_ice | arcadia_planitia | 0.701 | 0.422 |  |
 | haughton | isru_ice | jezero | 0.698 | 0.415 |  |
 | haughton | isru_ice | mons_mouton | 0.693 | 0.406 |  |
@@ -103,14 +104,14 @@ Each site is a cell of the 0.5 degree grid; its score is turned into a percentil
 | svalbard | isru_ice | jezero | 0.628 | 0.282 |  |
 | svalbard | isru_ice | mons_mouton | 0.657 | 0.337 |  |
 | svalbard | isru_ice | shackleton_ridge | 0.658 | 0.339 |  |
-| concordia | low_sun_ops | mons_mouton | 0.691 | None | snow_free_window, not_ice_sheet |
-| concordia | low_sun_ops | shackleton_ridge | 0.688 | None | snow_free_window, not_ice_sheet |
-| haughton | low_sun_ops | mons_mouton | 0.75 | 0.94 |  |
-| haughton | low_sun_ops | shackleton_ridge | 0.748 | 0.934 |  |
-| mcmurdo_dry_valleys | low_sun_ops | mons_mouton | 0.797 | None | snow_free_window, not_ice_sheet |
-| mcmurdo_dry_valleys | low_sun_ops | shackleton_ridge | 0.795 | None | snow_free_window, not_ice_sheet |
-| svalbard | low_sun_ops | mons_mouton | 0.765 | None | snow_free_window |
-| svalbard | low_sun_ops | shackleton_ridge | 0.767 | None | snow_free_window |
+| concordia | low_sun_ops | mons_mouton | None | None | sun_window, not_ice_sheet |
+| concordia | low_sun_ops | shackleton_ridge | None | None | sun_window, not_ice_sheet |
+| haughton | low_sun_ops | mons_mouton | 0.466 | 0.936 |  |
+| haughton | low_sun_ops | shackleton_ridge | 0.459 | 0.93 |  |
+| mcmurdo_dry_valleys | low_sun_ops | mons_mouton | None | None | sun_window, not_ice_sheet |
+| mcmurdo_dry_valleys | low_sun_ops | shackleton_ridge | None | None | sun_window, not_ice_sheet |
+| svalbard | low_sun_ops | mons_mouton | 0.415 | None | sun_window |
+| svalbard | low_sun_ops | shackleton_ridge | 0.434 | None | sun_window |
 | askja | mobility | mons_mouton | 0.829 | 0.78 |  |
 | askja | mobility | shackleton_ridge | 0.844 | 0.79 |  |
 | atacama | mobility | arcadia_planitia | 0.17 | 0.171 |  |
@@ -164,10 +165,10 @@ Every weight of a task was changed at random by up to +-25 % (30 draws). Share o
 |---|---|---|
 | biosignatures | 92% | 0% |
 | caves | 96% | 37% |
-| eva_geology | 88% | 9% |
+| eva_geology | 90% | 15% |
 | isru_ice | 99% | 0% |
-| landing | 95% | 2% |
-| low_sun_ops | 78% | 0% |
+| landing | 97% | 2% |
+| low_sun_ops | 86% | 0% |
 | mobility | 95% | 2% |
 
 No spatial hold-out is run: no weight or threshold is fitted to the known sites, so every site is already unseen by the method.
