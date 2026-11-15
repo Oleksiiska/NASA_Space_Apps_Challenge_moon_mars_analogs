@@ -1,184 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
 <meta charset="utf-8">
 <title>Moon–Mars Analog Finder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Where on Earth are the conditions of a lunar or Martian site closest? 88,883 land cells ranked for 7 test tasks against Moon and Mars targets, from NASA data.">
+<meta name="theme-color" content="#050912">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%2308121f' stroke='%232a4262'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%231f3a58'/%3E%3Cpath d='M16 16V1A15 15 0 0 1 29 8.5Z' fill='%235ad1ff' fill-opacity='.55'/%3E%3Ccircle cx='22.5' cy='9.5' r='2.2' fill='%23ffb547'/%3E%3C/svg%3E">
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Unbounded:wght@500;600&display=swap">
 <style>
-/* Layout: map pinned on the left, controls and results scroll on the right; stacked on a phone.
-   Palette: cool slate neutrals, one teal-blue accent, a viridis ramp for scores (set in JS).
-   Type: Space Grotesk for names, IBM Plex Sans for text, IBM Plex Mono for numbers. */
+/* Mission-console look: deep-space panels, one signal cyan for what is selected or ranked, amber for the Sun and warnings.
+   The similarity map is the one animated element (radar sweep, pulses on the 10 best regions); everything else stays still.
+   Type: Unbounded (wide, has Cyrillic) for names and big numbers, IBM Plex Sans for reading. Dark only: every text colour here
+   is at least 6.2:1 on the panels. */
 :root{
-  --bg:#f3f5f8; --surface:#ffffff; --ink:#141a22; --muted:#566170; --line:#d8dde5; --accent:#0a6a86; --accent-ink:#ffffff;
-  --accent-soft:#dff0f5; --sea:#eef2f6; --land:#a3adba; --good:#17743a; --warn:#a8530a; --bad:#a8261d; --pick:#141a22;
-  --s1:#2a78d6; --s2:#eb6834; --seq-lo:#a9cdf0; --seq-hi:#08306b; --spot:#c2410c;
-  --display:"Space Grotesk","Segoe UI",system-ui,sans-serif; --text:"IBM Plex Sans","Segoe UI",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  color-scheme:dark;
+  --void:#050912; --panel:#0b1422; --panel-2:#0f1b2c; --line:#1c2d44; --line-2:#2a4262;
+  --ink:#e6eef9; --mist:#a9b9cf; --dim:#8a9cb5;
+  --signal:#5ad1ff; --signal-deep:#14668c; --signal-ink:#04121c;
+  --amber:#ffb547; --good:#5ed69c; --bad:#ff8a8a;
+  /* read by the script for the map and the small charts */
+  --bg:#050912; --surface:#0b1422; --muted:#a9b9cf; --accent:#5ad1ff; --accent-ink:#04121c; --accent-soft:#12324a;
+  --warn:#ffb547; --pick:#ffffff; --spot:#ffb547; --sea:#050d18; --land:#2b3a4f;
+  --grat:rgba(90,209,255,.10); --grat2:rgba(90,209,255,.24);
+  --s1:#5ad1ff; --s2:#ffb547; --seq-lo:#1a2b45; --seq-hi:#ffc861;
+  --display:"Unbounded","IBM Plex Sans",system-ui,sans-serif;
+  --text:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --mono:var(--text);
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0d1117; --surface:#151b24; --ink:#e5e9ef; --muted:#93a0b0; --line:#273040; --accent:#52c3e0; --accent-ink:#06222b;
-  --accent-soft:#12303a; --sea:#0a0e14; --land:#3a4555; --good:#5ccf84; --warn:#f0a35c; --bad:#f08a80; --pick:#ffffff;
-  --s1:#3987e5; --s2:#d95926; --seq-lo:#1f4f7d; --seq-hi:#bfe0ff; --spot:#fb923c; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0d1117; --surface:#151b24; --ink:#e5e9ef; --muted:#93a0b0; --line:#273040; --accent:#52c3e0; --accent-ink:#06222b;
-  --accent-soft:#12303a; --sea:#0a0e14; --land:#3a4555; --good:#5ccf84; --warn:#f0a35c; --bad:#f08a80; --pick:#ffffff;
-  --s1:#3987e5; --s2:#d95926; --seq-lo:#1f4f7d; --seq-hi:#bfe0ff; --spot:#fb923c; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--text);padding-block:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-h1,h2,h3{font-family:var(--display);font-weight:600;margin:0;text-wrap:balance}
-h1{font-size:22px;letter-spacing:-.01em}
-h2{font-size:15px}
-h3{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+[hidden]{display:none!important}
+html{background:var(--void)}
+body{margin:0;min-height:100dvh;color:var(--ink);font:15px/1.55 var(--text);-webkit-font-smoothing:antialiased;
+  background:radial-gradient(1100px 520px at 78% -12%,rgba(42,118,190,.20),transparent 70%),
+             radial-gradient(900px 480px at -10% 105%,rgba(20,96,140,.14),transparent 70%),var(--void);background-attachment:fixed}
+h1,h2,h3{margin:0;text-wrap:balance}
 p{margin:0}
-button,select,input{font:inherit;color:inherit}
-.wrap{max-width:1500px;margin:0 auto}
-header{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:flex-end;justify-content:space-between;padding-block:16px 12px}
-header p{color:var(--muted);max-width:62ch}
-.disc{font-size:12px;border-left:3px solid var(--warn);padding-left:10px;max-width:90ch!important}
-details{margin-top:10px}summary{cursor:pointer;font-weight:500}details p{margin-top:6px;color:var(--muted);font-size:13px;max-width:70ch}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--surface)}
-.seg button{border:0;background:none;padding:5px 12px;cursor:pointer;color:var(--muted)}
-.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.layout{display:grid;gap:16px 24px;grid-template-columns:minmax(0,1fr);grid-template-areas:"ctrl" "map" "res";padding-bottom:40px}
-@media (min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 400px;grid-template-areas:"map ctrl" "map res"}}
-#ctrl{grid-area:ctrl;min-width:0}#res{grid-area:res;min-width:0}
-#mapbox{grid-area:map;min-width:0;align-self:start;position:sticky;top:12px}
-@media (max-width:999px){#mapbox{position:static}#canvaswrap{height:clamp(240px,58vw,520px)}}
-.field{display:grid;gap:4px;margin-bottom:12px}
-.field label,.label{font-size:12px;color:var(--muted)}
-select{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
-.world{margin-bottom:12px}
-.sliders{display:grid;gap:8px;margin:8px 0 12px}
-.sl{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:2px 8px;align-items:center}
-.sl .nm{font-size:13px;min-width:0}
-.sl output{font-family:var(--mono);font-size:12px;text-align:right;color:var(--muted)}
-.sl input{grid-column:1/-1;width:100%;accent-color:var(--accent);margin:0}
-.sl.off{opacity:.55}
-.sl .tag{font-size:11px;color:var(--warn)}
+button,select,input,textarea{font:inherit;color:inherit}
+a{color:var(--signal)}
+:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.app{max-width:1720px;margin:0 auto;padding:12px max(14px,env(safe-area-inset-right,0px)) 28px max(14px,env(safe-area-inset-left,0px))}
+
+/* ---------- top bar ---------- */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;padding:10px 14px;border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 70%),var(--panel)}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 300px}
+.glyph{width:38px;height:38px;flex:none}
+.brand h1{font:600 17px/1.25 var(--display);letter-spacing:.01em}
+.brand .tag{display:block;font-size:13px;color:var(--mist);margin-top:2px}
+.seg{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--line-2);border-radius:999px;background:var(--panel-2)}
+.seg button{border:0;background:none;color:var(--mist);padding:5px 14px;min-height:32px;border-radius:999px;cursor:pointer;font-weight:500}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{color:var(--ink);background:linear-gradient(180deg,rgba(90,209,255,.24),rgba(90,209,255,.08));
+  box-shadow:inset 0 0 0 1px rgba(90,209,255,.6),0 0 18px rgba(90,209,255,.22)}
+.worlds button{font:500 14px/1 var(--display);padding:9px 22px;min-height:38px}
+.citybox{position:relative;flex:1 1 230px;max-width:360px}
+.citybox input{width:100%;height:40px;padding:0 14px 0 38px;border-radius:999px;border:1px solid var(--line-2);background:var(--panel-2);color:var(--ink)}
+.citybox input::placeholder{color:var(--dim)}
+.citybox input:hover{border-color:var(--signal-deep)}
+.citybox .ico{position:absolute;left:13px;top:12px;width:16px;height:16px;color:var(--mist);pointer-events:none}
+.sugg{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;list-style:none;margin:0;padding:6px;background:var(--panel-2);border:1px solid var(--line-2);
+  border-radius:12px;max-height:300px;overflow:auto;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.sugg li button{width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:8px;cursor:pointer}
+.sugg li button:hover,.sugg li button:focus-visible{background:rgba(90,209,255,.12)}
+.disc{margin:10px 0 0;padding:8px 12px;border-left:3px solid var(--amber);background:rgba(255,181,71,.06);border-radius:0 8px 8px 0;font-size:13.5px;color:var(--mist)}
+
+/* ---------- dashboard grid ---------- */
+.dash{display:grid;gap:14px;margin-top:14px;grid-template-columns:minmax(0,1fr);grid-template-areas:"map" "kpis" "ctrl" "res"}
+@media (min-width:900px){.dash{grid-template-columns:300px minmax(0,1fr);grid-template-areas:"ctrl map" "ctrl kpis" "res res"}}
+@media (min-width:1240px){.dash{grid-template-columns:300px minmax(0,1fr) 344px;grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"ctrl map res" "ctrl kpis res"}}
+@media (min-width:1240px) and (min-height:760px){.dash{height:calc(100dvh - 158px);min-height:620px}.ctrl,.insights{overflow:auto;overscroll-behavior:contain}}
+.panel{min-width:0;border:1px solid var(--line);border-radius:16px;padding:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0) 120px),var(--panel)}
+.panel h2{font:500 15px/1.3 var(--display);letter-spacing:.01em}
+h3{font:600 14px/1.35 var(--text)}
+.sub{color:var(--mist);font-size:13.5px}
+.src{display:block;font-size:12px;color:var(--dim)}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:5px 10px;cursor:pointer}
-.btn:hover{border-color:var(--accent)}
-.checks{display:grid;gap:4px;margin:6px 0 4px}
-.checks label{display:flex;gap:8px;align-items:flex-start;font-size:13px}
-.checks input{margin-top:3px;accent-color:var(--accent)}
-.sub{color:var(--muted);font-size:12px}
-.src{display:block;font-size:11px;color:var(--muted)}
-.chart{width:100%;height:auto;display:block;margin-top:6px}
-.chart text{fill:var(--muted);font:11px var(--text)}
-.chart .ax{stroke:var(--line)}
-.key{display:inline-flex;align-items:center;gap:6px;margin-right:12px;font-size:12px;color:var(--muted)}
-.sw{display:inline-block;width:10px;height:10px;border-radius:2px}
-.hatch{background:repeating-linear-gradient(135deg,var(--land) 0 3px,var(--muted) 3px 4px)}
-.spot{display:grid;gap:6px;margin-top:10px}
-.citybox{position:relative;margin-bottom:14px}
-.citybox input{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
-.sugg{position:absolute;left:0;right:0;top:100%;z-index:5;list-style:none;margin:2px 0 0;padding:4px 0;background:var(--surface);border:1px solid var(--line);border-radius:6px;max-height:260px;overflow:auto}
-.sugg li button{width:100%;text-align:left;border:0;background:none;padding:5px 10px;cursor:pointer}
-.sugg li button:hover,.sugg li button:focus-visible{background:var(--accent-soft)}
-.gl dt{font-weight:500;margin-top:6px}.gl dd{margin:2px 0 0;color:var(--muted);font-size:13px}
-.spot button{text-align:left}
-section.blk{border-top:1px solid var(--line);padding-top:14px;margin-top:16px}
-#canvaswrap{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--sea);height:clamp(340px,66vh,760px);touch-action:none}
+.between{justify-content:space-between}
+.btn{min-height:32px;border:1px solid var(--line-2);background:var(--panel-2);border-radius:999px;padding:4px 14px;cursor:pointer;font-size:13.5px;color:var(--ink)}
+.btn:hover{border-color:var(--signal);box-shadow:0 0 12px rgba(90,209,255,.18)}
+
+/* ---------- search setup ---------- */
+.ctrl{grid-area:ctrl}
+.lede{color:var(--mist);font-size:14px;margin-top:8px}
+.field{display:grid;gap:6px;margin-top:14px}
+.field label{font-size:13.5px;color:var(--mist)}
+select{width:100%;height:42px;padding:0 36px 0 12px;border:1px solid var(--line-2);border-radius:10px;color:var(--ink);cursor:pointer;appearance:none;-webkit-appearance:none;
+  background:var(--panel-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23a9b9cf' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 13px center/12px 8px}
+select:hover{border-color:var(--signal-deep)}
+option{background:#0f1b2c;color:#e6eef9}
+details.wd{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+details>summary{cursor:pointer;font-weight:600;list-style:none;display:flex;align-items:center;gap:10px;min-height:32px}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--mist);border-bottom:2px solid var(--mist);transform:rotate(-45deg);transition:transform .15s;flex:none}
+details[open]>summary::before{transform:rotate(45deg)}
+.wd .row{margin-top:10px}
+.sliders{display:grid;gap:12px;margin:10px 0 16px}
+.sl{display:grid;grid-template-columns:minmax(0,1fr) 40px;gap:4px 8px;align-items:center}
+.sl .nm{font-size:14px;min-width:0}
+.sl output{font-size:13.5px;text-align:right;color:var(--mist);font-variant-numeric:tabular-nums}
+.sl input{grid-column:1/-1;width:100%;margin:0;height:22px;accent-color:var(--signal);cursor:pointer}
+.sl.off{opacity:.6}
+.sl .tag{font-size:12px;color:var(--amber)}
+.checks{display:grid;gap:10px;margin:10px 0 6px}
+.checks label{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.4;cursor:pointer}
+.checks input{width:20px;height:20px;margin:0;flex:none;accent-color:var(--signal)}
+#glossary details{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+.gl{margin:6px 0 0}
+.gl dt{font-weight:600;margin-top:10px;font-size:14px}
+.gl dd{margin:3px 0 0;color:var(--mist);font-size:13.5px}
+
+/* ---------- similarity map (radar) ---------- */
+.radar{grid-area:map;display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:20px}
+.panel-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.panel-head h2{margin-right:auto}
+.mapctx{flex-basis:100%;order:3;font-size:13.5px;color:var(--mist);margin-top:-2px}
+#month{width:auto;height:36px;padding:0 32px 0 12px;border-radius:999px}
+#canvaswrap{position:relative;height:clamp(240px,62vw,520px);border-radius:14px;overflow:hidden;background:var(--sea);border:1px solid var(--line-2);touch-action:none;isolation:isolate}
+@media (min-width:900px){#canvaswrap{height:clamp(380px,46vw,560px)}}
+@media (min-width:1240px) and (min-height:760px){#canvaswrap{height:auto;flex:1 1 0;min-height:300px}}
 canvas{display:block;width:100%;height:100%;cursor:grab}
 canvas:active{cursor:grabbing}
-.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:12px;white-space:nowrap;display:none;z-index:3}
-.zoom{position:absolute;right:8px;top:8px;display:grid;gap:4px;z-index:2}
-.zoom button{width:30px;height:30px;border:1px solid var(--line);background:var(--surface);border-radius:6px;cursor:pointer;font-size:16px;line-height:1}
-.empty{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;background:color-mix(in srgb,var(--sea) 80%,transparent);z-index:2}
-.empty div{max-width:42ch;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
-.legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;margin-top:8px;font-size:12px;color:var(--muted)}
-.ramp{display:inline-block;width:140px;height:10px;border-radius:2px;vertical-align:middle;margin:0 6px}
-.dot{display:inline-block;width:9px;height:9px;transform:rotate(45deg);margin-right:6px;border:1.5px solid var(--ink)}
-.cands{list-style:none;margin:8px 0 0;padding:0;display:grid}
-.cands li button{width:100%;display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:8px;align-items:baseline;text-align:left;border:0;border-bottom:1px solid var(--line);background:none;padding:7px 4px;cursor:pointer}
-.cands li button:hover,.cands li button[aria-current="true"]{background:var(--accent-soft)}
-.cands .rk{font-family:var(--mono);color:var(--muted);font-size:12px}
-.cands .sc{font-family:var(--mono);font-size:13px}
-.cands .nr{font-size:12px;color:var(--muted)}
-.bar{display:grid;grid-template-columns:120px minmax(0,1fr) 40px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
+#canvaswrap::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
+  background:repeating-radial-gradient(circle at 50% 50%,transparent 0 calc(12.5% - 1px),rgba(90,209,255,.07) calc(12.5% - 1px) 12.5%)}
+.sweep{position:absolute;left:50%;top:50%;width:150%;aspect-ratio:1;border-radius:50%;pointer-events:none;z-index:1;mix-blend-mode:screen;will-change:transform;
+  background:conic-gradient(from 0deg,transparent 0deg 292deg,rgba(90,209,255,.05) 318deg,rgba(90,209,255,.15) 350deg,rgba(170,236,255,.42) 359.4deg,transparent 360deg);
+  transform:translate(-50%,-50%) rotate(0deg);animation:sweep 7s linear infinite}
+@keyframes sweep{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.pulses{position:absolute;inset:0;pointer-events:none;z-index:2}
+.pulse{position:absolute;left:0;top:0;width:0;height:0;display:none}
+.pulse::before,.pulse::after{content:"";position:absolute;left:-15px;top:-15px;width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(90,209,255,.85);
+  transform:scale(.4);opacity:0;animation:ping 2.8s cubic-bezier(.2,.6,.3,1) infinite;animation-delay:var(--d,0s)}
+.pulse::after{animation-delay:calc(var(--d,0s) + 1.4s)}
+.pulse.lead::before,.pulse.lead::after{border-color:rgba(170,236,255,.95);border-width:2px}
+@keyframes ping{0%{transform:scale(.4);opacity:.9}75%{opacity:0}100%{transform:scale(2.4);opacity:0}}
+.radar-off .sweep{display:none}
+.radar-off .pulse::before,.radar-off .pulse::after{animation:none;transform:scale(1.15);opacity:.55}
+.radar-off .pulse::after{display:none}
+@media (prefers-reduced-motion:reduce){.sweep{display:none}.pulse::before,.pulse::after{animation:none;transform:scale(1.15);opacity:.55}.pulse::after{display:none}}
+.zoom{position:absolute;right:10px;top:10px;display:grid;gap:6px;z-index:3}
+.zoom button{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--line-2);background:rgba(11,20,34,.92);border-radius:10px;cursor:pointer;font-size:18px;line-height:1;color:var(--ink)}
+.zoom button:hover{border-color:var(--signal)}
+.zoom button svg{width:18px;height:18px}
+#zradar[aria-pressed="true"]{color:var(--signal);box-shadow:inset 0 0 0 1px rgba(90,209,255,.45)}
+.tip{position:absolute;pointer-events:none;background:rgba(11,20,34,.96);border:1px solid var(--line-2);border-radius:8px;padding:6px 10px;font-size:13px;white-space:nowrap;display:none;z-index:4;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.empty{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:24px;background:rgba(5,13,24,.74);z-index:3}
+.empty div{max-width:44ch;background:var(--panel);border:1px solid var(--line-2);border-radius:12px;padding:14px 16px}
+.legend{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;font-size:13.5px;color:var(--mist)}
+.lg-ramp,.lg-item{display:inline-flex;align-items:center;gap:8px}
+.ramp{display:inline-block;width:150px;height:10px;border-radius:5px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;flex:none}
+.sw-land{background:var(--land);box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
+.hatch{background:repeating-linear-gradient(135deg,var(--land) 0 3px,var(--mist) 3px 4px)}
+.dot{display:inline-block;width:10px;height:10px;flex:none}
+.dot-an{transform:rotate(45deg);background:var(--signal);box-shadow:0 0 0 1.5px var(--ink)}
+.dot-spot{border-radius:50%;box-shadow:0 0 0 2px var(--amber)}
+.lg-item input{width:18px;height:18px;margin:0;accent-color:var(--signal)}
+.count{margin-left:auto;font-variant-numeric:tabular-nums}
+
+/* ---------- key figures ---------- */
+.kpis{grid-area:kpis;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:700px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.kpi{min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,rgba(90,209,255,.07),rgba(90,209,255,0) 75%),var(--panel)}
+.k-l{font-size:13.5px;color:var(--mist)}
+.k-v{font:500 23px/1.2 var(--display);margin-top:4px;font-variant-numeric:tabular-nums}
+.k-s{font-size:12.5px;color:var(--dim);margin-top:4px;overflow-wrap:anywhere}
+
+/* ---------- results ---------- */
+.insights{grid-area:res;padding:0;display:flex;flex-direction:column}
+.loading{padding:28px 16px;color:var(--mist)}
+.tabs{display:flex;gap:2px;padding:6px 8px 0;position:sticky;top:0;z-index:5;background:var(--panel);border-bottom:1px solid var(--line);border-radius:16px 16px 0 0;overflow-x:auto}
+.tabs button{flex:1 0 auto;border:0;background:none;color:var(--mist);padding:11px 12px 10px;cursor:pointer;font-weight:500;font-size:14.5px;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--signal)}
+.pane{padding:14px 16px 20px}
+.cands{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+.cands li button{width:100%;display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--panel-2);border-radius:12px;padding:10px 12px;cursor:pointer;color:var(--ink)}
+.cands li button:hover{border-color:var(--line-2)}
+.cands li button[aria-current="true"]{border-color:rgba(90,209,255,.65);background:linear-gradient(180deg,rgba(90,209,255,.12),rgba(90,209,255,.03));box-shadow:0 0 18px rgba(90,209,255,.14)}
+.cands .rk{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line-2);font-size:13px;font-weight:600}
+.cands li button[aria-current="true"] .rk{border-color:var(--signal);color:var(--signal)}
+.cands .nm{display:block;font-weight:600;font-size:14.5px;line-height:1.3}
+.cands .co,.cands .nr{display:block;font-size:12.5px;color:var(--mist);margin-top:2px}
+.cands .nr{color:var(--dim)}
+.cands .sc{font:500 16px/1 var(--display);font-variant-numeric:tabular-nums}
+#copybox{width:100%;height:120px;margin-top:10px;font-size:12.5px;background:var(--panel-2);color:var(--ink);border:1px solid var(--line-2);border-radius:10px;padding:8px}
+section.blk{border-top:1px solid var(--line);padding-top:16px;margin-top:18px}
+section.blk.first,#citysec[hidden]+#card{border-top:0;padding-top:0;margin-top:0}
+.place{color:var(--mist);font-size:14px;margin-top:4px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.stat{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--panel-2)}
+.label{font-size:13px;color:var(--mist)}
+.big{font:500 22px/1.15 var(--display);margin-top:2px;font-variant-numeric:tabular-nums}
+.bar{display:grid;grid-template-columns:minmax(0,9fr) minmax(0,7fr) 34px;gap:10px;align-items:center;font-size:14px;margin:8px 0}
 .bar .nm{min-width:0}
-.bar .tr{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
-.bar .fl{height:100%;background:var(--accent)}
-.bar .vl{font-family:var(--mono);font-size:12px;text-align:right}
-.bar.na .nm,.bar.na .vl{color:var(--muted)}
-.big{font-family:var(--mono);font-size:28px;line-height:1.1}
-.kv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;font-size:13px}
-.kv span:nth-child(even){font-family:var(--mono);text-align:right}
-.chip{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:10px;padding:0 7px;white-space:nowrap}
-.chip.ok{color:var(--good);border-color:var(--good)}.chip.no{color:var(--bad);border-color:var(--bad)}.chip.part{color:var(--warn);border-color:var(--warn)}
-.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
-.tbl th{text-align:left;font-weight:500;color:var(--muted);padding:4px 6px 4px 0;border-bottom:1px solid var(--line)}
-.tbl td{padding:5px 6px 5px 0;border-bottom:1px solid var(--line);vertical-align:top}
-.tbl td.n{font-family:var(--mono);overflow-wrap:anywhere}
-.tbl td:first-child{width:34%}
+.bar .tr{height:8px;background:#1a2a40;border-radius:4px;overflow:hidden}
+.bar .fl{height:100%;background:linear-gradient(90deg,#14668c,#5ad1ff)}
+.bar .vl{font-size:13.5px;text-align:right;font-variant-numeric:tabular-nums}
+.bar.na .nm,.bar.na .vl{color:var(--dim)}
+.kv{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px;font-size:14px}
+.kv span:nth-child(even){text-align:right;font-variant-numeric:tabular-nums}
+.chip{display:inline-block;font-size:12.5px;border:1px solid var(--line-2);border-radius:999px;padding:2px 10px;white-space:nowrap}
+.chip.ok{color:var(--good);border-color:rgba(94,214,156,.55);background:rgba(94,214,156,.08)}
+.chip.no{color:var(--bad);border-color:rgba(255,138,138,.55);background:rgba(255,138,138,.08)}
+.chip.part{color:var(--amber);border-color:rgba(255,181,71,.55);background:rgba(255,181,71,.08)}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{text-align:left;font-weight:500;color:var(--mist);padding:6px 8px 6px 0;border-bottom:1px solid var(--line-2)}
+.tbl td{padding:7px 8px 7px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl td.n{font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tbl td:first-child{width:36%}
 .tblwrap{overflow-x:auto}
-ul.plain{margin:6px 0 0;padding-left:18px;display:grid;gap:4px}
-footer{padding:8px 0 28px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);max-width:90ch}
-.loading{padding:40px 0;color:var(--muted)}
-@media (prefers-reduced-motion:no-preference){.fl{transition:width .2s}}
+.tbl th::first-letter{text-transform:uppercase}
+.gaps{margin-top:10px}
+.gap{padding:12px 0;border-bottom:1px solid var(--line)}
+.gap-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.gap-n{font-weight:600;font-size:14.5px}
+.gap-v{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;font-size:14px;font-variant-numeric:tabular-nums}
+.gap-v .label{display:block;margin-bottom:2px}
+.gap-w{margin-top:8px}
+@media (max-width:640px){.zoom{top:auto;bottom:8px;right:8px;grid-auto-flow:column;gap:4px}.zoom button{width:32px;height:32px;font-size:16px}}
+ul.plain{margin:8px 0 0;padding-left:18px;display:grid;gap:6px}
+.chart{width:100%;height:auto;display:block;margin-top:8px}
+.chart text{fill:var(--mist);font:12px var(--text)}
+.chart .ax{stroke:var(--line-2)}
+.key{display:inline-flex;align-items:center;gap:6px;margin-right:14px;font-size:13px;color:var(--mist)}
+.spot{display:grid;gap:8px;margin-top:10px}
+.spot button{text-align:left}
+details p{margin-top:8px;color:var(--mist);font-size:14px;max-width:70ch}
+footer{margin-top:18px;padding:14px 2px 0;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px;max-width:110ch}
+@media (prefers-reduced-motion:no-preference){.bar .fl{transition:width .2s}}
+@media (max-width:640px){
+  .top{padding:10px}
+  .brand{flex-basis:100%}
+  .brand h1{font-size:15px}
+  .worlds{flex:1 1 auto;justify-content:center}
+  .worlds button{flex:1;padding:9px 12px}
+  .citybox{flex-basis:100%;max-width:none;order:5}
+  .panel{padding:14px}
+  .pane{padding:12px 14px 18px}
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .big{font-size:19px}
+  .count{margin-left:0}
+}
 </style>
 
-<div class="wrap">
-<header>
-  <div>
-    <h1 data-i="title">Moon–Mars Analog Finder</h1>
-    <p data-i="sub">Where on Earth are the conditions of a lunar or Martian site closest? Pick a target and a task, weigh the criteria, and see which 55 km cells of the Earth match, and what they cannot reproduce.</p>
+<div class="app">
+<header class="top">
+  <div class="brand">
+    <svg class="glyph" viewBox="0 0 38 38" aria-hidden="true"><defs><linearGradient id="gw" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#5ad1ff" stop-opacity="0"/><stop offset="1" stop-color="#5ad1ff" stop-opacity=".6"/></linearGradient></defs><circle cx="19" cy="19" r="17.5" fill="#08121f" stroke="#2a4262"/><circle cx="19" cy="19" r="11.5" fill="none" stroke="#1f3a58"/><circle cx="19" cy="19" r="5.5" fill="none" stroke="#1f3a58"/><path d="M19 19V1.5A17.5 17.5 0 0 1 34.2 10.3Z" fill="url(#gw)"/><circle cx="27" cy="11" r="2.4" fill="#ffb547"/><circle cx="19" cy="19" r="1.7" fill="#5ad1ff"/></svg>
+    <div><h1 data-i="title">Moon–Mars Analog Finder</h1><span class="tag" data-i="tagline">Earth sites for lunar and Martian field tests</span></div>
   </div>
-  <p class="disc" data-i="disc" style="flex-basis:100%"></p>
+  <div class="seg worlds" role="group" aria-label="World"><button id="w-moon" aria-pressed="true" data-i="moon">Moon</button><button id="w-mars" aria-pressed="false" data-i="mars">Mars</button></div>
+  <div class="citybox"><label for="city" class="sr-only" data-i="city_l">Check a place: type a city</label>
+    <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M11 11l3.6 3.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <input id="city" type="search" autocomplete="off" placeholder="Kyiv, Reykjavík, Tucson…" aria-controls="sugg">
+    <ul class="sugg" id="sugg" hidden></ul></div>
   <div class="seg" role="group" aria-label="Language"><button id="l-en" aria-pressed="true">EN</button><button id="l-uk" aria-pressed="false">УК</button></div>
 </header>
+<p class="disc" data-i="disc"></p>
 
-<div class="layout">
-  <div id="ctrl">
-    <div class="citybox"><label for="city" class="label" data-i="city_l">Check a place: type a city</label>
-      <input id="city" type="search" autocomplete="off" placeholder="Kyiv, Reykjavík, Tucson…" aria-controls="sugg">
-      <ul class="sugg" id="sugg" hidden></ul></div>
-    <div class="world seg" role="group" aria-label="World"><button id="w-moon" aria-pressed="true" data-i="moon">Moon</button><button id="w-mars" aria-pressed="false" data-i="mars">Mars</button></div>
+<main class="dash">
+  <section id="ctrl" class="panel ctrl" aria-labelledby="ctrl-h">
+    <h2 id="ctrl-h" data-i="setup">Search setup</h2>
+    <p class="lede" data-i="sub">Where on Earth are the conditions of a lunar or Martian site closest?</p>
     <div class="field"><label for="target" data-i="target">Target to reproduce</label><select id="target"></select></div>
     <div class="field"><label for="task" data-i="task">Test task</label><select id="task"></select></div>
-    <div class="row"><h3 data-i="weights">Criteria weights</h3><button class="btn" id="reset" data-i="reset">Reset</button></div>
-    <div class="sliders" id="sliders"></div>
-    <h3 data-i="filters">Hard filters</h3>
-    <div class="checks" id="checks"></div>
-    <p class="sub" id="unchecked"></p>
+    <details class="wd" id="wdetails" open>
+      <summary data-i="weights_sum">Weights and filters</summary>
+      <div class="row between"><h3 data-i="weights">Criteria weights</h3><button class="btn" id="reset" data-i="reset">Reset</button></div>
+      <div class="sliders" id="sliders"></div>
+      <h3 data-i="filters">Hard filters</h3>
+      <div class="checks" id="checks"></div>
+      <p class="sub" id="unchecked"></p>
+    </details>
     <div id="glossary"></div>
-  </div>
+  </section>
 
-  <div id="mapbox">
+  <section id="mapbox" class="panel radar" aria-labelledby="map-h">
+    <div class="panel-head">
+      <h2 id="map-h" data-i="map_t">Similarity map</h2>
+      <p class="mapctx" id="mapctx"></p>
+      <div class="seg" role="group" aria-label="Map"><button id="m-score" aria-pressed="true" data-i="mode_score">Score</button><button id="m-sun" aria-pressed="false" data-i="mode_sun">Low-Sun window</button></div>
+      <select id="month" aria-label="Month" hidden></select>
+    </div>
     <div id="canvaswrap">
       <canvas id="map" role="img" aria-label="Map of Earth cells coloured by similarity score"></canvas>
-      <div class="zoom"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="zreset" aria-label="Reset view" style="font-size:12px">⌂</button></div>
+      <div class="sweep" aria-hidden="true"></div>
+      <div class="pulses" id="pulses" aria-hidden="true"></div>
+      <div class="zoom"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="zreset" aria-label="Reset view">⌂</button><button id="zradar" aria-label="Radar animation" aria-pressed="true"><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7.5" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="9" cy="9" r="3.6" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9 9L14.3 3.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
       <div class="tip" id="tip"></div>
       <div class="empty" id="empty"><div id="emptytxt"></div></div>
     </div>
     <div class="legend">
-      <div class="seg" role="group" aria-label="Map"><button id="m-score" aria-pressed="true" data-i="mode_score">Score</button><button id="m-sun" aria-pressed="false" data-i="mode_sun">Low-Sun window</button></div>
-      <select id="month" aria-label="Month" hidden style="width:auto;padding:3px 6px"></select>
-      <span><span id="lo-l" data-i="lo">lower</span><span class="ramp" id="ramp"></span><span id="hi-l" data-i="hi">higher similarity</span></span>
-      <span id="snowkey" hidden><span class="sw hatch"></span> <span data-i="snow_leg">snow ≥ 10 % that month</span></span>
-      <span><span class="dot" style="background:transparent;border-color:var(--spot)"></span><span data-i="spot_t">Spotlight</span></span>
-      <span><span class="dot" style="background:var(--accent)"></span><span data-i="a_ok">known analog</span></span>
-      <label style="display:inline-flex;gap:6px;align-items:center"><input type="checkbox" id="showan" checked style="accent-color:var(--accent)"><span data-i="show_an">show known analogs</span></label>
-      <span id="count"></span>
+      <span class="lg-ramp"><span id="lo-l" data-i="lo">lower</span><span class="ramp" id="ramp"></span><span id="hi-l" data-i="hi">higher similarity</span></span>
+      <span class="lg-item" id="nrkey"><span class="sw sw-land"></span><span data-i="nr_leg">not ranked: filter or too little data</span></span>
+      <span class="lg-item" id="snowkey" hidden><span class="sw hatch"></span><span data-i="snow_leg">snow ≥ 10 % that month</span></span>
+      <span class="lg-item"><span class="dot dot-spot"></span><span data-i="spot_t">Spotlight</span></span>
+      <span class="lg-item"><span class="dot dot-an"></span><span data-i="a_ok">known analog</span></span>
+      <label class="lg-item"><input type="checkbox" id="showan" checked><span data-i="show_an">show known analogs</span></label>
+      <span id="count" class="count"></span>
     </div>
-  </div>
+  </section>
 
-  <div id="res">
+  <section class="kpis" id="kpis" aria-label="Key figures"></section>
+
+  <section id="res" class="panel insights" aria-label="Results">
     <div class="loading" id="loading" data-i="loading">Loading the grid of 88,883 land cells…</div>
     <div id="results" hidden>
-      <div class="row" style="justify-content:space-between"><h2 data-i="cands">Best regions</h2><span class="row"><button class="btn" id="copy" data-i="copy">Copy list</button><button class="btn" id="dl-csv" data-i="dl_csv">CSV</button><button class="btn" id="dl-geo" data-i="dl_geo">GeoJSON</button></span></div>
-      <p class="sub" data-i="cands_sub">Best cell of each region (regions at least 600 km apart).</p>
-      <ol class="cands" id="cands"></ol>
-      <textarea id="copybox" readonly hidden style="width:100%;height:120px;margin-top:8px;font-family:var(--mono);font-size:12px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px"></textarea>
-
-      <p class="sub" data-i="dl_note" style="margin-top:6px"></p>
-      <section class="blk" id="citysec" hidden></section>
-      <section class="blk" id="spots"></section>
-      <section class="blk" id="card"></section>
-      <section class="blk" id="val"></section>
-      <section class="blk" id="gaps"></section>
-      <section class="blk" id="rel"></section>
+      <div class="tabs" role="tablist" aria-label="Results">
+        <button role="tab" id="t-regions" data-tab="regions" aria-controls="p-regions" aria-selected="true" data-i="tab_regions">Regions</button>
+        <button role="tab" id="t-cell" data-tab="cell" aria-controls="p-cell" aria-selected="false" tabindex="-1" data-i="tab_cell">Cell</button>
+        <button role="tab" id="t-trust" data-tab="trust" aria-controls="p-trust" aria-selected="false" tabindex="-1" data-i="tab_trust">Trust</button>
+        <button role="tab" id="t-limits" data-tab="limits" aria-controls="p-limits" aria-selected="false" tabindex="-1" data-i="tab_limits">Limits</button>
+      </div>
+      <div class="pane" role="tabpanel" id="p-regions" aria-labelledby="t-regions">
+        <div class="row between"><h2 data-i="cands">Best regions</h2><span class="row"><button class="btn" id="copy" data-i="copy">Copy list</button><button class="btn" id="dl-csv" data-i="dl_csv">CSV</button><button class="btn" id="dl-geo" data-i="dl_geo">GeoJSON</button></span></div>
+        <p class="sub" data-i="cands_sub" style="margin-top:6px">Best cell of each region (regions at least 600 km apart).</p>
+        <ol class="cands" id="cands"></ol>
+        <textarea id="copybox" readonly hidden></textarea>
+        <p class="sub" data-i="dl_note" style="margin-top:10px"></p>
+        <section class="blk" id="spots"></section>
+      </div>
+      <div class="pane" role="tabpanel" id="p-cell" aria-labelledby="t-cell" hidden>
+        <section class="blk first" id="citysec" hidden></section>
+        <section class="blk" id="card"></section>
+      </div>
+      <div class="pane" role="tabpanel" id="p-trust" aria-labelledby="t-trust" hidden>
+        <section class="blk first" id="val"></section>
+        <section class="blk" id="rel"></section>
+      </div>
+      <div class="pane" role="tabpanel" id="p-limits" aria-labelledby="t-limits" hidden>
+        <section class="blk first" id="gaps"></section>
+      </div>
     </div>
-  </div>
-</div>
+  </section>
+</main>
 
 <footer id="foot"></footer>
 </div>
@@ -228,7 +389,11 @@ const I18N = {
     crit_tip:{slope_hist:"Match of the slope-class shares at a 1 km step with the target",relief:"Match of the 5–95 % elevation range",roughness:"Match of the median local roughness",cold:"Colder annual mean surface temperature ranks higher",thermal_range:"Larger day–night swing ranks higher",ground_ice:"Permafrost proxy (mean surface temperature under 0 °C) or glaciers",bare_ground:"Low NDVI: ground visible",composition:"Clays, sulfates, carbonates and iron oxides (EMIT); Mars only",low_sun:"Hours per day with the Sun 0–5° above the horizon",snow_free:"Months with a snow decision and under 10 % snow"},
     cons:{bare_ground_min:"Enough bare ground (NDVI ≤ 0.25, or ≥ 10 % of 5 km pixels)",flat_patch_exists:"A flat patch exists (≥ 5 % under 8°)",ground_ice_present:"Ground ice or glacier present",snow_free_window:"At least one snow-free month",not_ice_sheet:"Not an ice sheet (glacier ≤ 50 %)",road_access:"A major road within 50 km (Natural Earth)"},
     nr:{road_access:"road access",safe_access:"safe access",protected_ecosystem_flag:"protected areas"},
-    role:{base_site:"base site"}},
+    role:{base_site:"base site"},
+    tagline:"Earth sites for lunar and Martian field tests",setup:"Search setup",weights_sum:"Weights and filters",map_t:"Similarity map",nr_leg:"not ranked: filter or too little data",
+    tab_regions:"Regions",tab_cell:"Cell",tab_trust:"Trust",tab_limits:"Limits",radar:"Radar animation",
+    kpi_ranked:"Ranked cells",kpi_ranked_sub:"of {n} land cells",kpi_best:"Best region",kpi_known:"Known analogs",kpi_known_sub:"median percentile, {n} sites",
+    kpi_known_none:"no listed sites for this task",kpi_stab:"Task stability",kpi_stab_sub:"of the top 5 % stays at ±25 % weights",near_town:"next to the town",km:"km"},
   uk:{title:"Пошук земних аналогів Місяця та Марса",sub:"Де на Землі умови найближчі до місця на Місяці чи Марсі? Оберіть ціль і задачу, налаштуйте ваги критеріїв і побачте, які клітинки 55 км збігаються і чого вони не відтворюють.",
     moon:"Місяць",mars:"Марс",target:"Що відтворюємо",task:"Тестова задача",weights:"Ваги критеріїв",reset:"Скинути",filters:"Жорсткі фільтри",lo:"менше",hi:"більша схожість",a_ok:"відомий аналог",show_an:"показати відомі аналоги",
     loading:"Завантажую сітку з 88 883 клітинок суходолу…",cands:"Найкращі регіони",copy:"Копіювати список",cands_sub:"Найкраща клітинка кожного регіону (регіони щонайменше за 600 км один від одного).",nodata:"даних ще немає",unchecked:"Не перевіряється (немає даних): ",
@@ -265,7 +430,11 @@ const I18N = {
     crit_tip:{slope_hist:"Збіг часток класів схилу на кроці 1 км із ціллю",relief:"Збіг діапазону висот 5–95 %",roughness:"Збіг медіанної локальної шорсткості",cold:"Холодніша річна температура поверхні — вищий ранг",thermal_range:"Більша різниця день–ніч — вищий ранг",ground_ice:"Наближення мерзлоти (середня температура поверхні нижче 0 °C) або льодовики",bare_ground:"Низький NDVI: ґрунт видно",composition:"Глини, сульфати, карбонати й оксиди заліза (EMIT); лише Марс",low_sun:"Годин на добу із Сонцем 0–5° над горизонтом",snow_free:"Місяці зі снігом нижче 10 %"},
     cons:{bare_ground_min:"Достатньо голого ґрунту (NDVI ≤ 0,25 або ≥ 10 % пікселів 5 км)",flat_patch_exists:"Є рівний майданчик (≥ 5 % зі схилом до 8°)",ground_ice_present:"Є ґрунтовий лід або льодовик",snow_free_window:"Принаймні один місяць без снігу",not_ice_sheet:"Не льодовиковий щит (льодовик ≤ 50 %)",road_access:"Велика дорога ближче 50 км (Natural Earth)"},
     nr:{road_access:"доступ дорогами",safe_access:"безпечний доступ",protected_ecosystem_flag:"охоронні території"},
-    role:{base_site:"місце бази"}}
+    role:{base_site:"місце бази"},
+    tagline:"Місця на Землі для польових тестів під Місяць і Марс",setup:"Налаштування пошуку",weights_sum:"Ваги й фільтри",map_t:"Мапа схожості",nr_leg:"без оцінки: фільтр або мало даних",
+    tab_regions:"Регіони",tab_cell:"Клітинка",tab_trust:"Довіра",tab_limits:"Межі",radar:"Анімація радара",
+    kpi_ranked:"Ранжовано клітинок",kpi_ranked_sub:"з {n} клітинок суходолу",kpi_best:"Найкращий регіон",kpi_known:"Відомі аналоги",kpi_known_sub:"медіана перцентиля, місць: {n}",
+    kpi_known_none:"для цієї задачі місць немає",kpi_stab:"Стабільність задачі",kpi_stab_sub:"топ-5 % не змінюється при вагах ±25 %",near_town:"поруч із містом",km:"км"}
 };
 let lang="en";
 const T=k=>I18N[lang][k]??I18N.en[k]??k;
@@ -349,13 +518,14 @@ function pickCandidates(){
 }
 
 /* ---------- colour ---------- */
-const STOPS=[[68,1,84],[59,82,139],[33,145,140],[94,201,98],[253,231,37]];
+// lightness rises step by step (luminance 9 → 93 %), so the order reads on the dark sea and without colour vision
+const STOPS=[[15,93,128],[22,141,163],[45,189,185],[134,230,200],[242,252,201]];
 const RAMP=new Array(256);
 for(let k=0;k<256;k++){const t=k/255*(STOPS.length-1),a=Math.min(Math.floor(t),STOPS.length-2),f=t-a;
   RAMP[k]="rgb("+STOPS[a].map((v,j)=>Math.round(v+(STOPS[a+1][j]-v)*f)).join(",")+")"}
 let CSSV={};
 function readCss(){const cs=getComputedStyle(document.documentElement);
-  for(const k of ["--sea","--land","--ink","--accent","--pick","--surface","--line","--muted","--s1","--s2","--seq-lo","--seq-hi","--spot"]) CSSV[k]=cs.getPropertyValue(k).trim();
+  for(const k of ["--sea","--land","--ink","--accent","--pick","--surface","--line","--muted","--s1","--s2","--seq-lo","--seq-hi","--spot","--grat","--grat2"]) CSSV[k]=cs.getPropertyValue(k).trim();
   const h2r=h=>{h=h.replace("#",""); return [0,2,4].map(k=>parseInt(h.substr(k,2),16))};
   const lo=h2r(CSSV["--seq-lo"]||"#dcebf9"), hi=h2r(CSSV["--seq-hi"]||"#0b4f9c");
   for(let k=0;k<256;k++){const f=k/255; SEQ[k]="rgb("+lo.map((v,j)=>Math.round(v+(hi[j]-v)*f)).join(",")+")"}
@@ -385,7 +555,7 @@ let W=0,H=0,DPR=1;
 function resize(){
   DPR=window.devicePixelRatio||1; const r=cv.getBoundingClientRect(); W=r.width; H=r.height;
   cv.width=Math.max(1,Math.round(W*DPR)); cv.height=Math.max(1,Math.round(H*DPR));
-  S.fit=(window.innerWidth<1000)?W/360:Math.max(W/360,H/170); if(!S.view.touched){S.view.s=S.fit;S.view.cx=0;S.view.cy=18}
+  S.fit=Math.min(W/360,H/160); if(!S.view.touched){S.view.s=S.fit;S.view.cx=0;S.view.cy=10} // whole world in view: Alaska and Chile are not cut off
   draw();
 }
 const X=lo=>(lo-S.view.cx)*S.view.s+W/2, Y=la=>(S.view.cy-la)*S.view.s+H/2;
@@ -394,12 +564,14 @@ function clampView(){const v=S.view; v.s=Math.min(60,Math.max(S.fit,v.s));
 function draw(){
   if(!D||!W) return; readCss();
   ctx.setTransform(DPR,0,0,DPR,0,0); ctx.fillStyle=CSSV["--sea"]; ctx.fillRect(0,0,W,H);
-  const s=S.view.s, cw=CD*s, pad=cw<1?0.6:0;
-  // graticule
-  ctx.strokeStyle=CSSV["--line"]; ctx.lineWidth=1; ctx.globalAlpha=.5; ctx.beginPath();
-  for(let lo=-180;lo<=180;lo+=30){const x=Math.round(X(lo))+.5; ctx.moveTo(x,0);ctx.lineTo(x,H)}
-  for(let la=-60;la<=60;la+=30){const y=Math.round(Y(la))+.5; ctx.moveTo(0,y);ctx.lineTo(W,y)}
-  ctx.stroke(); ctx.globalAlpha=1;
+  const s=S.view.s, cw=CD*s, pad=cw<1?0.6:0.8; // cells overlap by a fraction of a pixel: no seams between them
+  // graticule every 30 degrees, equator and prime meridian a little brighter (radar grid)
+  ctx.lineWidth=1; ctx.strokeStyle=CSSV["--grat"]; ctx.beginPath();
+  for(let lo=-150;lo<=150;lo+=30){if(lo===0) continue; const x=Math.round(X(lo))+.5; ctx.moveTo(x,0);ctx.lineTo(x,H)}
+  for(let la=-60;la<=60;la+=30){if(la===0) continue; const y=Math.round(Y(la))+.5; ctx.moveTo(0,y);ctx.lineTo(W,y)}
+  ctx.stroke(); ctx.strokeStyle=CSSV["--grat2"]; ctx.beginPath();
+  {const x=Math.round(X(0))+.5, y=Math.round(Y(0))+.5; ctx.moveTo(x,0);ctx.lineTo(x,H); ctx.moveTo(0,y);ctx.lineTo(W,y)}
+  ctx.stroke();
   const inv=1/(RANGE[1]-RANGE[0]), sun=S.mode==="sun", m=S.month, smax=sun?SUNMAX():1;
   const sr=sun?rawInfo("snow_m"+String(m).padStart(2,"0")):null;
   for(let i=0;i<M.n;i++){
@@ -424,11 +596,26 @@ function draw(){
       ctx.fillRect(-4,-4,8,8); ctx.strokeRect(-4,-4,8,8); ctx.restore();
     }
   }
-  if(S.mode==="score") CANDS.forEach((i,k)=>{const x=X(cellLon(i)),y=Y(cellLat(i)); ctx.beginPath(); ctx.arc(x,y,9,0,7); ctx.fillStyle=CSSV["--surface"]; ctx.fill();
-    ctx.strokeStyle=CSSV["--ink"]; ctx.lineWidth=1.5; ctx.stroke(); ctx.fillStyle=CSSV["--ink"]; ctx.font="600 10px "+getComputedStyle(document.body).fontFamily;
+  if(S.mode==="score") CANDS.forEach((i,k)=>{const x=X(cellLon(i)),y=Y(cellLat(i)); ctx.beginPath(); ctx.arc(x,y,10,0,7); ctx.fillStyle=CSSV["--surface"]; ctx.fill();
+    ctx.strokeStyle=CSSV["--ink"]; ctx.lineWidth=1.5; ctx.stroke(); ctx.fillStyle=CSSV["--ink"]; ctx.font="600 11px "+getComputedStyle(document.body).fontFamily;
     ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(String(k+1),x,y+.5)});
   if(S.sel>=0){const x=X(-180+COLS[S.sel]*CD),y=Y(90-ROWS[S.sel]*CD); ctx.strokeStyle=CSSV["--pick"]; ctx.lineWidth=2.5; ctx.strokeRect(x-1,y-1,cw+2,cw+2)}
+  placePulses();
 }
+/* radar pulses on the 10 best regions: DOM rings over the canvas, moved on every redraw, animated by CSS only */
+function placePulses(){
+  const box=$("pulses"); if(!box) return;
+  while(box.children.length<10){const d=document.createElement("i"); d.className="pulse"; box.appendChild(d)}
+  [...box.children].forEach((el,k)=>{const i=CANDS[k];
+    if(S.mode!=="score"||i===undefined){el.style.display="none"; return}
+    const x=X(cellLon(i)), y=Y(cellLat(i));
+    if(x<-20||y<-20||x>W+20||y>H+20){el.style.display="none"; return}
+    el.style.display="block"; el.style.transform="translate("+x.toFixed(1)+"px,"+y.toFixed(1)+"px)";
+    el.style.setProperty("--d",(k*0.28).toFixed(2)+"s"); el.classList.toggle("lead",k<3)});
+}
+function setRadar(on){S.radar=on; $("canvaswrap").classList.toggle("radar-off",!on); $("zradar").setAttribute("aria-pressed",String(on));
+  try{localStorage.setItem("mma_radar",on?"on":"off")}catch(e){}}
+$("zradar").onclick=()=>setRadar(!S.radar);
 function cellAt(px,py){
   const lo=S.view.cx+(px-W/2)/S.view.s, la=S.view.cy-(py-H/2)/S.view.s;
   const r=Math.floor((90-la)/CD), c=Math.floor((lo+180)/CD);
@@ -450,7 +637,7 @@ cv.addEventListener("pointermove",e=>{
   hover(e.offsetX,e.offsetY);
 });
 cv.addEventListener("pointerup",e=>{ptrs.delete(e.pointerId); if(!moved&&down){const a=S.showAn?nearAnalog(e.offsetX,e.offsetY):null; const i=cellAt(e.offsetX,e.offsetY);
-  if(i>=0||a){ if(i>=0) select(i);} } down=null; pinch0=0});
+  if(i>=0||a){ if(i>=0){select(i); setTab("cell")}} } down=null; pinch0=0});
 cv.addEventListener("pointerleave",()=>{$("tip").style.display="none"});
 cv.addEventListener("wheel",e=>{e.preventDefault(); zoomAt(e.offsetX,e.offsetY,Math.exp(-e.deltaY*0.0015))},{passive:false});
 function zoomAt(px,py,f){const v=S.view; const lo=v.cx+(px-W/2)/v.s, la=v.cy-(py-H/2)/v.s; v.s=Math.min(60,Math.max(S.fit,v.s*f)); v.touched=true;
@@ -578,7 +765,7 @@ function renderSpots(){
     sp.map(x=>'<button class="btn" data-spot="'+x.id+'">'+(lang==="uk"?x.name_uk:x.name)+' <span class="sub">'+x.country+" · "+(x.world==="moon"?T("moon"):T("mars"))+"</span></button>").join("")+"</div>";
   box.querySelectorAll("[data-spot]").forEach(b=>b.onclick=()=>{
     const x=sp.find(y=>y.id===b.dataset.spot); if(x.world!==S.world) setWorld(x.world);
-    S.spot=x.id; const k=analogPos(x); if(k>=0) select(k,true);
+    S.spot=x.id; const k=analogPos(x); if(k>=0){select(k,true); setTab("cell")}
   });
 }
 
@@ -628,7 +815,7 @@ function tripBlock(i){
   const o=originCity();
   if(o){
     const d=km(o[3],o[4],cellLat(i),cellLon(i)), f=d<3700?0.068:0.0632, co2=d*1.08*f;
-    h+="<span>"+T("trip_from")+" "+(lang==="uk"&&o[1]?o[1]:o[0])+"</span><span>"+Math.round(d).toLocaleString()+" km</span>"+
+    h+="<span>"+T("trip_from")+" "+(lang==="uk"&&o[1]?o[1]:o[0])+"</span><span>"+nf(Math.round(d))+" "+T("km")+"</span>"+
        "<span>"+T("trip_co2")+"</span><span>"+Math.round(co2)+" kg</span><span>"+T("trip_rf")+"</span><span>"+Math.round(co2*1.7)+" kg</span>";
   }
   return h+'</div><p class="sub" style="margin-top:4px">'+T("trip_src")+"</p>";
@@ -668,7 +855,7 @@ function scoresFor(taskId){
 function pctIn(srt,v){let lo=0,hi=srt.length; while(lo<hi){const m=(lo+hi)>>1; if(srt[m]<v) lo=m+1; else hi=m} return srt.length?lo/srt.length:NaN}
 function pickCity(c){
   S.city=c; const k=cellOfPoint(c[3],c[4]); S.city.k=k; S.spot=null;
-  if(k>=0) select(k,true); renderCity();
+  if(k>=0) select(k,true); renderCity(); setTab("cell");
 }
 function renderCity(){
   const box=$("citysec"), c=S.city; if(!c){box.hidden=true; return}
@@ -686,12 +873,12 @@ function renderCity(){
   // nearest strong cell for the current task (current sliders)
   let best=-1,bd=1e9;
   if(NRANKED){const thr=SORTED[Math.floor(NRANKED*0.9)]; for(let i=0;i<M.n;i++){const v=SC[i]; if(v===v&&v>=thr){const d=km(c[3],c[4],cellLat(i),cellLon(i)); if(d<bd){bd=d;best=i}}}}
-  h+='<p style="margin-top:8px">'+T("city_near")+" ("+tname(taskById(S.task))+"): "+(best>=0?"<b>"+Math.round(bd).toLocaleString()+" km</b>, "+Math.abs(cellLat(best)).toFixed(1)+(cellLat(best)<0?"°S":"°N")+", "+Math.abs(cellLon(best)).toFixed(1)+(cellLon(best)<0?"°W":"°E")+' <button class="btn" id="city-go">'+T("city_show")+"</button>":T("city_none"))+"</p>";
+  h+='<p style="margin-top:8px">'+T("city_near")+" ("+tname(taskById(S.task))+"): "+(best>=0?"<b>"+nf(Math.round(bd))+" "+T("km")+"</b>, "+Math.abs(cellLat(best)).toFixed(1)+(cellLat(best)<0?"°S":"°N")+", "+Math.abs(cellLon(best)).toFixed(1)+(cellLon(best)<0?"°W":"°E")+' <button class="btn" id="city-go">'+T("city_show")+"</button>":T("city_none"))+"</p>";
   const o=originCity(), isO=o&&o[0]===c[0]&&o[3]===c[3];
   h+='<p style="margin-top:10px">'+(isO?'<span class="chip ok">✓ '+T("city_origin_set")+'</span>':'<button class="btn" id="city-origin">'+T("city_origin")+'</button>')+'</p>'+
      '<p class="sub" style="margin-top:4px">'+(isO?T("city_origin_hint"):T("city_origin_now")+" "+(lang==="uk"&&o&&o[1]?o[1]:(o?o[0]:"")))+"</p>";
   box.innerHTML=h; box.hidden=false;
-  if(best>=0) $("city-go").onclick=()=>select(best,true);
+  if(best>=0) $("city-go").onclick=()=>{select(best,true); setTab("cell")};
   if(!isO) $("city-origin").onclick=()=>{S.origin=c; try{localStorage.setItem("mma_origin",c[0])}catch(e){} renderCard(); renderCity()};
 }
 function whyNotFor(t,k,cov){
@@ -702,7 +889,7 @@ function whyNotFor(t,k,cov){
     else if(c==="flat_patch_exists") out.push(T("r_flat")+" "+Math.round(raw("slope_lt8",k)*100)+" %");
     else if(c==="ground_ice_present") out.push(T("r_ice")+" "+Math.round((raw("lst_day_mean_k",k)+raw("lst_night_mean_k",k))/2)+" K");
     else if(c==="snow_free_window") out.push(T("r_snow"));
-    else if(c==="road_access") out.push(T("r_road")+" "+Math.round(raw("road_dist_km",k))+" km");}
+    else if(c==="road_access") out.push(T("r_road")+" "+Math.round(raw("road_dist_km",k))+" "+T("km"));}
   return out.join("; ")||T("val_ns");
 }
 function renderGlossary(){
@@ -712,7 +899,10 @@ $("city").addEventListener("input",e=>suggest(e.target.value));
 $("city").addEventListener("keydown",e=>{if(e.key==="Enter"){const b=$("sugg").querySelector("button"); if(b){e.preventDefault(); b.click()}} if(e.key==="Escape") $("sugg").hidden=true});
 document.addEventListener("click",e=>{if(!e.target.closest(".citybox")) $("sugg").hidden=true});
 /* ---------- UI: results ---------- */
-function fmt(v){ if(typeof v!=="number") return String(v); const a=Math.abs(v); if(a!==0&&a<0.01) return v.toExponential(1); return v.toLocaleString(lang==="uk"?"uk-UA":"en-US",{maximumSignificantDigits:4}) }
+const SUP={"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+function fmt(v){ if(typeof v!=="number") return String(v); const a=Math.abs(v);
+  if(a!==0&&a<0.01){const [m,e]=v.toExponential(1).split("e"); return nf(+m,1)+" × 10"+String(+e).split("").map(c=>SUP[c]||c).join("")}
+  return v.toLocaleString(lang==="uk"?"uk-UA":"en-US",{maximumSignificantDigits:4}) }
 function nearbyAnalogs(i){const la=cellLat(i),lo=cellLon(i);
   return M.analogs.map(a=>({a,d:km(la,lo,a.lat,a.lon)})).filter(x=>x.d<1000).sort((p,q)=>p.d-q.d).slice(0,4)}
 function whyNot(i){
@@ -726,13 +916,47 @@ function whyNot(i){
     else if(c==="flat_patch_exists") out.push(T("r_flat")+" "+Math.round(raw("slope_lt8",i)*100)+" % < 5 %");
     else if(c==="ground_ice_present") out.push(T("r_ice")+" "+Math.round((raw("lst_day_mean_k",i)+raw("lst_night_mean_k",i))/2)+" K");
     else if(c==="snow_free_window") out.push(T("r_snow"));
-    else if(c==="road_access") out.push(T("r_road")+" "+Math.round(raw("road_dist_km",i))+" km > "+(M.road_max_km||50)+" km");
+    else if(c==="road_access") out.push(T("r_road")+" "+Math.round(raw("road_dist_km",i))+" "+T("km")+" > "+(M.road_max_km||50)+" "+T("km"));
   }
   return out.join("; ")||T("val_ns");
 }
+/* ---------- names, tabs, key figures ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const LOC=()=>lang==="uk"?"uk-UA":"en-US";
+const nf=(v,d=0)=>v.toLocaleString(LOC(),{minimumFractionDigits:d,maximumFractionDigits:d});
+const coordTxt=i=>Math.abs(cellLat(i)).toFixed(1)+(cellLat(i)<0?"°S":"°N")+", "+Math.abs(cellLon(i)).toFixed(1)+(cellLon(i)<0?"°W":"°E");
+const DIRS={en:["N","NE","E","SE","S","SW","W","NW"],uk:["пн.","пн.-сх.","сх.","пд.-сх.","пд.","пд.-зх.","зх.","пн.-зх."]};
+const ALIAS={"United States of America":"USA","United Kingdom":"UK","Democratic Republic of the Congo":"DR Congo","Central African Republic":"CAR","United Arab Emirates":"UAE"};
+const PLACE=new Map();
+function nearestPlace(i){ // nearest of the 7,342 Natural Earth places, and where the cell lies from it
+  if(PLACE.has(i)) return PLACE.get(i);
+  const la=cellLat(i), lo=cellLon(i); let best=null, bd=1e9;
+  for(const c of CITIES){const d=km(la,lo,c[3],c[4]); if(d<bd){bd=d;best=c}}
+  if(!best) return null;
+  const r=Math.PI/180, y=Math.sin((lo-best[4])*r)*Math.cos(la*r), x=Math.cos(best[3]*r)*Math.sin(la*r)-Math.sin(best[3]*r)*Math.cos(la*r)*Math.cos((lo-best[4])*r);
+  const out={c:best,d:bd,dir:Math.round(((Math.atan2(y,x)/r+360)%360)/45)%8}; PLACE.set(i,out); return out;
+}
+function placeName(i){const p=nearestPlace(i); if(!p) return coordTxt(i); const c=p.c;
+  return lang==="uk"&&c[1]?c[1]:c[0]+(c[2]?", "+(ALIAS[c[2]]||c[2]):"")}
+function placeDist(i){const p=nearestPlace(i); if(!p) return ""; if(p.d<15) return T("near_town");
+  return lang==="uk"?"за "+nf(Math.round(p.d))+" км на "+DIRS.uk[p.dir]:nf(Math.round(p.d))+" km "+DIRS.en[p.dir]}
+const TABS=["regions","cell","trust","limits"];
+function setTab(t){S.tab=t; for(const k of TABS){const on=k===t; $("t-"+k).setAttribute("aria-selected",String(on)); $("t-"+k).tabIndex=on?0:-1; $("p-"+k).hidden=!on}}
+TABS.forEach(k=>{const b=$("t-"+k); b.onclick=()=>setTab(k);
+  b.onkeydown=e=>{if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft") return; e.preventDefault();
+    const j=(TABS.indexOf(S.tab)+(e.key==="ArrowRight"?1:TABS.length-1))%TABS.length; setTab(TABS[j]); $("t-"+TABS[j]).focus()}});
+let VALK={n:0,med:NaN};
+function renderKpis(){
+  const best=CANDS[0], se=M.sensitivity&&M.sensitivity[S.task];
+  const tiles=[[T("kpi_ranked"),nf(NRANKED),T("kpi_ranked_sub").replace("{n}",nf(M.n))],
+    [T("kpi_best"),best!==undefined?nf(SC[best]*100)+" %":"–",best!==undefined?placeName(best):""],
+    [T("kpi_known"),VALK.n?nf(VALK.med,2):"–",VALK.n?T("kpi_known_sub").replace("{n}",VALK.n):T("kpi_known_none")],
+    [T("kpi_stab"),se?nf(se.mean_overlap*100)+" %":"–",T("kpi_stab_sub")]];
+  $("kpis").innerHTML=tiles.map(t=>'<div class="kpi"><div class="k-l">'+t[0]+'</div><div class="k-v">'+t[1]+'</div><div class="k-s">'+esc(t[2])+"</div></div>").join("");
+}
 function renderCands(){
   const ol=$("cands"); ol.innerHTML=""; const task=taskById(S.task);
-  $("count").textContent=NRANKED.toLocaleString()+" "+T("ranked");
+  $("count").textContent=nf(NRANKED)+" "+T("ranked");
   const empty=$("empty");
   if(!NRANKED){
     const miss=Object.keys(task.weights).filter(n=>!available(n)).map(n=>TN("crit_names",n)).join(", ");
@@ -741,19 +965,20 @@ function renderCands(){
   CANDS.forEach((i,k)=>{
     const li=document.createElement("li"), b=document.createElement("button"); b.setAttribute("aria-current",i===S.sel?"true":"false");
     const near=nearbyAnalogs(i)[0];
-    b.innerHTML='<span class="rk">'+(k+1)+'</span><span>'+Math.abs(cellLat(i)).toFixed(1)+(cellLat(i)<0?"°S":"°N")+", "+Math.abs(cellLon(i)).toFixed(1)+(cellLon(i)<0?"°W":"°E")+
-      (near?'<br><span class="nr">'+(lang==="uk"?near.a.name_uk:near.a.name)+" · "+Math.round(near.d)+" km</span>":"")+'</span><span class="sc">'+(SC[i]*100).toFixed(0)+"%</span>";
-    b.onclick=()=>{select(i,true)}; li.appendChild(b); ol.appendChild(li);
+    b.innerHTML='<span class="rk">'+(k+1)+'</span><span><span class="nm">'+esc(placeName(i))+'</span><span class="co">'+esc(placeDist(i))+" · "+coordTxt(i)+"</span>"+
+      (near?'<span class="nr">'+T("a_ok")+": "+esc(lang==="uk"?near.a.name_uk:near.a.name)+", "+nf(Math.round(near.d))+" "+T("km")+"</span>":"")+'</span><span class="sc">'+(SC[i]*100).toFixed(0)+"%</span>";
+    b.onclick=()=>{select(i,true); setTab("cell")}; li.appendChild(b); ol.appendChild(li);
   });
 }
 function renderCard(){
   const box=$("card"); const i=S.sel; if(i<0){box.innerHTML='<h2>'+T("cell")+'</h2><p class="sub">'+(lang==="uk"?"Клацніть клітинку на мапі або регіон у списку.":"Click a cell on the map or a region in the list.")+"</p>"; return}
   const task=taskById(S.task), v=SC[i], la=cellLat(i), lo=cellLon(i);
   const used=Object.keys(task.weights);
-  let h='<h2>'+T("cell")+" "+Math.abs(la).toFixed(2)+(la<0?"°S":"°N")+", "+Math.abs(lo).toFixed(2)+(lo<0?"°W":"°E")+'</h2>';
-  if(v===v){h+='<div class="row" style="margin:8px 0;gap:16px"><div><div class="label">'+T("score")+'</div><div class="big">'+(v*100).toFixed(0)+'%</div></div>'+
-    '<div><div class="label">'+T("top")+'</div><div class="big">'+Math.max(0.1,(1-pctOf(v))*100).toFixed(1)+'%</div><div class="sub">'+T("of_ranked")+'</div></div>'+
-    '<div><div class="label">'+T("coverage")+'</div><div class="big">'+Math.round(CV[i]*100)+'%</div></div></div>'}
+  let h='<h2>'+T("cell")+" "+Math.abs(la).toFixed(2)+(la<0?"°S":"°N")+", "+Math.abs(lo).toFixed(2)+(lo<0?"°W":"°E")+'</h2>'+
+    '<p class="place">'+esc(placeName(i))+(placeDist(i)?", "+esc(placeDist(i)):"")+"</p>";
+  if(v===v){h+='<div class="stats"><div class="stat"><div class="label">'+T("score")+'</div><div class="big">'+(v*100).toFixed(0)+'%</div></div>'+
+    '<div class="stat"><div class="label">'+T("top")+'</div><div class="big">'+nf(Math.max(0.1,(1-pctOf(v))*100),1)+'%</div><div class="sub">'+T("of_ranked")+'</div></div>'+
+    '<div class="stat"><div class="label">'+T("coverage")+'</div><div class="big">'+Math.round(CV[i]*100)+'%</div></div></div>'}
   else{h+='<p class="sub" style="margin:8px 0">'+(lang==="uk"?"Ця клітинка не ранжується: ":"This cell is not ranked: ")+whyNot(i)+".</p>"}
   h+='<h3 style="margin-top:12px">'+T("crit")+'</h3>';
   for(const name of used){
@@ -801,9 +1026,9 @@ function renderCard(){
   box.innerHTML=h; scheduleStability();
 }
 function hasRaw(n){return M.raw.some(r=>r.name===n)}
-function distTxt(v){return v===v?(v>=995?"> 1000 km":(v>=299&&v<=300.5?"> 300 km":Math.round(v)+" km")):"–"}
-function impDiam(i){const d=hasRaw("impact_diam_km")?raw("impact_diam_km",i):NaN; return d===d&&d>0?" (⌀ "+(d<10?d.toFixed(1):Math.round(d))+" km)":""}
-function analogPos(a){       // the site's cell; for an island or coastal site whose cell is not land, the nearest land cell within 60 km
+function distTxt(v){return v===v?(v>=995?"> 1000 "+T("km"):(v>=299&&v<=300.5?"> 300 "+T("km"):nf(Math.round(v))+" "+T("km"))):"–"}
+function impDiam(i){const d=hasRaw("impact_diam_km")?raw("impact_diam_km",i):NaN; return d===d&&d>0?" (⌀ "+(d<10?nf(d,1):Math.round(d))+" "+T("km")+")":""}
+function analogPos(a){       // an island or coastal site whose cell is not land takes the nearest land cell within 60 km
   const r=Math.floor((90-a.lat)/CD), c=Math.floor((a.lon+180)/CD);
   const k=(r<0||r>=M.grid.n_lat||c<0||c>=M.grid.n_lon)?-1:LUT[r*M.grid.n_lon+c]; if(k>=0) return k;
   const b=cellOfPoint(a.lat,a.lon); return b>=0&&km(a.lat,a.lon,cellLat(b),cellLon(b))<=60?b:-1}
@@ -814,34 +1039,39 @@ function renderVal(){
     const k=analogPos(a), v=k>=0?SC[k]:NaN, p=v===v?pctOf(v):NaN;
     (a.tasks.includes(S.task)&&a.validate?mine:other).push({a,p,k});
   }
-  const row=x=>'<tr><td>'+(lang==="uk"?x.a.name_uk:x.a.name)+' <span class="sub">'+x.a.country+'</span></td><td class="n">'+(x.p===x.p?x.p.toFixed(2):'<span class="sub">'+whyNot(x.k)+'</span>')+'</td><td>'+
-    (x.p===x.p?'<span class="chip '+(x.p>=0.8?"ok":x.p>=0.5?"part":"no")+'">'+(x.p>=0.8?"top 20 %":x.p>=0.5?"> 0.50":"< 0.50")+'</span>':"")+'</td></tr>';
+  const row=x=>'<tr><td>'+esc(lang==="uk"?x.a.name_uk:x.a.name)+' <span class="sub">'+esc(x.a.country)+'</span></td><td class="n">'+(x.p===x.p?nf(x.p,2):'<span class="sub">'+whyNot(x.k)+'</span>')+'</td><td>'+
+    (x.p===x.p?'<span class="chip '+(x.p>=0.8?"ok":x.p>=0.5?"part":"no")+'">'+(x.p>=0.8?(lang==="uk"?"топ-20 %":"top 20 %"):x.p>=0.5?"> "+nf(0.5,2):"< "+nf(0.5,2))+'</span>':"")+'</td></tr>';
   mine.sort((a,b)=>(b.p===b.p?b.p:-1)-(a.p===a.p?a.p:-1)); other.sort((a,b)=>(b.p===b.p?b.p:-1)-(a.p===a.p?a.p:-1));
   let h='<h2>'+T("val_t")+'</h2><p class="sub" style="margin:4px 0 8px">'+T("val_sub")+'</p>';
+  VALK={n:0,med:NaN};
   if(mine.length){
     const ps=mine.map(x=>x.p).filter(p=>p===p).sort((a,b)=>a-b); const med=ps.length?(ps.length%2?ps[(ps.length-1)/2]:(ps[ps.length/2-1]+ps[ps.length/2])/2):NaN;
-    h+='<div class="tblwrap"><table class="tbl"><tbody>'+mine.map(row).join("")+'</tbody></table></div>'+(med===med?'<p class="sub" style="margin-top:6px">'+T("val_med")+": "+med.toFixed(2)+"</p>":"");
+    if(ps.length) VALK={n:ps.length,med};
+    h+='<div class="tblwrap"><table class="tbl"><tbody>'+mine.map(row).join("")+'</tbody></table></div>'+(med===med?'<p class="sub" style="margin-top:6px">'+T("val_med")+": "+nf(med,2)+"</p>":"");
   } else h+='<p class="sub">'+T("val_none")+"</p>";
   if(other.length) h+='<details><summary>'+T("val_other")+" ("+other.length+')</summary><div class="tblwrap"><table class="tbl"><tbody>'+other.map(row).join("")+"</tbody></table></div></details>";
   box.innerHTML=h;
 }
 function renderGaps(){
   const w=S.world; let h='<h2>'+T("gaps")+"</h2><p class=\"sub\">"+T("gaps_sub")+"</p>";
-  h+='<div class="tblwrap"><table class="tbl"><thead><tr><th>'+T("q")+"</th><th>"+T("earth")+"</th><th>"+(w==="moon"?T("moon"):T("mars"))+"</th><th></th></tr></thead><tbody>";
+  // one block per quantity: name and verdict, then Earth and target side by side, then the workaround (a 4-column table was too narrow here)
+  const unit=u=>u.replace(/\^2/g,"²").replace(/\^3/g,"³");
+  h+='<div class="gaps">';
   for(const q of M.gaps){
     const r=q.reproducible; const chip=r===false?'<span class="chip no">'+T("not_rep")+"</span>":'<span class="chip part">'+T("partly")+"</span>";
-    h+="<tr><td>"+(lang==="uk"?q.name_uk:q.name)+(q.unit?' <span class="sub">'+q.unit+"</span>":"")+'</td><td class="n">'+fmt(q.values.earth)+'</td><td class="n">'+fmt(q.values[w])+"</td><td>"+chip+"</td></tr>";
-    if(q.workaround) h+='<tr><td colspan="4" class="sub" style="padding-top:0">'+T("workaround")+": "+q.workaround+"</td></tr>";
+    h+='<div class="gap"><div class="gap-h"><span class="gap-n">'+esc(lang==="uk"?q.name_uk:q.name)+(q.unit?' <span class="sub">'+esc(unit(q.unit))+"</span>":"")+"</span>"+chip+"</div>"+
+      '<div class="gap-v"><div><span class="label">'+T("earth")+"</span>"+esc(fmt(q.values.earth))+'</div><div><span class="label">'+(w==="moon"?T("moon"):T("mars"))+"</span>"+esc(fmt(q.values[w]))+"</div></div>"+
+      (q.workaround?'<p class="sub gap-w">'+T("workaround")+": "+esc(q.workaround)+"</p>":"")+"</div>";
   }
-  $("gaps").innerHTML=h+"</tbody></table></div>";
+  $("gaps").innerHTML=h+"</div>";
 }
 function renderRel(){
   const v=M.validation.all.scores_only, bt=M.validation.by_task[S.task];
   let h='<h2>'+T("rel")+'</h2><p class="sub" style="margin:4px 0 8px">'+T("rel_a")+'</p><div class="kv">'+
-   "<span>"+T("sites")+"</span><span>"+v.scored+" / "+v.pairs+"</span><span>"+T("median")+"</span><span>"+v.median_percentile.toFixed(2)+"</span><span>"+T("top20")+"</span><span>"+Math.round(v.share_top20*100)+" %</span></div>";
-  if(bt) h+='<p class="sub" style="margin-top:8px">'+tname(taskById(S.task))+": "+bt.scores_only.scored+" "+T("sites")+", "+T("median")+" "+bt.scores_only.median_percentile.toFixed(2)+", "+T("top20")+" "+Math.round(bt.scores_only.share_top20*100)+" %.</p>";
+   "<span>"+T("sites")+"</span><span>"+v.scored+" / "+v.pairs+"</span><span>"+T("median")+"</span><span>"+nf(v.median_percentile,2)+"</span><span>"+T("top20")+"</span><span>"+Math.round(v.share_top20*100)+" %</span></div>";
+  if(bt) h+='<p class="sub" style="margin-top:8px">'+tname(taskById(S.task))+": "+bt.scores_only.scored+" "+T("sites")+", "+T("median")+" "+nf(bt.scores_only.median_percentile,2)+", "+T("top20")+" "+Math.round(bt.scores_only.share_top20*100)+" %.</p>";
   const ind=M.validation.independent&&M.validation.independent.scores_only;
-  if(ind&&ind.scored) h+='<p class="sub" style="margin-top:8px">'+T("indep")+": "+ind.scored+" "+T("sites")+", "+T("median")+" "+ind.median_percentile.toFixed(2)+", "+T("top20")+" "+Math.round(ind.share_top20*100)+" %.</p>";
+  if(ind&&ind.scored) h+='<p class="sub" style="margin-top:8px">'+T("indep")+": "+ind.scored+" "+T("sites")+", "+T("median")+" "+nf(ind.median_percentile,2)+", "+T("top20")+" "+Math.round(ind.share_top20*100)+" %.</p>";
   h+='<ul class="plain sub"><li>'+T("weights_not_tuned")+"</li><li>"+T("lim1")+"</li><li>"+T("lim2")+"</li><li>"+T("lim3")+"</li>"+((M.no_data_yet||[]).includes("dryness")?"<li>"+T("lim_dry")+"</li>":"")+"<li>"+T("lim4")+"</li></ul>";
   const se=M.sensitivity&&M.sensitivity[S.task];
   if(se) h+='<p class="sub" style="margin-top:8px">'+T("stab")+": "+Math.round(se.mean_overlap*100)+" % "+(lang==="uk"?"верхніх 5 % клітинок лишаються при зміні ваг на ±25 %.":"of the top 5 % cells stay when the weights change by 25 %.")+"</p>";
@@ -859,20 +1089,23 @@ function applyStatic(){
   document.documentElement.lang=lang; $("foot").textContent=T("foot");
   $("l-en").setAttribute("aria-pressed",lang==="en"); $("l-uk").setAttribute("aria-pressed",lang==="uk");
   $("w-moon").setAttribute("aria-pressed",S.world==="moon"); $("w-mars").setAttribute("aria-pressed",S.world==="mars");
-  document.title=T("title");
+  document.title=T("title"); $("zradar").setAttribute("aria-label",T("radar"));
   legend();
 }
 function refresh(rebuildControls){
   if(rebuildControls){fillTargets();fillTasks();fillSliders()}
-  compute(); renderCands(); renderSpots(); renderCard(); renderCity(); renderVal(); renderGaps(); renderRel(); renderGlossary(); draw();
+  compute(); renderCands(); renderSpots(); renderCard(); renderCity(); renderVal(); renderKpis(); renderGaps(); renderRel(); renderGlossary(); draw(); legend();
+  const tg=M.targets.find(t=>t.id===S.target); $("mapctx").textContent=(tg?targName(tg):"")+" · "+tname(taskById(S.task));
 }
 function legend(){
-  if(S.mode==="sun"){$("ramp").style.background="linear-gradient(90deg,var(--seq-lo),var(--seq-hi))"; $("lo-l").textContent=T("lo_sun"); $("hi-l").textContent=(D?SUNMAX().toFixed(1)+(lang==="uk"?" год ":" h "):"")+T("hi_sun")}
-  else{$("ramp").style.background="linear-gradient(90deg,"+STOPS.map(s=>"rgb("+s.join(",")+")").join(",")+")"; $("lo-l").textContent=T("lo"); $("hi-l").textContent=T("hi")}
+  $("nrkey").hidden=S.mode!=="score";
+  if(S.mode==="sun"){$("ramp").style.background="linear-gradient(90deg,var(--seq-lo),var(--seq-hi))"; $("lo-l").textContent=T("lo_sun"); $("hi-l").textContent=(D?nf(SUNMAX(),1)+(lang==="uk"?" год ":" h "):"")+T("hi_sun")}
+  else{$("ramp").style.background="linear-gradient(90deg,"+STOPS.map(s=>"rgb("+s.join(",")+")").join(",")+")"; // the colours stretch from the 5th percentile to the best cell
+    const on=D&&NRANKED; $("lo-l").textContent=on?Math.round(RANGE[0]*100)+" %":T("lo"); $("hi-l").textContent=on?Math.round(RANGE[1]*100)+" % "+T("score").toLowerCase():T("hi")}
 }
 
 $("w-moon").onclick=()=>setWorld("moon"); $("w-mars").onclick=()=>setWorld("mars");
-function setWorld(w){S.world=w; S.sel=-1; fillTargets(); fillTasks(); resetWeights(); fillSliders(); applyStatic(); refresh(false)}
+function setWorld(w){S.world=w; S.sel=-1; S.view.touched=false; fillTargets(); fillTasks(); resetWeights(); fillSliders(); applyStatic(); refresh(false); resize()}
 $("target").onchange=e=>{S.target=e.target.value; S.sel=-1; fillSliders(); refresh(false)};
 $("task").onchange=e=>{S.task=e.target.value; S.sel=-1; resetWeights(); fillSliders(); refresh(false)};
 $("reset").onclick=()=>{resetWeights(); fillSliders(); refresh(false)};
@@ -883,7 +1116,10 @@ $("copy").onclick=async()=>{
   const text=lines.join("\n"), box=$("copybox");
   try{await navigator.clipboard.writeText(text)}catch(e){box.hidden=false; box.value=text; box.select()}
 };
-window.addEventListener("resize",resize);
+// redraw only when the canvas box or the pixel ratio really changed (the observer also fires once on start)
+function fitCanvas(){ if(!D) return; const r=cv.getBoundingClientRect(); if(Math.abs(r.width-W)<.5&&Math.abs(r.height-H)<.5&&DPR===(window.devicePixelRatio||1)) return; resize() }
+window.addEventListener("resize",fitCanvas);
+if(window.ResizeObserver) new ResizeObserver(fitCanvas).observe($("canvaswrap"));
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>draw());
 new MutationObserver(()=>draw()).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
 
@@ -893,6 +1129,9 @@ new MutationObserver(()=>draw()).observe(document.documentElement,{attributes:tr
   $("loading").hidden=true; $("results").hidden=false;
   CITIES=M.cities||[];
   S.world="moon"; S.target=(M.targets.find(t=>t.world==="moon"&&t.mvp)||M.targets[0]).id; S.task="landing";
+  if(window.innerWidth<900) $("wdetails").open=false; // phones: the map comes right after target and task
+  let radar=true; try{radar=localStorage.getItem("mma_radar")!=="off"}catch(e){}
+  setRadar(radar); setTab("regions");
   fillTargets(); fillTasks(); resetWeights(); fillSliders(); resize(); refresh(false);
   if(CANDS.length) select(CANDS[0]);
 })();

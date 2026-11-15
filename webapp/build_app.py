@@ -50,7 +50,7 @@ def build(pdir: Path, out: Path):
     cols = (index % grid["grid"]["n_lon"]).astype("<u2")
     rc_off = off
     blocks += [np.frombuffer(rows.tobytes(), np.uint8), np.frombuffer(cols.tobytes(), np.uint8)]
-    blob = gzip.compress(np.concatenate(blocks).tobytes(), 9)
+    blob = gzip.compress(np.concatenate(blocks).tobytes(), 9, mtime=0)  # mtime=0: same input, same bytes
 
     tg = config.targets()["targets"]
     targets = []
