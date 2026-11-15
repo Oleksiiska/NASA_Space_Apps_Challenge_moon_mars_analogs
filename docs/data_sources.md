@@ -187,30 +187,6 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 - Citation: NASA Langley Research Center (LaRC) POWER Project, funded through the NASA Earth Science/Applied Science Program.
 - Licence: NASA open data.
 
-**NASA POWER precipitation climatology on the whole land grid (dryness criterion)** (`earth_power_precip_grid`)
-
-- Official resource: none (NASA, outside the challenge list). Agency: NASA. Access: `open`.
-- Source: https://power.larc.nasa.gov/api/temporal/climatology/regional
-- Size: chosen at download time. Saved to `data/raw/earth/power_grid`. Used for: dryness.
-- Citation: NASA Langley Research Center (LaRC) POWER Project, funded through the NASA Earth Science/Applied Science Program. Precipitation from MERRA-2 (corrected), long-term climatology.
-- Licence: NASA open data.
-
-**Holocene volcanoes of the world (location and type), Smithsonian Global Volcanism Program** (`earth_volcanoes`)
-
-- Official resource: none (geological context, outside the challenge list). Agency: Smithsonian Institution. Access: `open`.
-- Source: https://raw.githubusercontent.com/plotly/datasets/master/
-- Size: 1 file(s), 0.1 MB. Saved to `data/raw/earth/context`. Used for: volcanic.
-- Citation: Global Volcanism Program, Smithsonian Institution. Volcanoes of the World, list of Holocene volcanoes (an earlier version of the database, 1,571 volcanoes, as copied in the plotly/datasets repository on GitHub). Current version: https://volcano.si.edu
-- Licence: Free use with citation of the Global Volcanism Program (check the terms on volcano.si.edu).
-
-**Confirmed impact structures (Earth Impact Database, 189 structures)** (`earth_impacts`)
-
-- Official resource: none (geological context, outside the challenge list). Agency: Planetary and Space Science Centre, University of New Brunswick. Access: `open`.
-- Source: https://raw.githubusercontent.com/cjwinchester/earth-impact-data/main/
-- Size: 1 file(s), 0.0 MB. Saved to `data/raw/earth/context`. Used for: impact.
-- Citation: Earth Impact Database, Planetary and Space Science Centre, University of New Brunswick (http://www.passc.net/EarthImpactDatabase), table as compiled in the cjwinchester/earth-impact-data repository on GitHub.
-- Licence: Terms of the Earth Impact Database apply; cite PASSC.
-
 **Copernicus DEM GLO-90 tiles (terrain of Antarctic sites and detail views)** (`earth_copdem_glo90`)
 
 - Official resource: Copernicus Data Space Ecosystem (ESA). Agency: ESA / Copernicus. Access: `open`.

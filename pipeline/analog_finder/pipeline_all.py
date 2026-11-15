@@ -111,7 +111,7 @@ def run_all(force: list[str] | None = None, fetch: bool = False, log: Callable[[
         from .features import earth_surface
         built_layers |= bool(earth_surface.build_all())
 
-    # 6. volcanoes and impacts (features/context.py, from the lists in data/reference), roads (features/earth_context.py).
+    # 6. volcanoes and impacts (features/context.py, from the lists in data/reference), roads (features/roads.py).
     #    Dryness comes from GPM IMERG in the surface step (earth_surface.build_precip).
     todo = []
     if not {"volcano_dist_km", "impact_dist_km"} <= feats or "context" in force:
@@ -121,9 +121,10 @@ def run_all(force: list[str] | None = None, fetch: bool = False, log: Callable[[
         built_layers = True
         todo.append("gvp")
     if ("road_dist_km" not in feats or "context" in force) and _has_files("earth_naturalearth_roads", "ne_10m_roads.geojson"):
-        from .features import earth_context
+        from .features import roads
         head("context", "roads")
-        built_layers |= bool(earth_context.build_all(["roads"]))
+        roads.build_layer()
+        built_layers = True
         todo.append("roads")
     if not todo:
         head("context", "done")

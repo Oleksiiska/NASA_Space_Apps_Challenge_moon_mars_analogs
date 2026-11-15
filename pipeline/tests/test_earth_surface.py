@@ -43,7 +43,6 @@ def test_snow_codes_become_nan():
 
 
 def test_snow_features_count_free_months_and_need_six_months():
-    shape = (1, 2)
     months = {m: np.array([[0.0, 90.0]], dtype=np.float32) for m in range(1, 13)}
     for m in range(1, 7):
         months[m][0, 0] = np.nan                       # cell 0: only 6 months with a decision

@@ -16,7 +16,7 @@ from __future__ import annotations
 import csv
 import json
 from pathlib import Path
-from typing import Callable, Iterable, Optional
+from typing import Callable, Iterable
 
 import numpy as np
 

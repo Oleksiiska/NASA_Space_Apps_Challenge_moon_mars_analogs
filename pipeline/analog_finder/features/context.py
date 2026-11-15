@@ -188,7 +188,7 @@ def update_reference(raw_dir: Optional[Path] = None, log: Callable[[str], None] 
         volc = _read_csv(volcanoes_csv())
         log(f"  {len(volc)} volcanoes from {volcanoes_csv().name} (no download found)")
     else:
-        raise FileNotFoundError(f"No volcano list. Run: python -m analog_finder fetch context")
+        raise FileNotFoundError("No volcano list. Run: python -m analog_finder fetch context")
     wp, wd = raw / "impacts_wikipedia.wiki", raw / "impacts_wikidata.json"
     if wp.exists():
         a = parse_wikipedia_impacts(wp.read_text(encoding="utf-8"))
@@ -205,7 +205,7 @@ def update_reference(raw_dir: Optional[Path] = None, log: Callable[[str], None] 
         imp = _read_csv(impacts_csv())
         log(f"  {len(imp)} impact structures from {impacts_csv().name} (no download found)")
     else:
-        raise FileNotFoundError(f"No impact list. Run: python -m analog_finder fetch context")
+        raise FileNotFoundError("No impact list. Run: python -m analog_finder fetch context")
     return volc, imp
 
 

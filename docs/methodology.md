@@ -65,7 +65,7 @@ never turned into 0.
 - `composition` (Mars only): percentile of the summed abundance of minerals that form in water (kaolinite, montmorillonite, illite and muscovite, vermiculite, chlorite, gypsum, calcite, dolomite, hematite, goethite). The lunar highlands have none of these, so the criterion is not used for the Moon.
 - `volcanic`: 1 within 25 km of the nearest volcano (Holocene or Pleistocene), falling linearly to 0 at 150 km. Tested against the alternative max(exp(−d_basalt / 50 km), 0.6 · exp(−d_any / 50 km)) with the basaltic forms of the volcano type: the difference stayed within noise.
 - `impact`: the same 25–150 km ramp on the distance to the rim, 1 inside a structure (an exp(−d / 40 km) ramp gave the same result).
-- `dryness`: percentile rank of −log10(1 + P), with P the annual GPM IMERG precipitation: the driest cell on land gets 1. The alternative NASA POWER layer (`fetch power-grid`, `context --only dryness`) uses 1 − log10(P / 25 mm) / log10(1000 / 25) and is used only when IMERG is missing.
+- `dryness`: percentile rank of −log10(1 + P), with P the annual GPM IMERG precipitation: the driest cell on land gets 1.
 
 ## 5. Task score
 

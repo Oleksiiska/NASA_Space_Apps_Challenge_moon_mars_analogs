@@ -176,4 +176,4 @@ No spatial hold-out is run: no weight or threshold is fitted to the known sites,
 
 - A cell is about 55 km across; a site is much smaller. A flat Martian plain (Arcadia) is rarely matched by a whole cell.
 - Earth cannot reach lunar or Martian cold, vacuum or radiation. Cold, thermal range and low Sun are ranked in the useful direction only.
-- Volcanic fields and impact structures enter as distance to the nearest listed point or rim; dryness comes from NASA POWER precipitation when its layer was built.
+- Volcanic fields and impact structures enter as distance to the nearest listed point or rim; dryness is the annual precipitation of GPM IMERG.

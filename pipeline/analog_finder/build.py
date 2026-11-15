@@ -10,7 +10,6 @@ import csv
 from pathlib import Path
 from typing import Callable, Optional
 
-import numpy as np
 
 from . import config
 from .export import to_binary

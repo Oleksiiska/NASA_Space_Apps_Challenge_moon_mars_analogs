@@ -51,26 +51,30 @@ pipeline/
   config/targets.yaml    12 Moon and Mars targets with coordinates and sources
   config/tasks.yaml      7 test tasks: weights of the criteria and hard filters
   analog_finder/
-    fetch/               downloads: NASA PDS, Earthdata, NASA POWER, Copernicus DEM, context tables
+    fetch/               downloads: NASA PDS, Earthdata, NASA POWER points, Copernicus DEM, context lists
     io/                  readers: PDS3 images and tables, SRTM tiles, HDF4 / NetCDF inspection
     prep/                Earth land grid, feature layers, reference layers
-    features/            terrain, Sun geometry, MODIS and EMIT surface layers, volcano / impact / dryness layers
+    features/            terrain, Sun geometry, MODIS, EMIT and IMERG surface layers, volcano / impact / road layers
     targets/             feature "fingerprints" of the Moon and Mars targets
     scoring.py           criteria and task scores
     validate.py          known-analog validation, weight sensitivity, export for the web page
+    evaluate.py          metrics of the ranking against a baseline, hold-out sets
+    ml/                  resemblance to the known analog sites (PU learning, shown in the cell card)
     pipeline_all.py      the `all` command
     export/              compact binary grid
   scripts/               generator of docs/data_sources.md
-  tests/                 80 tests; they need no downloads
+  tests/                 they need no downloads
 webapp/
   template.html          the page; build_app.py embeds data/processed into index.html
 data/
-  raw/                   downloads (not committed, except the land mask and the two context tables)
+  raw/                   downloads (not committed, except the Natural Earth land and glacier masks)
   interim/               intermediate layers (not committed)
   processed/             grid, target profiles, criteria and validation: everything the page reads
   reference/             known analogs, targets, spotlight places, what Earth cannot reproduce
 docs/                    methodology.md, data_sources.md
 .github/workflows/ci.yml tests and a full `all` run on every push
+.github/workflows/deploy.yml  after the tests pass on analog-finder: upload the page to the demo server
+deploy/                  Caddy web server (Caddyfile, docker-compose.yml)
 ```
 
 ## Quick start (Windows)
@@ -129,7 +133,7 @@ python -m analog_finder merge
 ```
 
 `terrain` reads the 27 SRTMGL30 tiles, `surface` the monthly MODIS files and the EMIT file,
-`context` the volcano and impact tables (and the POWER boxes, see step 4). Each product checks
+`context` the volcano, impact and road lists (step 4). Each product checks
 itself against known places and stops if a file is read wrongly. `merge` adds the layers to
 `data/processed/grid.bin`. `python -m analog_finder inspect FILE` lists the variables of any
 HDF4 or NetCDF file.
@@ -139,7 +143,7 @@ HDF4 or NetCDF file.
 ```powershell
 python -m analog_finder fetch context
 python -m analog_finder fetch aux
-python -m analog_finder context --only gvp roads
+python -m analog_finder context
 python -m analog_finder merge
 ```
 
@@ -148,10 +152,8 @@ Wikipedia/Wikidata lists of confirmed impact structures (4 MB). `context` writes
 `data/reference/volcanoes.csv` and `impact_structures.csv` (kept in the repository, so it also runs
 without the downloads) and the distance from every cell to the nearest volcano and impact rim. The
 `volcanic` and `impact` criteria give full score within 25 km and none beyond 150 km; they say nothing
-about how well a structure is exposed. `roads` adds the distance to a major Natural Earth road (the
-`road_access` filter of rover mobility). `context --only volcanic impact dryness` builds the alternative
-layers of `features/earth_context.py` (older volcano table with a basaltic flag, Earth Impact Database
-table, NASA POWER precipitation); build either `gvp` or `impact`, both write `impact_dist_km`.
+about how well a structure is exposed. With `fetch aux` done it also adds the distance to a major
+Natural Earth road (the `road_access` switch of rover mobility and the "getting there" part of the card).
 
 ### 4b. Precipitation for the dryness criterion (Earthdata Login)
 
@@ -163,8 +165,7 @@ python -m analog_finder merge
 
 12 monthly GPM IMERG files (214 MB) from GES DISC. The first download may stop with "EULA acceptance
 failure": approve "NASA GESDISC DATA ARCHIVE" under Applications > Authorized Apps in your Earthdata
-profile and run it again. NASA POWER (`fetch power-grid`, then `context --only dryness`) is the
-alternative used before IMERG; IMERG wins when both are in the grid.
+profile and run it again.
 
 ### 5. Score, validate, build the page
 

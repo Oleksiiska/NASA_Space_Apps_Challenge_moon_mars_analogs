@@ -16,7 +16,6 @@ from typing import Optional
 import numpy as np
 
 from . import config, scoring
-from .export import to_binary
 
 SCHEMA = 1
 CONTEXT_CRITERIA = ("volcanic", "impact")     # built from point lists that include many analog sites themselves
@@ -167,7 +166,7 @@ def report_markdown(result: dict) -> str:
     lines += ["", "## How to read this", "",
               "- A cell is about 55 km across; a site is much smaller. A flat Martian plain (Arcadia) is rarely matched by a whole cell.",
               "- Earth cannot reach lunar or Martian cold, vacuum or radiation. Cold, thermal range and low Sun are ranked in the useful direction only.",
-              "- Volcanic fields and impact structures enter as distance to the nearest listed point or rim; dryness comes from NASA POWER precipitation when its layer was built.",
+              "- Volcanic fields and impact structures enter as distance to the nearest listed point or rim; dryness is the annual precipitation of GPM IMERG.",
               ""]
     return "\n".join(lines)
 

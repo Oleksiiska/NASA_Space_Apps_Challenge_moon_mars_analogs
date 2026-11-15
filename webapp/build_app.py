@@ -13,8 +13,7 @@ from analog_finder.prep import reference  # noqa: E402
 
 RAW = ["elev_mean_m", "relief_m", "slope_mean_deg", "slope_lt8", "rough_p50_m", "lst_day_mean_k", "lst_night_min_k", "lst_diurnal_k",
        "ndvi_mean", "snow_free_months", "lowsun_best_h", "ice_frac",
-       "volc_dist_km", "volc_basalt_dist_km", "impact_dist_km", "impact_diam_km", "precip_mm_yr",
-       "volcano_dist_km", "holocene_volcano_dist_km", "precip_log_mm", "bare_px_frac",
+       "volcano_dist_km", "holocene_volcano_dist_km", "impact_dist_km", "precip_log_mm", "bare_px_frac",
        "lst_night_mean_k", "lowsun_best_month", "road_dist_km", "ml_moon", "ml_mars"] + [f"slope_h{k}" for k in range(9)] + [f"snow_m{m:02d}" for m in range(1, 13)]
 # features missing from grid.json are skipped
 

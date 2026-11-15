@@ -4,7 +4,6 @@ import numpy as np
 import pytest
 
 from analog_finder import scoring, validate
-from analog_finder.export import to_binary
 
 HIST_NAMES = scoring.HIST
 

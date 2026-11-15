@@ -36,12 +36,11 @@ from ..prep import layers
 FEATURES = (["elev_mean_m", "relief_m", "slope_mean_deg", "slope_lt8", "slope_lt15", "rough_p50_m"]
             + [f"slope_h{k}" for k in range(9)]
             + ["lst_day_mean_k", "lst_night_mean_k", "lst_day_max_k", "lst_night_min_k", "lst_diurnal_k",
-               "ndvi_mean", "ndvi_max", "snow_cover_pct", "snow_free_months", "precip_mm_yr", "precip_log_mm", "bare_px_frac",
+               "ndvi_mean", "ndvi_max", "snow_cover_pct", "snow_free_months", "precip_log_mm", "bare_px_frac",
                "lowsun_best_h", "lowsun_mean_h", "ice_frac",
                "min_calcite", "min_chlorite", "min_dolomite", "min_goethite", "min_gypsum", "min_hematite",
                "min_illite_muscovite", "min_kaolinite", "min_montmorillonite", "min_vermiculite", "min_quartz_feldspar"])
-LEFT_OUT = ("lat", "lon", "volc_dist_km", "volc_basalt_dist_km", "impact_dist_km", "impact_diam_km", "road_dist_km",
-            "volcano_dist_km", "holocene_volcano_dist_km")
+LEFT_OUT = ("lat", "lon", "volcano_dist_km", "holocene_volcano_dist_km", "impact_dist_km", "road_dist_km")
 EXCLUDE_KM = 300.0
 N_BAGS = 40
 UNLABELED_PER_POSITIVE = 20
