@@ -20,9 +20,14 @@ Metrics (all at the level of sites, because pairs of the same site are not indep
   (``isru_ice`` is exempt from the glacier flag), and geology needs exposed ground.
 * ``tasks_ranked``: tasks that have at least one ranked cell.
 
+``*_ind`` metrics: the same over the tasks that do not use the volcano and impact lists. Those lists contain many of
+the analog sites themselves, so the caves and EVA geology tasks rank them high by construction; the ``_ind`` numbers are
+the part of the result that the method earns on its own.
+
 ``--holdout`` scores the sites of data/reference/holdout_analogs.csv instead: analogs that were collected after the method
 was tuned on known_analogs.csv, with their tasks fixed from their sources before any score was seen. Check them once a
-change is finished; tuning on them would make them one more training set.
+change is finished; tuning on them would make them one more training set. ``--holdout2`` does the same for
+data/reference/holdout2_analogs.csv, a second set collected later (15 November 2026), before the experiments it guards.
 
 Every metric comes with a 95 % bootstrap interval over sites. The comparison with the baseline is paired (the same sites
 before and after), which is much tighter than comparing two intervals. With 17 sites, a change that the paired interval
@@ -47,10 +52,16 @@ SCHEMA = 1
 N_BOOT = 2000
 TOP_FRAC = 0.01
 NO_GLACIER_TASKS = ("landing", "mobility", "eva_geology", "low_sun_ops", "caves", "biosignatures")
+CONTEXT_CRITERIA = ("volcanic", "impact")      # built from point lists that contain many analog sites
 
 
-def holdout_path() -> Path:
-    return config.reference_dir() / "holdout_analogs.csv"
+def holdout_path(which: int = 1) -> Path:
+    return config.reference_dir() / ("holdout_analogs.csv" if which == 1 else f"holdout{which}_analogs.csv")
+
+
+def independent_tasks(tasks: dict) -> set[str]:
+    """Tasks that give no weight to the volcano and impact criteria."""
+    return {t for t, d in tasks.items() if not any(d["weights"].get(c, 0) > 0 for c in CONTEXT_CRITERIA)}
 
 
 def negatives_path() -> Path:
@@ -86,7 +97,7 @@ def site_values(cells: scoring.Cells, ranks: dict, analogs: list[dict], negative
     neg_pos = [k for k in neg_pos if k >= 0]
     out = {}
     for a in analogs:
-        k = cells.position(a["lat"], a["lon"])
+        k = cells.site_position(a["lat"], a["lon"])
         pcts, aucs = [], []
         for (tid, world, tg), p in pct_cache.items():
             if a["world"] not in (world, "both") or tid not in a["tasks"]:
@@ -135,9 +146,13 @@ def evaluate(cells: scoring.Cells, profiles: dict, analogs: list[dict], negative
     tasks = tasks or {t["id"]: t for t in config.tasks()["tasks"]}
     ranks = rankings(cells, profiles, tasks)
     sites = site_values(cells, ranks, analogs, negatives)
+    indep = independent_tasks(tasks)
+    sites_ind = site_values(cells, {k: v for k, v in ranks.items() if k[0] in indep}, analogs, negatives)
     rng = np.random.default_rng(seed)
     pct = np.array([s["pct"] for s in sites.values()])
     auc = np.array([s["auc"] for s in sites.values() if np.isfinite(s["auc"])])
+    pct_i = np.array([s["pct"] for s in sites_ind.values()])
+    auc_i = np.array([s["auc"] for s in sites_ind.values() if np.isfinite(s["auc"])])
     flags = red_flags(cells, ranks)
     glacier = [v["glacier"] for t, v in flags.items() if t in NO_GLACIER_TASKS]
     green = [v["dense_vegetation"] for v in flags.values()]
@@ -150,10 +165,18 @@ def evaluate(cells: scoring.Cells, profiles: dict, analogs: list[dict], negative
         "green_in_top": {"value": round(float(np.mean(green)), 3) if green else None},
         "tasks_ranked": {"value": len(ranked), "of": len(tasks)},
     }
+    if pct_i.size:
+        metrics["pos_pct_ind"] = {"value": round(float(pct_i.mean()), 3), "ci95": _boot_ci(pct_i, rng)}
+        metrics["auc_ind"] = {"value": round(float(auc_i.mean()), 3), "ci95": _boot_ci(auc_i, rng)}
+        metrics["top20_ind"] = {"value": round(float((pct_i >= 0.8).mean()), 3),
+                                "ci95": _boot_ci((pct_i >= 0.8).astype(float), rng)}
     neg_in = sum(cells.position(n["lat"], n["lon"]) >= 0 for n in negatives)
     return {"schema": SCHEMA, "n_sites": len(sites), "n_negatives": int(neg_in), "metrics": metrics,
             "red_flags": flags, "tasks_ranked": ranked, "sites": {k: {kk: round(vv, 4) if isinstance(vv, float) else vv
-                                                                     for kk, vv in v.items()} for k, v in sites.items()}}
+                                                                     for kk, vv in v.items()} for k, v in sites.items()},
+            "independent_tasks": sorted(indep),
+            "sites_ind": {k: {kk: round(vv, 4) if isinstance(vv, float) else vv for kk, vv in v.items()}
+                          for k, v in sites_ind.items()}}
 
 
 def compare(cur: dict, base: dict, seed: int = 0, n_boot: int = N_BOOT) -> dict:
@@ -161,8 +184,14 @@ def compare(cur: dict, base: dict, seed: int = 0, n_boot: int = N_BOOT) -> dict:
     common = sorted(set(cur["sites"]) & set(base["sites"]))
     rng = np.random.default_rng(seed)
     out = {}
-    for key, get in (("pos_pct", lambda s: s["pct"]), ("auc", lambda s: s["auc"]), ("top20", lambda s: float(s["pct"] >= 0.8))):
-        d = np.array([get(cur["sites"][s]) - get(base["sites"][s]) for s in common], dtype=float)
+    metrics = [("pos_pct", "sites", lambda s: s["pct"]), ("auc", "sites", lambda s: s["auc"]),
+               ("top20", "sites", lambda s: float(s["pct"] >= 0.8))]
+    if "sites_ind" in cur and "sites_ind" in base:
+        metrics += [("pos_pct_ind", "sites_ind", lambda s: s["pct"]), ("auc_ind", "sites_ind", lambda s: s["auc"]),
+                    ("top20_ind", "sites_ind", lambda s: float(s["pct"] >= 0.8))]
+    for key, part, get in metrics:
+        both = sorted(set(cur[part]) & set(base[part]))
+        d = np.array([get(cur[part][s]) - get(base[part][s]) for s in both], dtype=float)
         d = d[np.isfinite(d)]
         ci = _boot_ci(d, rng, n_boot)
         verdict = "better" if ci[0] > 0 else "worse" if ci[1] < 0 else "no clear change"
@@ -178,15 +207,19 @@ def compare(cur: dict, base: dict, seed: int = 0, n_boot: int = N_BOOT) -> dict:
 
 def format_report(cur: dict, cmp: Optional[dict] = None, base: Optional[dict] = None) -> str:
     m = cur["metrics"]
-    lines = [f"Sites: {cur['n_sites']} known analogs, {cur['n_negatives']} negatives. Random ranking: pos_pct 0.5, auc 0.5, top20 0.2.", ""]
+    lines = [f"Sites: {cur['n_sites']} known analogs, {cur['n_negatives']} negatives. Random ranking: pos_pct 0.5, auc 0.5, top20 0.2.",
+             "_ind: only the tasks that do not use the volcano and impact lists ("
+             + ", ".join(cur.get("independent_tasks", [])) + ").", ""]
     head = f"{'metric':16s} {'current':>8s}  {'95% CI':15s}"
     if base:
         head += f" {'baseline':>9s} {'change':>8s}  {'paired 95% CI':17s} verdict"
     lines.append(head)
-    for key in ("pos_pct", "auc", "top20"):
+    for key in ("pos_pct", "auc", "top20", "pos_pct_ind", "auc_ind", "top20_ind"):
+        if key not in m:
+            continue
         ci = m[key]["ci95"]
         row = f"{key:16s} {m[key]['value']:8.3f}  [{ci[0]:.3f}, {ci[1]:.3f}] "
-        if base and cmp:
+        if base and cmp and key in cmp:
             c = cmp[key]
             row += f" {base['metrics'][key]['value']:9.3f} {c['delta']:+8.3f}  [{c['ci95'][0]:+.3f}, {c['ci95'][1]:+.3f}]  {c['verdict']}"
         lines.append(row)
@@ -216,15 +249,17 @@ def format_report(cur: dict, cmp: Optional[dict] = None, base: Optional[dict] = 
 
 
 def run(processed_dir: Optional[Path] = None, save_baseline: bool = False, baseline: Optional[Path] = None,
-        holdout: bool = False, log=print) -> dict:
+        holdout: int = 0, log=print) -> dict:
     from .prep import reference
     pdir = Path(processed_dir) if processed_dir else config.processed_dir()
     cells = scoring.load_cells(pdir)
     profiles = json.loads((pdir / "target_profiles.json").read_text(encoding="utf-8"))["targets"]
     if holdout:
-        cur = evaluate(cells, profiles, reference.read_analogs(holdout_path(), validate_only=True), read_negatives())
-        (pdir / "eval_holdout.json").write_text(json.dumps(cur, indent=1), encoding="utf-8")
-        log("HOLD-OUT SITES (data/reference/holdout_analogs.csv). Look at them only to check a finished method, never to tune it.\n")
+        hp = holdout_path(int(holdout))
+        cur = evaluate(cells, profiles, reference.read_analogs(hp, validate_only=True), read_negatives())
+        (pdir / ("eval_holdout.json" if int(holdout) == 1 else f"eval_holdout{int(holdout)}.json")).write_text(
+            json.dumps(cur, indent=1), encoding="utf-8")
+        log(f"HOLD-OUT SITES (data/reference/{hp.name}). Look at them only to check a finished method, never to tune it.\n")
         log(format_report(cur))
         log("\nPer site (percentile, 1.0 = best cell on Earth; 0 = filtered out or no data):")
         for k, v in sorted(cur["sites"].items(), key=lambda kv: -kv[1]["pct"]):

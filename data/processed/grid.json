@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_utc": "2026-11-15T13:30:12Z",
+  "created_utc": "2026-11-15T14:35:17Z",
   "grid": {
     "cell_deg": 0.5,
     "n_lat": 360,
@@ -590,6 +590,24 @@
       "unit": "percent",
       "description": "Snow cover in month 12 of 2023 (MODIS); missing in polar night and under cloud",
       "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "ml_moon",
+      "offset": 5599629,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "score",
+      "description": "Experimental: how much the cell looks like the known moon analog sites (PU learning)",
+      "source": "Experimental PU-learning layer (scikit-learn HistGradientBoosting), computed by ml/pu.py"
+    },
+    {
+      "name": "ml_mars",
+      "offset": 5688512,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "score",
+      "description": "Experimental: how much the cell looks like the known mars analog sites (PU learning)",
+      "source": "Experimental PU-learning layer (scikit-learn HistGradientBoosting), computed by ml/pu.py"
     }
   ],
   "min_land_frac": 0.2,

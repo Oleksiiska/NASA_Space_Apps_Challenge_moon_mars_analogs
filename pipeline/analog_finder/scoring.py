@@ -38,6 +38,7 @@ VOLC_SCALE_KM = 50.0      # score 1 at a volcano, 0.37 at 50 km, 0.05 at 150 km
 IMPACT_SCALE_KM = 40.0    # score 1 inside a structure, 0.37 at 40 km from its rim
 DRY_WET_MM, DRY_ARID_MM = 1000.0, 25.0     # dryness 0 at 1000 mm/year or more, 1 at 25 mm/year or less (log scale)
 MATCHED = ("slope_hist", "relief", "roughness")
+SITE_NEAR_KM = 60.0       # a site whose own cell is not land (island, coast) takes the nearest land cell this close
 BARE_PX_MIN = 0.10        # bare_ground_min also passes when this share of 5 km pixels has NDVI <= 0.25
 
 
@@ -61,6 +62,31 @@ class Cells:
         flat = r * g["n_lon"] + c
         k = int(np.searchsorted(self.index, flat))
         return k if k < self.index.size and int(self.index[k]) == flat else -1
+
+    def site_position(self, lat: float, lon: float, max_km: float = SITE_NEAR_KM) -> int:
+        """Cell of a site; when that cell is not a land cell (a narrow island or a coast), the nearest land cell
+        whose centre lies within ``max_km`` of the site. -1 if there is none."""
+        k = self.position(lat, lon)
+        if k >= 0:
+            return k
+        g = self.meta["grid"]
+        r0, c0 = int((90.0 - lat) / g["cell_deg"]), int((lon + 180.0) / g["cell_deg"])
+        best, best_d = -1, max_km
+        for dr in (-2, -1, 0, 1, 2):
+            for dc in (-2, -1, 0, 1, 2):
+                r, c = r0 + dr, (c0 + dc) % g["n_lon"]
+                if not 0 <= r < g["n_lat"]:
+                    continue
+                flat = r * g["n_lon"] + c
+                j = int(np.searchsorted(self.index, flat))
+                if j >= self.index.size or int(self.index[j]) != flat:
+                    continue
+                p1, p2 = np.radians(lat), np.radians(self.lat[j])
+                a = np.sin((p2 - p1) / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(np.radians(self.lon[j] - lon) / 2) ** 2
+                d = 2 * 6371.0 * np.arcsin(np.sqrt(a))
+                if d <= best_d:
+                    best, best_d = j, d
+        return best
 
 
 def load_cells(processed_dir: str | Path | None = None) -> Cells:

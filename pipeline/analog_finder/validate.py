@@ -57,7 +57,7 @@ def validate(cells: scoring.Cells, profiles: dict, analogs: list[dict], tasks: O
                 for a in analogs:
                     if a["world"] not in (world, "both") or tid not in a["tasks"]:
                         continue
-                    k = cells.position(a["lat"], a["lon"])
+                    k = cells.site_position(a["lat"], a["lon"])
                     rec = {"analog": a["id"], "task": tid, "target": tg, "world": world, "in_grid": k >= 0,
                            "coverage": round(float(cov[k]), 2) if k >= 0 else None}
                     for tag, p in (("percentile", p_free), ("percentile_filtered", p_filt)):

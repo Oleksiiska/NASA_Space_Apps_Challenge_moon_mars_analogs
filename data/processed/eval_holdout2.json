@@ -1,0 +1,194 @@
+{
+ "schema": 1,
+ "n_sites": 8,
+ "n_negatives": 38,
+ "metrics": {
+  "pos_pct": {
+   "value": 0.718,
+   "ci95": [
+    0.601,
+    0.833
+   ]
+  },
+  "auc": {
+   "value": 0.967,
+   "ci95": [
+    0.924,
+    0.995
+   ]
+  },
+  "top20": {
+   "value": 0.5,
+   "ci95": [
+    0.125,
+    0.875
+   ]
+  },
+  "glacier_in_top": {
+   "value": 0.0
+  },
+  "green_in_top": {
+   "value": 0.012
+  },
+  "tasks_ranked": {
+   "value": 7,
+   "of": 7
+  },
+  "pos_pct_ind": {
+   "value": 0.689,
+   "ci95": [
+    0.563,
+    0.814
+   ]
+  },
+  "auc_ind": {
+   "value": 1.0,
+   "ci95": [
+    1.0,
+    1.0
+   ]
+  },
+  "top20_ind": {
+   "value": 0.4,
+   "ci95": [
+    0.0,
+    0.8
+   ]
+  }
+ },
+ "red_flags": {
+  "biosignatures": {
+   "glacier": 0.0,
+   "never_snow_free": 0.07,
+   "dense_vegetation": 0.0
+  },
+  "caves": {
+   "glacier": 0.0,
+   "never_snow_free": 0.194,
+   "dense_vegetation": 0.064
+  },
+  "eva_geology": {
+   "glacier": 0.0,
+   "never_snow_free": 0.235,
+   "dense_vegetation": 0.011
+  },
+  "isru_ice": {
+   "glacier": 1.0,
+   "never_snow_free": 1.0,
+   "dense_vegetation": 0.0
+  },
+  "landing": {
+   "glacier": 0.0,
+   "never_snow_free": 0.0,
+   "dense_vegetation": 0.003
+  },
+  "low_sun_ops": {
+   "glacier": 0.0,
+   "never_snow_free": 0.0,
+   "dense_vegetation": 0.0
+  },
+  "mobility": {
+   "glacier": 0.0,
+   "never_snow_free": 0.256,
+   "dense_vegetation": 0.003
+  }
+ },
+ "tasks_ranked": [
+  "biosignatures",
+  "caves",
+  "eva_geology",
+  "isru_ice",
+  "landing",
+  "low_sun_ops",
+  "mobility"
+ ],
+ "sites": {
+  "dhofar_marmul": {
+   "pct": 0.8537,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "ramon_crater": {
+   "pct": 0.8173,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "erfoud": {
+   "pct": 0.7284,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "armash": {
+   "pct": 0.5138,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "lava_beds": {
+   "pct": 0.9393,
+   "auc": 0.9605,
+   "pairs": 6,
+   "in_grid": true
+  },
+  "newberry": {
+   "pct": 0.8756,
+   "auc": 0.9474,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "lofoten": {
+   "pct": 0.487,
+   "auc": 0.8289,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "licancabur": {
+   "pct": 0.5295,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  }
+ },
+ "independent_tasks": [
+  "biosignatures",
+  "isru_ice",
+  "landing",
+  "low_sun_ops",
+  "mobility"
+ ],
+ "sites_ind": {
+  "dhofar_marmul": {
+   "pct": 0.8537,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "ramon_crater": {
+   "pct": 0.8173,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "erfoud": {
+   "pct": 0.7284,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "armash": {
+   "pct": 0.5138,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "licancabur": {
+   "pct": 0.5295,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  }
+ }
+}

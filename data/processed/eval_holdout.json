@@ -33,6 +33,27 @@
   "tasks_ranked": {
    "value": 7,
    "of": 7
+  },
+  "pos_pct_ind": {
+   "value": 0.534,
+   "ci95": [
+    0.336,
+    0.71
+   ]
+  },
+  "auc_ind": {
+   "value": 0.905,
+   "ci95": [
+    0.78,
+    1.0
+   ]
+  },
+  "top20_ind": {
+   "value": 0.125,
+   "ci95": [
+    0.0,
+    0.375
+   ]
   }
  },
  "red_flags": {
@@ -98,6 +119,63 @@
    "pct": 0.793,
    "auc": 1.0,
    "pairs": 4,
+   "in_grid": true
+  },
+  "mauna_kea": {
+   "pct": 0.4242,
+   "auc": 0.7434,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "dumont_dunes": {
+   "pct": 0.5444,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "tso_kar": {
+   "pct": 0.7356,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "gypsum_hill": {
+   "pct": 0.9085,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "arkaroola": {
+   "pct": 0.295,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "lonar": {
+   "pct": 0.0,
+   "auc": 0.5,
+   "pairs": 2,
+   "in_grid": true
+  }
+ },
+ "independent_tasks": [
+  "biosignatures",
+  "isru_ice",
+  "landing",
+  "low_sun_ops",
+  "mobility"
+ ],
+ "sites_ind": {
+  "lunar_crater_vf": {
+   "pct": 0.7745,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "black_point_lava_flow": {
+   "pct": 0.5885,
+   "auc": 1.0,
+   "pairs": 2,
    "in_grid": true
   },
   "mauna_kea": {

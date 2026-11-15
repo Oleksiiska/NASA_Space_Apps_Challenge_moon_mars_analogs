@@ -201,6 +201,9 @@ these numbers, the less they say about unseen sites.
 `python -m analog_finder evaluate --holdout` scores `data/reference/holdout_analogs.csv`: 9 sites
 collected after the tuning, with tasks fixed from their sources before any score was seen. Run it
 only to check a finished method; tuning on them would turn them into one more training set.
+`--holdout2` does the same for `data/reference/holdout2_analogs.csv` (8 sites collected on 15 November 2026, before
+the experiments they guard). Every metric also has an `_ind` version over the tasks that do not use the volcano and
+impact lists (those lists contain many of the sites, so caves and EVA geology rank them high by construction).
 
 
 ## Conventions

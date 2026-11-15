@@ -127,3 +127,15 @@ def test_snow_free_window_survives_quantisation():
     cells = make_cells(extra={"snow_free_months": np.array([0, 0.992, 1, 12, np.nan, 0.4], np.float32)})
     ok = scoring.constraints(cells)["snow_free_window"]
     assert ok.tolist() == [False, True, True, True, False, False]
+
+
+def test_site_position_takes_the_nearest_land_cell_for_an_island():
+    import numpy as np
+    from analog_finder import scoring
+    g = {"cell_deg": 0.5, "n_lat": 360, "n_lon": 720, "row0_lat_center": 89.75, "col0_lon_center": -179.75}
+    rows, cols = np.array([43, 43]), np.array([386, 400])          # two land cells near 68.25 N
+    index = rows * 720 + cols
+    cells = scoring.Cells(index=index, lat=89.75 - rows * 0.5, lon=-179.75 + cols * 0.5, f={}, meta={"grid": g})
+    assert cells.site_position(68.2, 13.2) == 0                     # own cell is land
+    assert cells.site_position(68.2, 13.7) == 0                     # sea cell next to it: nearest land cell, ~20 km
+    assert cells.site_position(68.2, 16.0) == -1                    # nothing within 60 km

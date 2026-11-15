@@ -141,6 +141,28 @@ Black Point lava flow, Mauna Kea, Dumont Dunes, Tso Kar, Gypsum Hill, Arkaroola,
 the tuning, with their tasks fixed from their sources before any score was seen. They give pos_pct 0.617
 (first version 0.334) and AUC 0.916.
 
+**Sites off the land grid.** A site whose own cell is mostly sea (a narrow island or a coast, such as the Lofoten
+anorthosites) takes the nearest land cell whose centre is within 60 km; the page does the same. Only the Lofoten site of
+the second hold-out set is affected: its percentile goes from 0 (no cell) to 0.49, and that set from 0.657 to 0.718.
+
+**Resemblance to earlier analog missions** (card of a cell; `python -m analog_finder ml`, needs scikit-learn). A
+positive-unlabeled model (bagged gradient-boosted trees, after Mordelet and Vert 2014) learns from the cells of the known
+sites of one world which cells look like them, on 40 Earth measures (terrain, temperatures, vegetation, snow,
+precipitation, low Sun, glaciers, minerals) and without location or the volcano, impact and road distances. The card shows
+the cell's percentile among land cells. It is not part of the score: the score compares a cell with the target for a task,
+this compares it with places people already use, including for reasons that have nothing to do with the Moon or Mars.
+Checked with each site and everything within 300 km hidden from training: median percentile of the hidden sites 0.88 for
+the Moon (formula 0.90) and 0.85 for Mars (formula 0.61), see `data/processed/ml_report.md`. Mixed 50/50 into the ranking
+it raised `pos_pct` from 0.615 to 0.675 on the known sites, but on the two hold-out sets the gain (+0.03, +0.04) stayed
+within noise and some sites dropped (Dhofar 0.85 to 0.45), so it is shown beside the score, not inside it. A cell with a
+high score and a low resemblance is physically like the target but unlike the usual choices: a new candidate.
+
+**Tested and not adopted** (paired over sites, hold-outs checked at the end): the best 11 km or 18 km patch of a cell for
+the terrain criteria (+0.014 on the known sites, 0 on both hold-outs); the 0.25 degree grid of branch `grid-025`
+(+0.031 on the independent part of the known sites, +0.02 on hold-out 1, within noise, four times the page size); a
+basaltic-volcano preference and exponential distance ramps for the volcanic and impact criteria (within noise); the road
+filter of rover mobility as a default (removes MDRS, Haughton and the Atacama).
+
 ## 7. Getting there and checking a place
 
 - **Road access.** Natural Earth 1:10M roads (ferry routes left out) are densified to 5 km steps and binned at 0.1 degree; the distance from each cell centre to the nearest bin is the `road_dist_km` feature (capped at 300 km). It drives the `road_access` filter of the mobility task.
