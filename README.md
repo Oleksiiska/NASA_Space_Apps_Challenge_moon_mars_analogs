@@ -135,6 +135,32 @@ inside any HDF4 or NetCDF file.
 Mineral abundances (EMIT) exist only for bare surfaces between 55 N and 54.5 S; cells
 elsewhere stay empty, and the ranking must treat an empty feature as unknown, not as zero.
 
+### 2b'. Volcanic and impact context (no login)
+
+```powershell
+python -m analog_finder fetch context
+python -m analog_finder context
+python -m analog_finder merge
+```
+
+`fetch context` downloads the Smithsonian GVP volcano lists and the Wikipedia/Wikidata lists of
+confirmed impact structures (4 MB). `context` writes `data/reference/volcanoes.csv` and
+`impact_structures.csv` (kept in the repository, so it also runs without the downloads) and the
+distance from every cell to the nearest volcano and impact rim. The `volcanic` and `impact`
+criteria give full score within 25 km and none beyond 150 km. They say nothing about how well a
+structure is exposed.
+
+### 2b''. Precipitation for the dryness criterion (Earthdata Login)
+
+```powershell
+python -m analog_finder fetch earth --only earth_imerg_monthly --year 2023
+python -m analog_finder surface --only precip
+python -m analog_finder merge
+```
+
+12 monthly GPM IMERG files (214 MB) from GES DISC. The first download may stop with "EULA acceptance failure": approve
+"NASA GESDISC DATA ARCHIVE" under Applications > Authorized Apps in your Earthdata profile and run it again.
+
 ### 2c. Ranking and validation
 
 ```powershell
@@ -152,6 +178,35 @@ scores for the web app. The known analogs are never used to set weights.
 Tasks that need data not in the grid yet (volcanic fields and caves, impact structures,
 dryness) are scored from the criteria that exist; `caves` cannot be ranked until a volcano
 layer is added. Check `validation.md` before quoting any number.
+
+### 2d. Did a change make the ranking better?
+
+```powershell
+python -m analog_finder evaluate --save-baseline   # once, before the change
+# ... change scoring.py, tasks.yaml, add a layer ...
+python -m analog_finder evaluate                   # compare with the baseline
+```
+
+`evaluate` prints a few numbers with 95 % bootstrap intervals over sites: the percentile of
+the known analogs as the web app shows them (filtered out = 0), the AUC of known analogs
+against clearly non-analog places (`data/reference/negative_sites.csv`), and red flags such
+as glaciers in the top 1 % of a landing task. Against the baseline it gives a paired change
+per metric and a verdict: `better`, `worse` or `no clear change`. With about 18 sites, a
+change the paired interval does not separate from zero is noise. Results go to
+`data/processed/eval_current.json`; the baseline is `data/processed/eval_baseline.json`.
+After a change is accepted, save it as the new baseline. The more you tune while looking at
+these numbers, the less they say about unseen sites.
+
+`python -m analog_finder evaluate --holdout` scores `data/reference/holdout_analogs.csv`: 9 sites
+collected after the tuning, with tasks fixed from their sources before any score was seen. Run it
+only to check a finished method; tuning on them would turn them into one more training set.
+
+### 2e. Web app
+
+```powershell
+python ../webapp/build_app.py                      # from the pipeline folder, after `score`
+python -m http.server 8765 --directory ../webapp   # then open http://localhost:8765/index.html
+```
 
 ### 3. Point data for the known analog sites
 
@@ -186,7 +241,10 @@ rewrites the two GeoJSON layers and `analogs_grid.csv` after you edit
 
 ## What is not done yet
 
-- The web app; volcanic, impact and dryness layers (the `caves` task cannot be ranked without them).
+- Dryness is precipitation only (GPM IMERG 2023), not an aridity index; a 55 km cell around a salt basin (Dallol,
+  Tirez) also holds the wetter hills around it.
+- Volcanic and impact criteria are distances to point lists; tropical volcanoes under forest rank high in the caves
+  and EVA tasks (28-38 % dense vegetation in their top 5 %).
 - The code was tested on synthetic files that follow the real labels, because the build machine could not reach the NASA servers. The first run on real files is the real test: read what `check` and `profiles` print.
 
 ## Use of AI

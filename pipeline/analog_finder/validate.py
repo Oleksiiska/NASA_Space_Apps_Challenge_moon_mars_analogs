@@ -54,7 +54,7 @@ def validate(cells: scoring.Cells, profiles: dict, analogs: list[dict], tasks: O
                 sc_filt, _, _ = scoring.task_score(task, crit, world, cells, check_constraints=True)
                 p_free, p_filt = _percentiles(sc_free), _percentiles(sc_filt)
                 for a in analogs:
-                    if a["world"] != world or tid not in a["tasks"]:
+                    if a["world"] not in (world, "both") or tid not in a["tasks"]:
                         continue
                     k = cells.position(a["lat"], a["lon"])
                     rec = {"analog": a["id"], "task": tid, "target": tg, "world": world, "in_grid": k >= 0,
@@ -179,8 +179,8 @@ def export_scores(cells: scoring.Cells, profiles: dict, out_dir: Optional[Path] 
         meta.append({"name": name, "target": target, "offset": len(blocks) * cells.n})
         blocks.append(q)
 
-    for name in scoring.SHARED:
-        add(name, shared[name])
+    for name, v in shared.items():
+        add(name, v)
     for tg, prof in profiles.items():
         for name, v in scoring.matched_criteria(cells, prof["terrain_1km"]).items():
             add(name, v, tg)
@@ -193,7 +193,7 @@ def export_scores(cells: scoring.Cells, profiles: dict, out_dir: Optional[Path] 
     doc = {"schema": SCHEMA, "n_cells": cells.n, "scale": "uint8 0..254 -> 0..1, 255 no data", "criteria": meta,
            "constraint_bits": {c: i for i, c in enumerate(names)}, "constraints_not_checked": list(scoring.NOT_CHECKED),
            "constraint_offset": len(meta) * cells.n, "min_coverage": scoring.MIN_COVERAGE,
-           "no_data_yet": list(scoring.NO_DATA_YET), "composition_worlds": ["mars"],
+           "no_data_yet": scoring.no_data(shared), "composition_worlds": ["mars"],
            "tasks": config.tasks()["tasks"]}
     np.concatenate(blocks).tofile(out_dir / "criteria.bin")
     with open(out_dir / "criteria.json", "w", encoding="utf-8", newline="\n") as f:

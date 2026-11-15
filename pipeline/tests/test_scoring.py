@@ -121,3 +121,9 @@ def test_export_layout(tmp_path):
     off = next(c["offset"] for c in doc["criteria"] if c["name"] == "composition")
     assert (raw[off: off + cells.n] == 255).all()                               # no EMIT values: unknown, not zero
     json.loads((tmp_path / "criteria.json").read_text())
+
+
+def test_snow_free_window_survives_quantisation():
+    cells = make_cells(extra={"snow_free_months": np.array([0, 0.992, 1, 12, np.nan, 0.4], np.float32)})
+    ok = scoring.constraints(cells)["snow_free_window"]
+    assert ok.tolist() == [False, True, True, True, False, False]

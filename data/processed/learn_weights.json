@@ -1,0 +1,129 @@
+{
+ "mobility": {
+  "sites": 15,
+  "hand_mean": 0.463,
+  "loso_mean": 0.446,
+  "delta": -0.017,
+  "ci95": [
+   -0.047,
+   0.01
+  ],
+  "in_sample_best": 0.469,
+  "weights_fitted_on_all": {
+   "slope_hist": 0.58,
+   "roughness": 0.04,
+   "relief": 0.34,
+   "bare_ground": 0.03,
+   "composition": 0.01
+  },
+  "hand_weights": {
+   "slope_hist": 0.4,
+   "roughness": 0.3,
+   "relief": 0.1,
+   "bare_ground": 0.1,
+   "composition": 0.1
+  }
+ },
+ "eva_geology": {
+  "sites": 19,
+  "hand_mean": 0.915,
+  "loso_mean": 0.927,
+  "delta": 0.012,
+  "ci95": [
+   -0.025,
+   0.047
+  ],
+  "in_sample_best": 0.944,
+  "weights_fitted_on_all": {
+   "relief": 0.14,
+   "slope_hist": 0.05,
+   "volcanic": 0.16,
+   "impact": 0.21,
+   "composition": 0.35,
+   "low_sun": 0.04,
+   "bare_ground": 0.05
+  },
+  "hand_weights": {
+   "relief": 0.15,
+   "slope_hist": 0.1,
+   "volcanic": 0.2,
+   "impact": 0.15,
+   "composition": 0.1,
+   "low_sun": 0.1,
+   "bare_ground": 0.2
+  }
+ },
+ "isru_ice": {
+  "sites": 4,
+  "hand_mean": 0.365,
+  "loso_mean": 0.581,
+  "delta": 0.216,
+  "ci95": [
+   -0.244,
+   0.5
+  ],
+  "in_sample_best": 0.604,
+  "weights_fitted_on_all": {
+   "ground_ice": 0.03,
+   "cold": 0.03,
+   "bare_ground": 0.82,
+   "composition": 0.07,
+   "slope_hist": 0.05
+  },
+  "hand_weights": {
+   "ground_ice": 0.4,
+   "cold": 0.3,
+   "bare_ground": 0.1,
+   "composition": 0.1,
+   "slope_hist": 0.1
+  }
+ },
+ "low_sun_ops": {
+  "sites": 4,
+  "hand_mean": 0.234,
+  "loso_mean": 0.234,
+  "delta": 0.0,
+  "ci95": [
+   0.0,
+   0.0
+  ],
+  "in_sample_best": 0.246,
+  "weights_fitted_on_all": {
+   "low_sun": 0.08,
+   "relief": 0.07,
+   "snow_free": 0.01,
+   "bare_ground": 0.84
+  },
+  "hand_weights": {
+   "low_sun": 0.45,
+   "relief": 0.2,
+   "snow_free": 0.2,
+   "bare_ground": 0.15
+  }
+ },
+ "biosignatures": {
+  "sites": 10,
+  "hand_mean": 0.389,
+  "loso_mean": 0.398,
+  "delta": 0.008,
+  "ci95": [
+   -0.06,
+   0.077
+  ],
+  "in_sample_best": 0.51,
+  "weights_fitted_on_all": {
+   "dryness": 0.0,
+   "composition": 0.05,
+   "bare_ground": 0.38,
+   "thermal_range": 0.53,
+   "cold": 0.04
+  },
+  "hand_weights": {
+   "dryness": 0.35,
+   "composition": 0.3,
+   "bare_ground": 0.15,
+   "thermal_range": 0.1,
+   "cold": 0.1
+  }
+ }
+}

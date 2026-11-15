@@ -109,6 +109,10 @@ def fetch_earthdata(ids: Optional[list[str]] = None, year: int = 2023, dry_run: 
             results.append(Result(ds["id"], "downloaded", int(size_mb * 1e6), f"{len(files)} file(s) -> {dest}"))
         except Exception as e:
             log(f"[{ds['id']}] download failed: {e}")
+            if "eula" in str(e).lower():
+                log("  The data centre wants its licence accepted once: sign in at https://urs.earthdata.nasa.gov, open "
+                    "Applications > Authorized Apps > Approve More Applications, approve the data centre of this product "
+                    "(for GES DISC: 'NASA GESDISC DATA ARCHIVE') and accept its EULA, then run the command again.")
             results.append(Result(ds["id"], "failed", 0, str(e)))
     return results
 

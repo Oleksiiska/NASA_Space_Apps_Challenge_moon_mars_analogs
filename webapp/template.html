@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Moon–Mars Analog Finder</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
@@ -159,6 +160,7 @@ const BLOB_B64=/*BLOB*/"";
 <script>
 "use strict";
 const M = META;
+const CD = M.grid.cell_deg;   // cell size in degrees (0.5 or 0.25)
 const I18N = {
   en:{title:"Moon–Mars Analog Finder",sub:"Where on Earth are the conditions of a lunar or Martian site closest? Pick a target and a task, weigh the criteria, and see which 55 km cells of the Earth match, and what they cannot reproduce.",
     moon:"Moon",mars:"Mars",target:"Target to reproduce",task:"Test task",weights:"Criteria weights",reset:"Reset",filters:"Hard filters",lo:"lower",hi:"higher similarity",a_ok:"known analog",show_an:"show known analogs",
@@ -176,13 +178,13 @@ const I18N = {
     how3:"Terrain criteria compare the cell with the target. Cold, day–night swing, low Sun, ground ice and minerals rank Earth cells in the useful direction, because Earth cannot reach lunar or Martian values.",
     how4:"The known analog sites are only used to check the ranking, never to tune it. What Earth cannot reproduce is shown next to every candidate, not inside the score.",
     srcs:"Data and sources",src1:"Earth: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) and MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth land.",src2:"Moon: LRO LOLA and Diviner polar resource product (NASA PDS Geosciences). Mars: MGS MOLA MEGDR and Mars Odyssey GRS (NASA PDS).",
-    lim1:"A cell is about 55 km across; real analog sites are far smaller.",lim2:"Cold, thermal range and low Sun are ranked in the useful direction only; Earth cannot reach lunar or Martian values.",lim3:"No volcanic, impact or dryness layer yet: geology tasks lean on terrain, and caves cannot be ranked.",lim4:"Ground ice is a proxy from annual surface temperature and glaciers. Minerals exist only for bare ground between 55°N and 54.5°S.",
+    lim1:"A cell is about 55 km across; real analog sites are far smaller.",lim2:"Cold, thermal range and low Sun are ranked in the useful direction only; Earth cannot reach lunar or Martian values.",lim3:"Volcanic and impact criteria are the distance to the nearest known volcano (Smithsonian GVP) or confirmed impact structure; they say nothing about how well a structure is exposed. Dryness is annual precipitation from GPM IMERG for 2023.",lim4:"Ground ice is a proxy from annual surface temperature and glaciers. Minerals exist only for bare ground between 55°N and 54.5°S.",
     nocell:"No cell has enough data for this task yet: ",ranked:"cells ranked",pct:"percentile",lat:"lat",lon:"lon",reg:"Region around",
     elev:"Mean elevation",relief:"Relief P5–P95",slope:"Mean slope",flat:"Share under 8° slope",tday:"Daytime surface, annual mean",tnight:"Coldest night month",swing:"Day–night swing",ndvi:"NDVI (greenness)",snow:"Snow-free months",lowsun:"Low-Sun hours per day (best month)",ice:"Glacier share",
     foot:"Data: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Natural Earth. Pipeline and page were built with Claude (Anthropic) from the team’s plan; every number comes from the files in the repository. Check validation.md before quoting a figure.",
     crit_names:{slope_hist:"Slope distribution",relief:"Relief",roughness:"Roughness",cold:"Cold",thermal_range:"Day–night swing",ground_ice:"Ground ice (proxy)",bare_ground:"Bare ground",composition:"Altered minerals",low_sun:"Low Sun",snow_free:"Snow-free months",dryness:"Dryness",volcanic:"Volcanic fields",impact:"Impact structures"},
     crit_tip:{slope_hist:"Match of the slope-class shares at a 1 km step with the target",relief:"Match of the 5–95 % elevation range",roughness:"Match of the median local roughness",cold:"Colder annual mean surface temperature ranks higher",thermal_range:"Larger day–night swing ranks higher",ground_ice:"Permafrost proxy (mean surface temperature under 0 °C) or glaciers",bare_ground:"Low NDVI: ground visible",composition:"Clays, sulfates, carbonates and iron oxides (EMIT); Mars only",low_sun:"Hours per day with the Sun 0–5° above the horizon",snow_free:"Months with a snow decision and under 10 % snow"},
-    cons:{bare_ground_min:"Enough bare ground (NDVI ≤ 0.25)",flat_patch_exists:"A flat patch exists (≥ 5 % under 8°)",ground_ice_present:"Ground ice or glacier present",snow_free_window:"At least one snow-free month"},
+    cons:{bare_ground_min:"Enough bare ground (NDVI ≤ 0.25, or ≥ 10 % of 5 km pixels)",flat_patch_exists:"A flat patch exists (≥ 5 % under 8°)",ground_ice_present:"Ground ice or glacier present",snow_free_window:"At least one snow-free month",not_ice_sheet:"Not an ice sheet (glacier ≤ 50 %)"},
     nr:{road_access:"road access",safe_access:"safe access",protected_ecosystem_flag:"protected areas"},
     role:{base_site:"base site"}},
   uk:{title:"Пошук земних аналогів Місяця та Марса",sub:"Де на Землі умови найближчі до місця на Місяці чи Марсі? Оберіть ціль і задачу, налаштуйте ваги критеріїв і побачте, які клітинки 55 км збігаються і чого вони не відтворюють.",
@@ -201,13 +203,13 @@ const I18N = {
     how3:"Критерії рельєфу порівнюють клітинку з ціллю. Холод, різниця день–ніч, низьке Сонце, ґрунтовий лід і мінерали ранжують клітинки Землі в потрібному напрямку, бо Земля не досягає місячних чи марсіанських значень.",
     how4:"Відомі аналоги лише перевіряють рейтинг і ніколи його не налаштовують. Те, чого Земля не відтворює, показано біля кандидата, а не всередині оцінки.",
     srcs:"Дані та джерела",src1:"Земля: NASA SRTMGL30 (LP DAAC), MODIS MOD11C3, MOD13C2 (LP DAAC) і MOD10CM (NSIDC DAAC), EMIT L3 ASA (LP DAAC), Natural Earth.",src2:"Місяць: LRO LOLA і полярний ресурсний продукт Diviner (NASA PDS Geosciences). Марс: MGS MOLA MEGDR і Mars Odyssey GRS (NASA PDS).",
-    lim1:"Клітинка має близько 55 км, а справжні майданчики набагато менші.",lim2:"Холод, добовий діапазон і низьке Сонце ранжуються лише в потрібному напрямку: Земля не досягає місячних чи марсіанських значень.",lim3:"Шарів вулканів, імпактних структур і посушливості ще немає: геологічні задачі спираються на рельєф, а печери не ранжуються.",lim4:"Ґрунтовий лід — наближення за річною температурою поверхні та льодовиками. Мінерали є лише для голого ґрунту між 55° пн.ш. і 54,5° пд.ш.",
+    lim1:"Клітинка має близько 55 км, а справжні майданчики набагато менші.",lim2:"Холод, добовий діапазон і низьке Сонце ранжуються лише в потрібному напрямку: Земля не досягає місячних чи марсіанських значень.",lim3:"Вулканічний та імпактний критерії — це відстань до найближчого відомого вулкана (Smithsonian GVP) або підтвердженої імпактної структури; вони нічого не кажуть про те, наскільки структура відслонена. Посушливість — річні опади за GPM IMERG 2023 року.",lim4:"Ґрунтовий лід — наближення за річною температурою поверхні та льодовиками. Мінерали є лише для голого ґрунту між 55° пн.ш. і 54,5° пд.ш.",
     nocell:"Для цієї задачі ще немає клітинок з достатніми даними: ",ranked:"клітинок ранжовано",pct:"перцентиль",lat:"шир.",lon:"довг.",reg:"Регіон навколо",
     elev:"Середня висота",relief:"Рельєф P5–P95",slope:"Середній схил",flat:"Частка зі схилом до 8°",tday:"Денна поверхня, річне середнє",tnight:"Найхолодніший нічний місяць",swing:"Різниця день–ніч",ndvi:"NDVI (зелень)",snow:"Місяців без снігу",lowsun:"Годин низького Сонця на добу (найкращий місяць)",ice:"Частка льодовиків",
     foot:"Дані: NASA SRTM, MODIS, EMIT, LOLA, Diviner, MOLA, GRS; Natural Earth. Конвеєр і сторінку створено з Claude (Anthropic) за планом команди; кожне число береться з файлів репозиторію. Перед цитуванням цифр перегляньте validation.md.",
     crit_names:{slope_hist:"Розподіл схилів",relief:"Рельєф",roughness:"Шорсткість",cold:"Холод",thermal_range:"Різниця день–ніч",ground_ice:"Ґрунтовий лід (наближення)",bare_ground:"Голий ґрунт",composition:"Змінені мінерали",low_sun:"Низьке Сонце",snow_free:"Місяці без снігу",dryness:"Посушливість",volcanic:"Вулканічні поля",impact:"Імпактні структури"},
     crit_tip:{slope_hist:"Збіг часток класів схилу на кроці 1 км із ціллю",relief:"Збіг діапазону висот 5–95 %",roughness:"Збіг медіанної локальної шорсткості",cold:"Холодніша річна температура поверхні — вищий ранг",thermal_range:"Більша різниця день–ніч — вищий ранг",ground_ice:"Наближення мерзлоти (середня температура поверхні нижче 0 °C) або льодовики",bare_ground:"Низький NDVI: ґрунт видно",composition:"Глини, сульфати, карбонати й оксиди заліза (EMIT); лише Марс",low_sun:"Годин на добу із Сонцем 0–5° над горизонтом",snow_free:"Місяці зі снігом нижче 10 %"},
-    cons:{bare_ground_min:"Достатньо голого ґрунту (NDVI ≤ 0,25)",flat_patch_exists:"Є рівний майданчик (≥ 5 % зі схилом до 8°)",ground_ice_present:"Є ґрунтовий лід або льодовик",snow_free_window:"Принаймні один місяць без снігу"},
+    cons:{bare_ground_min:"Достатньо голого ґрунту (NDVI ≤ 0,25 або ≥ 10 % пікселів 5 км)",flat_patch_exists:"Є рівний майданчик (≥ 5 % зі схилом до 8°)",ground_ice_present:"Є ґрунтовий лід або льодовик",snow_free_window:"Принаймні один місяць без снігу",not_ice_sheet:"Не льодовиковий щит (льодовик ≤ 50 %)"},
     nr:{road_access:"доступ дорогами",safe_access:"безпечний доступ",protected_ecosystem_flag:"охоронні території"},
     role:{base_site:"місце бази"}}
 };
@@ -237,7 +239,7 @@ async function load(){
   for(let i=0;i<n;i++) LUT[ROWS[i]*M.grid.n_lon+COLS[i]]=i;
   for(const c of M.criteria) CRIT[c.name+"|"+(c.target||"")]=c.offset;
 }
-const cellLat=i=>90-ROWS[i]*0.5-0.25, cellLon=i=>-180+COLS[i]*0.5+0.25;
+const cellLat=i=>90-(ROWS[i]+0.5)*CD, cellLon=i=>-180+(COLS[i]+0.5)*CD;
 function raw(name,i){const r=M.raw.find(x=>x.name===name); const q=D[r.offset+i]; return q===255?NaN:r.min+q/254*(r.max-r.min)}
 
 /* ---------- scoring ---------- */
@@ -316,7 +318,7 @@ function clampView(){const v=S.view; v.s=Math.min(60,Math.max(S.fit,v.s));
 function draw(){
   if(!D||!W) return; readCss();
   ctx.setTransform(DPR,0,0,DPR,0,0); ctx.fillStyle=CSSV["--sea"]; ctx.fillRect(0,0,W,H);
-  const s=S.view.s, cw=0.5*s, pad=cw<1?0.6:0;
+  const s=S.view.s, cw=CD*s, pad=cw<1?0.6:0;
   // graticule
   ctx.strokeStyle=CSSV["--line"]; ctx.lineWidth=1; ctx.globalAlpha=.5; ctx.beginPath();
   for(let lo=-180;lo<=180;lo+=30){const x=Math.round(X(lo))+.5; ctx.moveTo(x,0);ctx.lineTo(x,H)}
@@ -324,7 +326,7 @@ function draw(){
   ctx.stroke(); ctx.globalAlpha=1;
   const inv=1/(RANGE[1]-RANGE[0]);
   for(let i=0;i<M.n;i++){
-    const x=X(-180+COLS[i]*0.5), y=Y(90-ROWS[i]*0.5);
+    const x=X(-180+COLS[i]*CD), y=Y(90-ROWS[i]*CD);
     if(x<-cw||y<-cw||x>W||y>H+cw) continue;
     const v=SC?SC[i]:NaN;
     ctx.fillStyle=(v===v)?RAMP[Math.max(0,Math.min(255,Math.round((v-RANGE[0])*inv*255)))]:CSSV["--land"];
@@ -341,11 +343,11 @@ function draw(){
   CANDS.forEach((i,k)=>{const x=X(cellLon(i)),y=Y(cellLat(i)); ctx.beginPath(); ctx.arc(x,y,9,0,7); ctx.fillStyle=CSSV["--surface"]; ctx.fill();
     ctx.strokeStyle=CSSV["--ink"]; ctx.lineWidth=1.5; ctx.stroke(); ctx.fillStyle=CSSV["--ink"]; ctx.font="600 10px "+getComputedStyle(document.body).fontFamily;
     ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(String(k+1),x,y+.5)});
-  if(S.sel>=0){const x=X(-180+COLS[S.sel]*0.5),y=Y(90-ROWS[S.sel]*0.5); ctx.strokeStyle=CSSV["--pick"]; ctx.lineWidth=2.5; ctx.strokeRect(x-1,y-1,cw+2,cw+2)}
+  if(S.sel>=0){const x=X(-180+COLS[S.sel]*CD),y=Y(90-ROWS[S.sel]*CD); ctx.strokeStyle=CSSV["--pick"]; ctx.lineWidth=2.5; ctx.strokeRect(x-1,y-1,cw+2,cw+2)}
 }
 function cellAt(px,py){
   const lo=S.view.cx+(px-W/2)/S.view.s, la=S.view.cy-(py-H/2)/S.view.s;
-  const r=Math.floor((90-la)/0.5), c=Math.floor((lo+180)/0.5);
+  const r=Math.floor((90-la)/CD), c=Math.floor((lo+180)/CD);
   if(r<0||r>=M.grid.n_lat||c<0||c>=M.grid.n_lon) return -1; return LUT[r*M.grid.n_lon+c];
 }
 function nearAnalog(px,py){let best=null,bd=100;

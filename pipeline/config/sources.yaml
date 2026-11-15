@@ -153,6 +153,47 @@ datasets:
     citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
     license: Public domain
 
+  - id: earth_gvp_volcanoes
+    world: earth
+    title: Smithsonian Global Volcanism Program, Volcanoes of the World (Holocene and Pleistocene volcanoes)
+    official_resource: none (auxiliary context layer)
+    agency: Smithsonian Institution
+    access: open
+    provider: http
+    dest: data/raw/earth/context
+    format: geojson
+    used_for: [volcanic]
+    files:
+      - name: gvp_holocene.geojson
+        url: "https://webservices.volcano.si.edu/geoserver/GVP-VOTW/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Holocene_Volcanoes&outputFormat=application/json"
+      - name: gvp_pleistocene.geojson
+        url: "https://webservices.volcano.si.edu/geoserver/GVP-VOTW/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=GVP-VOTW:Smithsonian_VOTW_Pleistocene_Volcanoes&outputFormat=application/json"
+    citation: >-
+      Global Volcanism Program (2024). Volcanoes of the World (v. 5.2.x). Smithsonian Institution.
+      doi:10.5479/si.GVP.VOTW5-2024.5.2
+    license: Smithsonian terms of use; cite the Global Volcanism Program
+
+  - id: earth_impact_structures
+    world: earth
+    title: Confirmed impact structures on Earth (Wikipedia list based on the Earth Impact Database, and Wikidata)
+    official_resource: none (auxiliary context layer)
+    agency: Wikipedia / Wikidata
+    access: open
+    provider: http
+    dest: data/raw/earth/context
+    format: wikitext, sparql-json
+    used_for: [impact]
+    files:
+      - name: impacts_wikipedia.wiki
+        url: "https://en.wikipedia.org/w/index.php?title=List_of_impact_structures_on_Earth&action=raw"
+      - name: impacts_wikidata.json
+        url: "https://query.wikidata.org/sparql?format=json&query=SELECT%20%3Fitem%20%3FitemLabel%20%3Flat%20%3Flon%20WHERE%20%7B%20%3Fitem%20wdt%3AP31%20wd%3AQ55818%20.%20%3Fitem%20p%3AP625%2Fpsv%3AP625%20%3Fc%20.%20%3Fc%20wikibase%3AgeoLatitude%20%3Flat%20%3B%20wikibase%3AgeoLongitude%20%3Flon%20%3B%20wikibase%3AgeoGlobe%20wd%3AQ2%20.%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22.%20%7D%20%7D"
+    citation: >-
+      Wikipedia contributors, "List of impact structures on Earth" (CC BY-SA 4.0), compiled from the Earth Impact
+      Database (Planetary and Space Science Centre, University of New Brunswick); Wikidata (CC0), items that are
+      instances of "impact crater" (Q55818) with coordinates on Earth.
+    license: CC BY-SA 4.0 (Wikipedia), CC0 (Wikidata)
+
   - id: earth_srtmgl30
     world: earth
     title: NASA SRTM Global 30 arc second (about 926 m), 90N to 60S
@@ -241,6 +282,25 @@ datasets:
     citation: >-
       Friedl, M. and Sulla-Menashe, D. (2022). MODIS/Terra+Aqua Land Cover Type Yearly L3
       Global 0.05Deg CMG V061. NASA EOSDIS LP DAAC. doi:10.5067/MODIS/MCD12C1.061
+    license: NASA EOSDIS open data policy
+
+  - id: earth_imerg_monthly
+    world: earth
+    title: GPM IMERG Final Precipitation, monthly, 0.1 degree (GPM_3IMERGM)
+    official_resource: NASA Earthdata Search
+    agency: NASA
+    access: earthdata_login
+    provider: earthaccess
+    short_name: GPM_3IMERGM
+    version: "07"
+    temporal: year
+    dest: data/raw/earth/imerg
+    format: hdf5
+    used_for: [dryness]
+    citation: >-
+      Huffman, G.J., E.F. Stocker, D.T. Bolvin, E.J. Nelkin, J. Tan (2023). GPM IMERG Final Precipitation L3 1 month
+      0.1 degree x 0.1 degree V07. Goddard Earth Sciences Data and Information Services Center (GES DISC).
+      doi:10.5067/GPM/IMERG/3B-MONTH/07
     license: NASA EOSDIS open data policy
 
   - id: earth_emit_l3asa

@@ -1,0 +1,39 @@
+id,name,lat,lon,kind,notes
+amazon_manaus,Amazon rainforest near Manaus,-3.1,-60.0,rainforest,Dense tropical forest
+amazon_acre,Amazon rainforest in Acre,-9.5,-69.5,rainforest,Dense tropical forest
+congo_basin,Congo Basin,0.5,20.5,rainforest,Dense tropical forest
+gabon_forest,Gabon forest,-0.5,11.5,rainforest,Dense tropical forest
+borneo,Central Kalimantan,0.5,114.0,rainforest,Dense tropical forest
+sumatra,Central Sumatra,0.0,102.0,rainforest,Forest and plantations
+papua,Southern New Guinea lowlands,-5.0,141.0,rainforest,Dense tropical forest
+nigeria_south,Southern Nigeria,6.5,5.0,rainforest,Forest and farmland
+cote_divoire,Central Cote d'Ivoire,6.5,-5.5,rainforest,Forest and farmland
+iowa,Iowa corn belt,42.0,-93.5,farmland,Flat cropland
+illinois,Central Illinois,40.0,-89.0,farmland,Flat cropland
+beauce,Beauce plain,48.2,1.6,farmland,Flat cropland
+poltava,Poltava region,49.6,34.5,farmland,Flat cropland on chernozem
+gangetic_plain,Gangetic plain,26.5,82.0,farmland,Irrigated cropland
+bangladesh,Central Bangladesh,24.0,90.0,farmland,Rice paddies in a river delta
+java,Central Java,-7.3,110.0,farmland,Rice terraces and volcanoes under forest
+pampas,Argentine Pampas,-35.0,-61.0,farmland,Grassland and cropland
+england_midlands,English Midlands,52.5,-1.5,farmland,Pasture and cropland
+denmark,Central Jutland,56.0,9.5,farmland,Cropland
+netherlands,Central Netherlands,52.3,5.5,farmland,Polders and pasture
+poland,Central Poland,52.0,19.0,farmland,Cropland
+northeast_china,Songnen plain,46.0,126.0,farmland,Cropland
+bavaria,Lower Bavaria,48.5,11.5,farmland,Cropland and forest
+irish_midlands,Irish Midlands,53.3,-7.8,farmland,Pasture and bogs
+brittany,Central Brittany,48.2,-3.0,farmland,Pasture and hedgerows
+uruguay,Central Uruguay,-33.0,-56.0,farmland,Pasture
+waikato,Waikato,-37.8,175.3,farmland,Pasture
+gippsland,Gippsland,-38.0,146.5,farmland,Pasture and forest
+mekong_delta,Mekong delta,10.0,105.8,wetland,Rice paddies in a river delta
+thailand_central,Central Thailand,15.0,100.5,farmland,Rice paddies
+mississippi_delta,Mississippi alluvial plain,33.0,-90.8,farmland,Cropland and wetland
+georgia_us,Central Georgia (US),32.5,-83.5,forest,Pine forest and farmland
+japan_honshu,Central Honshu,36.5,138.5,forest,Mountain forest
+siberian_taiga,Central Siberian taiga,60.0,90.0,forest,Boreal forest
+finland,Finnish Lakeland,62.5,26.0,forest,Boreal forest and lakes
+quebec,Southern Quebec forest,48.5,-73.0,forest,Boreal forest
+pantanal,Pantanal,-18.0,-57.0,wetland,Seasonal wetland
+sudd,Sudd,7.5,30.5,wetland,Swamp

@@ -32,3 +32,6 @@ dist/
 .DS_Store
 Thumbs.db
 .dodsrc
+
+# Experimental grids of other cell sizes (ANALOG_CELL_DEG), rebuilt from the raw data
+data/processed_*/

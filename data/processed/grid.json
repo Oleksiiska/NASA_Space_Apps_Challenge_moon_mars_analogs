@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "created_utc": "2026-11-14T11:33:08Z",
+  "created_utc": "2026-11-14T17:00:42Z",
   "grid": {
     "cell_deg": 0.5,
     "n_lat": 360,
@@ -382,6 +382,96 @@
       "max": 12.0,
       "unit": "months",
       "description": "Months with a snow decision and under 10 % snow cover (months without decision are not counted as free).",
+      "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "barren_frac",
+      "offset": 3555320,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell's land that is barren ground at 500 m (IGBP class 16: rock, sand, bare soil, lava). Unlike mean NDVI it sees a bare patch inside a green cell.",
+      "source": "NASA MCD12C1 v061 (EOSDIS LP DAAC), IGBP classes, computed by features/earth_surface.py"
+    },
+    {
+      "name": "sparse_frac",
+      "offset": 3644203,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell's land that is barren or open shrubland (IGBP 16 and 7).",
+      "source": "NASA MCD12C1 v061 (EOSDIS LP DAAC), IGBP classes, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snow_ice_frac",
+      "offset": 3733086,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the cell's land under permanent snow and ice at 500 m (IGBP class 15).",
+      "source": "NASA MCD12C1 v061 (EOSDIS LP DAAC), IGBP classes, computed by features/earth_surface.py"
+    },
+    {
+      "name": "volcano_dist_km",
+      "offset": 3821969,
+      "min": 0.0,
+      "max": 1000.0,
+      "unit": "km",
+      "description": "Distance from the cell to the nearest Holocene or Pleistocene volcano (one point per volcano or volcanic field).",
+      "source": "Smithsonian GVP Volcanoes of the World (Holocene and Pleistocene), computed by features/context.py"
+    },
+    {
+      "name": "impact_dist_km",
+      "offset": 3910852,
+      "min": 0.0,
+      "max": 1000.0,
+      "unit": "km",
+      "description": "Distance from the cell to the rim of the nearest known impact structure.",
+      "source": "Wikipedia list of impact structures (Earth Impact Database) and Wikidata, computed by features/context.py"
+    },
+    {
+      "name": "holocene_volcano_dist_km",
+      "offset": 3999735,
+      "min": 0.0,
+      "max": 1000.0,
+      "unit": "km",
+      "description": "Distance from the cell to the nearest Holocene volcano (active in the last 11,700 years: young, little eroded lava).",
+      "source": "Smithsonian GVP Volcanoes of the World (Holocene and Pleistocene), computed by features/context.py"
+    },
+    {
+      "name": "precip_log_mm",
+      "offset": 4088618,
+      "min": 0.0,
+      "max": 4.0,
+      "unit": "log10(1 + mm/year)",
+      "description": "Annual precipitation on a log scale: 0 = none, 1 = 9 mm, 2 = 99 mm, 3 = 999 mm per year (GPM IMERG). Stored as a log so that hyper-arid deserts (a few mm per year) stay apart.",
+      "source": "NASA GPM IMERG Final V07 monthly 2023 (GES DISC), computed by features/earth_surface.py"
+    },
+    {
+      "name": "precip_min_log_mm",
+      "offset": 4177501,
+      "min": 0.0,
+      "max": 4.0,
+      "unit": "log10(1 + mm/year)",
+      "description": "Annual precipitation of the driest 0.1 degree (about 11 km) land pixel inside the cell, same log scale: a salt basin is not hidden by the wetter hills around it.",
+      "source": "NASA GPM IMERG Final V07 monthly 2023 (GES DISC), computed by features/earth_surface.py"
+    },
+    {
+      "name": "bare_px_frac",
+      "offset": 4266384,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the 0.05 degree (about 5 km) pixels of the cell whose annual mean NDVI is at most 0.25: a bare volcano or salt flat inside a green cell still counts.",
+      "source": "NASA MOD13C2 v061 (EOSDIS LP DAAC), monthly 2023, computed by features/earth_surface.py"
+    },
+    {
+      "name": "snowfree_px_frac",
+      "offset": 4355267,
+      "min": 0.0,
+      "max": 1.0,
+      "unit": "fraction",
+      "description": "Share of the 0.05 degree (about 5 km) pixels of the cell with at least one snow-free month: snow-free lowland next to a glacier still counts.",
       "source": "NASA MOD10CM v061 (NSIDC DAAC), monthly 2023, computed by features/earth_surface.py"
     }
   ],

@@ -27,11 +27,13 @@ from .export import to_binary
 
 MIN_COVERAGE = 0.5
 HIST = [f"slope_h{k}" for k in range(9)]
-NO_DATA_YET = ("dryness", "volcanic", "impact")
+NO_DATA_YET = ("dryness", "volcanic", "impact")   # criteria that may have no layer; see no_data()
+CONTEXT_NEAR_KM, CONTEXT_FAR_KM = 25.0, 150.0     # volcanic / impact: full score within 25 km, none beyond 150 km
 ALTERATION = ("min_kaolinite", "min_montmorillonite", "min_illite_muscovite", "min_vermiculite", "min_chlorite",
               "min_gypsum", "min_calcite", "min_dolomite", "min_hematite", "min_goethite")
 SHARED = ("cold", "thermal_range", "ground_ice", "bare_ground", "low_sun", "snow_free", "composition")
 MATCHED = ("slope_hist", "relief", "roughness")
+BARE_PX_MIN = 0.10        # bare_ground_min also passes when this share of 5 km pixels has NDVI <= 0.25
 
 
 @dataclass
@@ -99,6 +101,16 @@ def matched_criteria(cells: Cells, terrain_1km: dict) -> dict[str, np.ndarray]:
     }
 
 
+def proximity(dist_km: np.ndarray, near: float = CONTEXT_NEAR_KM, far: float = CONTEXT_FAR_KM) -> np.ndarray:
+    """1 within ``near`` km, falling linearly to 0 at ``far`` km; NaN stays NaN."""
+    return np.clip((far - dist_km) / (far - near), 0.0, 1.0).astype(np.float32)
+
+
+def no_data(shared: dict) -> list[str]:
+    """Criteria of NO_DATA_YET that have no layer in this grid."""
+    return [c for c in NO_DATA_YET if c not in shared]
+
+
 def shared_criteria(cells: Cells) -> dict[str, np.ndarray]:
     f = cells.f
     t_mean = (f["lst_day_mean_k"] + f["lst_night_mean_k"]) / 2.0
@@ -111,7 +123,7 @@ def shared_criteria(cells: Cells) -> dict[str, np.ndarray]:
     for k in ALTERATION:
         alt += np.nan_to_num(f[k])
     alt[~have] = np.nan
-    return {
+    out = {
         "cold": pct_rank(-t_mean),
         "thermal_range": pct_rank(f["lst_diurnal_k"]),
         "ground_ice": ground_ice,
@@ -120,6 +132,13 @@ def shared_criteria(cells: Cells) -> dict[str, np.ndarray]:
         "snow_free": (f["snow_free_months"] / 12.0).astype(np.float32),
         "composition": pct_rank(alt),
     }
+    if "precip_log_mm" in f:              # GPM IMERG annual precipitation: drier ranks higher, as cold does
+        out["dryness"] = pct_rank(-f["precip_log_mm"])
+    if "volcano_dist_km" in f:            # context layer (features/context.py)
+        out["volcanic"] = proximity(f["volcano_dist_km"])
+    if "impact_dist_km" in f:
+        out["impact"] = proximity(f["impact_dist_km"])
+    return out
 
 
 def constraints(cells: Cells) -> dict[str, np.ndarray]:
@@ -127,11 +146,15 @@ def constraints(cells: Cells) -> dict[str, np.ndarray]:
     f = cells.f
     with np.errstate(invalid="ignore"):
         ndvi_ok = ~(f["ndvi_mean"] > 0.25)
+        if "bare_px_frac" in f:           # or at least 10 % of the 5 km pixels are bare (a bare volcano in a green cell)
+            ndvi_ok = ndvi_ok | (f["bare_px_frac"] >= BARE_PX_MIN)
         flat_ok = ~(f["slope_lt8"] < 0.05)
         ice_ok = ~((f["lst_day_mean_k"] + f["lst_night_mean_k"]) / 2.0 >= 273.15) | (f["ice_frac"] > 0.5)
-        snow_ok = f["snow_free_months"] >= 1
+        snow_ok = f["snow_free_months"] >= 0.5         # whole months, stored quantised: 1 month reads back as 0.99
+        no_ice_sheet = ~(f["ice_frac"] > 0.5)
     return {"bare_ground_min": ndvi_ok, "flat_patch_exists": flat_ok, "ground_ice_present": ice_ok,
-            "snow_free_window": np.asarray(snow_ok)}
+            "snow_free_window": np.asarray(snow_ok),
+            "not_ice_sheet": np.asarray(no_ice_sheet)}
 
 
 NOT_CHECKED = ("road_access", "safe_access", "protected_ecosystem_flag")

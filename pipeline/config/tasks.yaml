@@ -10,12 +10,12 @@
 #   thermal_range day-night temperature amplitude                   (MOD11C3)
 #   ground_ice    permafrost / ice in the ground                    (snow, frost, permafrost vs Diviner ice_depth, GRS H2O)
 #   bare_ground   lack of vegetation                                (MOD13C2, MCD12C1)
-#   dryness       aridity                                           (precipitation, humidity)
+#   dryness       low annual precipitation                          (GPM IMERG)
 #   composition   mineral classes                                   (EMIT L3ASA)
 #   low_sun       hours per day with the Sun 0-5 deg above horizon  (computed, features/sun.py)
 #   snow_free     months without snow cover                         (MOD10CM)
-#   volcanic      volcanic field / lava tubes nearby                (context layer)
-#   impact        impact structure nearby                           (context layer)
+#   volcanic      volcano or volcanic field nearby                  (Smithsonian GVP, features/context.py)
+#   impact        confirmed impact structure nearby                 (Earth Impact Database via Wikipedia)
 version: 1
 
 criteria_ready:   # features that already exist in data/processed/grid.bin
@@ -28,21 +28,26 @@ tasks:
     name_uk: Посадка і навігація при посадці
     worlds: [moon, mars]
     weights: {slope_hist: 0.35, roughness: 0.30, relief: 0.10, low_sun: 0.15, bare_ground: 0.10}
-    constraints: [bare_ground_min, flat_patch_exists]
+    # snow_free_window: 42 % of the top 1 % were never free of snow. Not used for mobility: it would drop Askja,
+    # a real rover test site whose 55 km cell holds part of a glacier.
+    constraints: [bare_ground_min, flat_patch_exists, not_ice_sheet, snow_free_window]
 
   - id: mobility
     name: Rover mobility
     name_uk: Мобільність роверів
     worlds: [moon, mars]
     weights: {slope_hist: 0.40, roughness: 0.30, relief: 0.10, bare_ground: 0.10, composition: 0.10}
-    constraints: [bare_ground_min, road_access]
+    constraints: [bare_ground_min, road_access, not_ice_sheet]
 
   - id: eva_geology
     name: Surface EVA and field geology
     name_uk: Виходи на поверхню та польова геологія
     worlds: [moon]
-    weights: {relief: 0.25, slope_hist: 0.20, volcanic: 0.20, impact: 0.15, composition: 0.10, low_sun: 0.10}
-    constraints: [bare_ground_min, safe_access]
+    # Bare ground is a weight here, not a hard filter: geology sites such as Ries or Reunion are outcrops,
+    # quarries and lava fields inside a green 55 km cell, and a cell-mean NDVI filter removes them.
+    # With 0.10, a quarter of the top 1 % were volcanoes under rainforest; 0.20 keeps the top on exposed ground.
+    weights: {relief: 0.15, slope_hist: 0.10, volcanic: 0.20, impact: 0.15, composition: 0.10, low_sun: 0.10, bare_ground: 0.20}
+    constraints: [safe_access, not_ice_sheet]
 
   - id: isru_ice
     name: Ice mining and processing (ISRU)
@@ -56,27 +61,29 @@ tasks:
     name_uk: Робота при низькому Сонці
     worlds: [moon]
     weights: {low_sun: 0.45, relief: 0.20, snow_free: 0.20, bare_ground: 0.15}
-    constraints: [snow_free_window, bare_ground_min]
+    constraints: [snow_free_window, bare_ground_min, not_ice_sheet]
 
   - id: caves
     name: Caves and shelters
     name_uk: Печери та укриття
     worlds: [moon, mars]
     weights: {volcanic: 0.60, bare_ground: 0.20, relief: 0.20}
-    constraints: [safe_access]
+    constraints: [safe_access, not_ice_sheet]
 
   - id: biosignatures
     name: Search for biosignatures
     name_uk: Пошук біосигнатур
     worlds: [mars]
     weights: {dryness: 0.35, composition: 0.30, bare_ground: 0.15, thermal_range: 0.10, cold: 0.10}
-    constraints: [bare_ground_min, protected_ecosystem_flag]
+    # not_ice_sheet: with the dryness layer, ice sheets (the driest places on Earth by precipitation) filled the top.
+    constraints: [bare_ground_min, protected_ecosystem_flag, not_ice_sheet]
 
 constraints:
-  bare_ground_min: Vegetation low enough to see the ground (NDVI threshold, to be tuned).
+  bare_ground_min: Mean NDVI of the cell at most 0.25, or at least 10 % of its 5 km pixels with NDVI at most 0.25.
   flat_patch_exists: A patch with slopes under 8 degrees of the required size exists.
   road_access: A road within a set distance (OpenStreetMap), optional layer.
   safe_access: No access restrictions or hazards that rule out field work.
+  not_ice_sheet: Less than half of the cell under glaciers or ice sheets (field work needs ground, not ice).
   ground_ice_present: Permafrost or ground ice is present in the cell.
   snow_free_window: At least one month with a low Sun and no snow cover.
   protected_ecosystem_flag: Not a hard filter; shows a warning for protected areas.

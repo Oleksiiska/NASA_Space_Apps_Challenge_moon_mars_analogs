@@ -102,3 +102,99 @@ def test_build_layers_from_synthetic_monthly_data_and_merge(tmp_path, monkeypatc
     meta, back = layers.load_layer(p)
     assert [x.name for x in back] == list(es.LST_SPEC)
     assert back[0].values[10, 10] == pytest.approx(300.0)
+
+
+def test_landcover_shares_are_relative_to_land_and_see_small_bare_patches():
+    pct = np.zeros((20, 20, 17), dtype=np.uint8)
+    pct[:, :, 12] = 100                              # cropland everywhere
+    pct[0:10, 0:10, 12] = 0                          # block (0, 0): half sea, half land
+    pct[0:10, 0:10, es.LC_WATER] = 50
+    pct[0:10, 0:10, es.LC_BARREN] = 50
+    pct[0:2, 10:20, 12] = 0                          # block (0, 1): one bare strip, 20 % of the pixels
+    pct[0:2, 10:20, es.LC_BARREN] = 100
+    pct[10:20, 0:10] = 255                           # block (1, 0): fill
+    pct[10:20, 10:20, 12] = 60                       # block (1, 1): ice and open shrubs
+    pct[10:20, 10:20, es.LC_SNOW_ICE] = 30
+    pct[10:20, 10:20, es.LC_OPEN_SHRUB] = 10
+    f = es.landcover_features(pct)
+    assert f["barren_frac"][0, 0] == pytest.approx(1.0)        # all land of the block is bare, sea does not dilute
+    assert f["barren_frac"][0, 1] == pytest.approx(0.2)
+    assert np.isnan(f["barren_frac"][1, 0])
+    assert f["snow_ice_frac"][1, 1] == pytest.approx(0.3) and f["sparse_frac"][1, 1] == pytest.approx(0.1)
+    assert f["barren_frac"][1, 1] == 0.0
+
+
+def test_landcover_all_water_block_is_nan():
+    pct = np.zeros((10, 10, 17), dtype=np.uint8)
+    pct[:, :, es.LC_WATER] = 100
+    assert np.isnan(es.landcover_features(pct)["barren_frac"][0, 0])
+
+
+def test_imerg_is_flipped_to_north_up(tmp_path):
+    h5py = pytest.importorskip("h5py")
+    lat = np.arange(-89.95, 90, 0.1, dtype=np.float32)[:1800]
+    lon = np.arange(-179.95, 180, 0.1, dtype=np.float32)[:3600]
+    pr = np.zeros((1, 3600, 1800), np.float32)
+    pr[0, 0, 1799] = 1.0                       # lon -179.95, lat 89.95: north-west corner
+    pr[0, 5, 3] = -9999.9                      # fill near the south pole
+    p = tmp_path / "3B-MO.MS.MRG.3IMERG.20230101-S000000-E235959.01.V07B.HDF5"
+    with h5py.File(p, "w") as f:
+        f["Grid/lat"], f["Grid/lon"], f["Grid/precipitation"] = lat, lon, pr
+    a = es.read_imerg(p)
+    assert a.shape == (1800, 3600) and a[0, 0] == 1.0 and np.isnan(a[1799 - 3, 5])
+
+
+def test_precip_features_weight_months_by_hours_and_need_ten_months():
+    one = np.ones((2, 2), np.float32)
+    monthly = {m: one * 0.1 for m in range(1, 13)}                  # 0.1 mm/hour all year
+    monthly[2] = np.array([[0.1, np.nan], [0.1, 0.1]], np.float32)
+    monthly[3] = np.array([[0.1, np.nan], [0.1, 0.1]], np.float32)
+    monthly[4] = np.array([[0.1, np.nan], [0.1, 0.1]], np.float32)
+    f = es.precip_features(monthly, 2023)["precip_log_mm"]
+    assert 10 ** f[0, 0] - 1 == pytest.approx(0.1 * 8760, rel=1e-4)
+    assert np.isnan(f[0, 1])                                          # only 9 valid months
+
+
+def test_precip_min_takes_the_driest_land_pixel():
+    rate = np.full((10, 10), 0.1, np.float32)
+    rate[2, 3] = 0.001                                   # dry salt flat inside the first block
+    rate[7, 7] = 0.0                                     # dry sea pixel in the last block
+    monthly = {m: rate.copy() for m in range(1, 13)}
+    land = np.ones((10, 10), bool)
+    land[7, 7] = False
+    f = es.precip_features(monthly, 2023, n=5, land=land)
+    mm = 10 ** f["precip_min_log_mm"] - 1
+    assert mm[0, 0] == pytest.approx(0.001 * 8760, rel=1e-3)
+    assert mm[1, 1] == pytest.approx(0.1 * 8760, rel=1e-3)               # the sea pixel is ignored
+    assert 10 ** f["precip_log_mm"][0, 0] - 1 == pytest.approx((24 * 0.1 + 0.001) / 25 * 8760, rel=1e-3)
+
+
+def test_bare_pixel_share_counts_pixels_not_the_block_mean():
+    ndvi = np.full((10, 10), 0.6, np.float32)
+    ndvi[:2, :] = 0.05                                   # a bare strip: 20 % of the pixels
+    cnt = np.full((10, 10), 12, np.uint8)
+    share = es.bare_pixel_share(ndvi * 12, cnt)
+    assert share[0, 0] == pytest.approx(0.2)
+    cnt[:, :] = 3                                        # too few months everywhere
+    assert np.isnan(es.bare_pixel_share(ndvi * 3, cnt)[0, 0])
+
+
+def test_emit_to_finer_grid_takes_the_nearest_emit_cell():
+    lat = np.array([0.5, 0.0, -0.5])
+    lon = np.array([-0.5, 0.0, 0.5])
+    a = np.arange(9, dtype=np.float32).reshape(3, 3)          # value at (lat[i], lon[j])
+    g = es.emit_to_finer_grid(a, lat, lon, 0.25)
+    assert g.shape == (720, 1440)
+    r, c = int((90 - 0.125) / 0.25), int((0.125 + 180) / 0.25)   # fine cell centred at (0.125, 0.125) -> EMIT (0, 0)
+    assert g[r, c] == 4.0
+    assert np.isnan(g[0, 0])
+
+
+def test_other_grid_sizes_get_their_own_folders(monkeypatch):
+    from analog_finder import config
+    from analog_finder.prep import layers
+    monkeypatch.delenv("ANALOG_CELL_DEG", raising=False)
+    assert config.processed_dir().name == "processed" and layers.layers_dir().name == "layers"
+    monkeypatch.setenv("ANALOG_CELL_DEG", "0.25")
+    assert config.processed_dir().name == "processed_025" and layers.layers_dir().name == "layers_025"
+    assert es._n() == 5

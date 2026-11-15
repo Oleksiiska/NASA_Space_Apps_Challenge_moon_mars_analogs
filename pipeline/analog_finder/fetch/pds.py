@@ -13,10 +13,10 @@ from .common import Result, download
 
 def planned_files(ds: dict) -> list[dict]:
     """Expand one dataset into the list of files to fetch (data files and labels)."""
-    base = ds["base_url"].rstrip("/") + "/"
+    base = ds.get("base_url", "").rstrip("/") + "/"
     out = []
     for f in ds.get("files", []):
-        out.append({"name": f["name"], "url": base + f["name"], "bytes": f.get("bytes")})
+        out.append({"name": f["name"], "url": f.get("url") or base + f["name"], "bytes": f.get("bytes")})
         if f.get("label"):
             out.append({"name": f["label"], "url": base + f["label"], "bytes": None})
     return out

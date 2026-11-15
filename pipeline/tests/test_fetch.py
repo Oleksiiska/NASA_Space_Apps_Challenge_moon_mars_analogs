@@ -151,7 +151,7 @@ def test_earthdata_search_logic_with_a_fake_library(project):
         download=lambda granules, path: downloaded.append((len(granules), path)) or ["f"] * len(granules))
 
     res = earth.fetch_earthdata(year=2023, log=lambda s: None, earthaccess=fake)
-    assert all(r.ok for r in res) and len(res) == 6
+    assert all(r.ok for r in res) and len(res) == 7                  # 7 Earthdata products in the manifest
     assert ("MOD11C3", "061", ("2023-01-01", "2023-12-31")) in log
     assert ("MOD10CM", None, ("2023-01-01", "2023-12-31")) in log          # retried without the version
     by_path = {os.path.basename(p): n for n, p in downloaded}

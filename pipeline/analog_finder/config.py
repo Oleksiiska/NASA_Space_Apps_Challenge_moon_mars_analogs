@@ -37,8 +37,19 @@ def reference_dir() -> Path:
     return data_dir() / "reference"
 
 
+def cell_deg() -> float:
+    """Size of the Earth grid cell in degrees: 0.5 by default, ANALOG_CELL_DEG to build another grid (e.g. 0.25)."""
+    return float(os.environ.get("ANALOG_CELL_DEG", "0.5"))
+
+
+def grid_suffix() -> str:
+    """'' for the default 0.5 degree grid, '_025' for 0.25 and so on: other grids live in their own folders."""
+    cd = cell_deg()
+    return "" if abs(cd - 0.5) < 1e-9 else "_" + f"{cd:g}".replace(".", "")
+
+
 def processed_dir() -> Path:
-    return data_dir() / "processed"
+    return data_dir() / ("processed" + grid_suffix())
 
 
 def resolve(rel: str | os.PathLike) -> Path:

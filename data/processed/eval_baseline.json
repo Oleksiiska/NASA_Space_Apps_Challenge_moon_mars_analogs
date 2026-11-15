@@ -1,0 +1,278 @@
+{
+ "schema": 1,
+ "n_sites": 32,
+ "n_negatives": 38,
+ "metrics": {
+  "pos_pct": {
+   "value": 0.615,
+   "ci95": [
+    0.506,
+    0.709
+   ]
+  },
+  "auc": {
+   "value": 0.921,
+   "ci95": [
+    0.865,
+    0.966
+   ]
+  },
+  "top20": {
+   "value": 0.312,
+   "ci95": [
+    0.156,
+    0.469
+   ]
+  },
+  "glacier_in_top": {
+   "value": 0.0
+  },
+  "green_in_top": {
+   "value": 0.012
+  },
+  "tasks_ranked": {
+   "value": 7,
+   "of": 7
+  }
+ },
+ "red_flags": {
+  "biosignatures": {
+   "glacier": 0.0,
+   "never_snow_free": 0.07,
+   "dense_vegetation": 0.0
+  },
+  "caves": {
+   "glacier": 0.0,
+   "never_snow_free": 0.194,
+   "dense_vegetation": 0.064
+  },
+  "eva_geology": {
+   "glacier": 0.0,
+   "never_snow_free": 0.235,
+   "dense_vegetation": 0.011
+  },
+  "isru_ice": {
+   "glacier": 1.0,
+   "never_snow_free": 1.0,
+   "dense_vegetation": 0.0
+  },
+  "landing": {
+   "glacier": 0.0,
+   "never_snow_free": 0.0,
+   "dense_vegetation": 0.003
+  },
+  "low_sun_ops": {
+   "glacier": 0.0,
+   "never_snow_free": 0.0,
+   "dense_vegetation": 0.0
+  },
+  "mobility": {
+   "glacier": 0.0,
+   "never_snow_free": 0.256,
+   "dense_vegetation": 0.003
+  }
+ },
+ "tasks_ranked": [
+  "biosignatures",
+  "caves",
+  "eva_geology",
+  "isru_ice",
+  "landing",
+  "low_sun_ops",
+  "mobility"
+ ],
+ "sites": {
+  "sp_crater": {
+   "pct": 0.7747,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "kilbourne_hole": {
+   "pct": 0.9696,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "sw_nevada_vf": {
+   "pct": 0.9709,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "askja": {
+   "pct": 0.8913,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "meteor_crater": {
+   "pct": 0.9971,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "rio_grande_del_norte": {
+   "pct": 0.9859,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "ries": {
+   "pct": 0.7782,
+   "auc": 0.8947,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "mistastin": {
+   "pct": 0.8549,
+   "auc": 0.9342,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "sudbury": {
+   "pct": 0.7371,
+   "auc": 0.8947,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "haughton": {
+   "pct": 0.6854,
+   "auc": 1.0,
+   "pairs": 12,
+   "in_grid": true
+  },
+  "mcmurdo_dry_valleys": {
+   "pct": 0.1625,
+   "auc": 0.6667,
+   "pairs": 12,
+   "in_grid": true
+  },
+  "concordia": {
+   "pct": 0.0,
+   "auc": 0.5,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "svalbard": {
+   "pct": 0.4103,
+   "auc": 0.9,
+   "pairs": 10,
+   "in_grid": true
+  },
+  "kangerlussuaq": {
+   "pct": 0.242,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "chill_ice_lava_tube": {
+   "pct": 0.982,
+   "auc": 0.9934,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "hi_seas": {
+   "pct": 0.7152,
+   "auc": 1.0,
+   "pairs": 6,
+   "in_grid": true
+  },
+  "kilauea": {
+   "pct": 0.723,
+   "auc": 0.9868,
+   "pairs": 6,
+   "in_grid": true
+  },
+  "craters_of_the_moon": {
+   "pct": 0.8063,
+   "auc": 0.9921,
+   "pairs": 10,
+   "in_grid": true
+  },
+  "lanzarote_timanfaya": {
+   "pct": 0.9875,
+   "auc": 1.0,
+   "pairs": 6,
+   "in_grid": true
+  },
+  "teide": {
+   "pct": 0.7516,
+   "auc": 1.0,
+   "pairs": 6,
+   "in_grid": true
+  },
+  "etna": {
+   "pct": 0.3114,
+   "auc": 0.6623,
+   "pairs": 6,
+   "in_grid": true
+  },
+  "gros_morne": {
+   "pct": 0.4145,
+   "auc": 0.7895,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "lmas_reunion": {
+   "pct": 0.4719,
+   "auc": 0.75,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "atacama": {
+   "pct": 0.538,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "death_valley": {
+   "pct": 0.4421,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "mdrs": {
+   "pct": 0.6196,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "rio_tinto": {
+   "pct": 0.0,
+   "auc": 0.5,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "tirez": {
+   "pct": 0.4419,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "dallol": {
+   "pct": 0.6038,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  },
+  "makgadikgadi": {
+   "pct": 0.3077,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "qaidam": {
+   "pct": 0.8065,
+   "auc": 1.0,
+   "pairs": 4,
+   "in_grid": true
+  },
+  "pilbara": {
+   "pct": 0.3125,
+   "auc": 1.0,
+   "pairs": 2,
+   "in_grid": true
+  }
+ }
+}

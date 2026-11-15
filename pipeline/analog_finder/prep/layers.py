@@ -30,7 +30,7 @@ class LayerFeature:
 
 
 def layers_dir() -> Path:
-    return config.data_dir() / "interim" / "layers"
+    return config.data_dir() / "interim" / ("layers" + config.grid_suffix())
 
 
 def save_layer(layer: str, features: list[LayerFeature], cell_deg: float = 0.5) -> Path:

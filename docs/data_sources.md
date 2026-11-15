@@ -91,6 +91,30 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 - Citation: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com.
 - Licence: Public domain.
 
+**Smithsonian Global Volcanism Program, Volcanoes of the World (Holocene and Pleistocene volcanoes)** (`earth_gvp_volcanoes`)
+
+- Official resource: none (auxiliary context layer). Agency: Smithsonian Institution. Access: `open`.
+- Source: GVP GeoServer WFS, layers `Smithsonian_VOTW_Holocene_Volcanoes` and `Smithsonian_VOTW_Pleistocene_Volcanoes` (GeoJSON).
+- Size: 2 file(s), about 3.7 MB. Saved to `data/raw/earth/context`. Used for: volcanic.
+- Citation: Global Volcanism Program (2024). Volcanoes of the World (v. 5.2.x). Smithsonian Institution. doi:10.5479/si.GVP.VOTW5-2024.5.2
+- Licence: Smithsonian terms of use; cite the Global Volcanism Program.
+
+**Confirmed impact structures on Earth** (`earth_impact_structures`)
+
+- Official resource: none (auxiliary context layer). Agency: Wikipedia / Wikidata. Access: `open`.
+- Source: raw wikitext of the Wikipedia article "List of impact structures on Earth" (compiled from the Earth Impact Database) and a Wikidata SPARQL query for items that are instances of "impact crater" (Q55818) with coordinates on Earth. Only structures in the confirmed tables of the article are kept; Wikidata only fills in missing coordinates by name.
+- Size: 2 file(s), about 0.2 MB. Saved to `data/raw/earth/context`. Used for: impact.
+- Citation: Wikipedia contributors, "List of impact structures on Earth" (CC BY-SA 4.0); Earth Impact Database, Planetary and Space Science Centre, University of New Brunswick; Wikidata (CC0).
+- Licence: CC BY-SA 4.0 (Wikipedia), CC0 (Wikidata).
+
+**GPM IMERG Final Precipitation, monthly, 0.1 degree (GPM_3IMERGM)** (`earth_imerg_monthly`)
+
+- Official resource: NASA Earthdata Search. Agency: NASA. Access: `earthdata_login`.
+- Source: Earthdata short name `GPM_3IMERGM`, version 07
+- Size: 12 monthly files of 2023, about 214 MB. Saved to `data/raw/earth/imerg`. Used for: dryness.
+- Citation: Huffman, G.J., E.F. Stocker, D.T. Bolvin, E.J. Nelkin, J. Tan (2023). GPM IMERG Final Precipitation L3 1 month 0.1 degree x 0.1 degree V07. GES DISC. doi:10.5067/GPM/IMERG/3B-MONTH/07
+- Licence: NASA EOSDIS open data policy.
+
 **NASA SRTM Global 30 arc second (about 926 m), 90N to 60S** (`earth_srtmgl30`)
 
 - Official resource: NASA Earthdata Search. Agency: NASA. Access: `earthdata_login`.
@@ -163,6 +187,9 @@ Access: `open` needs no account; `earthdata_login` needs the free NASA Earthdata
 | `data/reference/known_analogs.csv` | Site list and coordinates: the Wikipedia articles "Terrestrial analogue site" and "List of impact structures on Earth" and the articles of single sites (text under CC BY-SA 4.0), Cavalazzi et al. 2019 (Astrobiology 19:553) for Dallol. Uses: USGS, NASA NTRS, Europlanet, CORDIS and National Park Service pages. Each row names its own sources in `coord_source` and `use_source`. |
 | `pipeline/config/targets.yaml`, `data/reference/targets.geojson` | Coordinates from the USGS Gazetteer of Planetary Nomenclature, the LROC site, the PDS Orbital Data Explorer landing-site table and Wikipedia; the source of each target is in its `source` field. |
 | `data/reference/environment_gaps.json` | NASA Planetary Fact Sheets (NSSDCA); Hassler et al. 2014 (Science 343, 1244797) for Mars radiation; Zhang et al. 2020 (Science Advances 6, eaaz1334) for lunar radiation; UNSCEAR 2008 for the Earth background. |
+| `data/reference/volcanoes.csv` | Written by `python -m analog_finder context` from the Smithsonian GVP lists (`earth_gvp_volcanoes`): name, position, Holocene or Pleistocene, volcano type. |
+| `data/reference/impact_structures.csv` | Written by `python -m analog_finder context` from the confirmed tables of the Wikipedia list (`earth_impact_structures`); coordinates missing there are taken from Wikidata by name, and structures still without coordinates are left out (the command lists them). |
+| `data/reference/negative_sites.csv` | Hand-picked places that are clearly not Moon or Mars analogs (rainforest, farmland, wetland), used only by `python -m analog_finder evaluate`. |
 | `data/processed/grid.*`, `lowsun_by_latitude.csv` | Land and ice masks from Natural Earth; the low-Sun hours are computed from solar geometry in `features/sun.py` and were checked against the pvlib library. |
 
 ### Columns of known_analogs.csv

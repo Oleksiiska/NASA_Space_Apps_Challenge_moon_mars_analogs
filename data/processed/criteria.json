@@ -39,204 +39,216 @@
    "offset": 533298
   },
   {
-   "name": "slope_hist",
-   "target": "shackleton_ridge",
+   "name": "dryness",
+   "target": null,
    "offset": 622181
   },
   {
-   "name": "relief",
-   "target": "shackleton_ridge",
+   "name": "volcanic",
+   "target": null,
    "offset": 711064
   },
   {
-   "name": "roughness",
-   "target": "shackleton_ridge",
+   "name": "impact",
+   "target": null,
    "offset": 799947
   },
   {
    "name": "slope_hist",
-   "target": "shackleton_crater",
+   "target": "shackleton_ridge",
    "offset": 888830
   },
   {
    "name": "relief",
-   "target": "shackleton_crater",
+   "target": "shackleton_ridge",
    "offset": 977713
   },
   {
    "name": "roughness",
-   "target": "shackleton_crater",
+   "target": "shackleton_ridge",
    "offset": 1066596
   },
   {
    "name": "slope_hist",
-   "target": "de_gerlache_crater",
+   "target": "shackleton_crater",
    "offset": 1155479
   },
   {
    "name": "relief",
-   "target": "de_gerlache_crater",
+   "target": "shackleton_crater",
    "offset": 1244362
   },
   {
    "name": "roughness",
-   "target": "de_gerlache_crater",
+   "target": "shackleton_crater",
    "offset": 1333245
   },
   {
    "name": "slope_hist",
-   "target": "mons_mouton",
+   "target": "de_gerlache_crater",
    "offset": 1422128
   },
   {
    "name": "relief",
-   "target": "mons_mouton",
+   "target": "de_gerlache_crater",
    "offset": 1511011
   },
   {
    "name": "roughness",
-   "target": "mons_mouton",
+   "target": "de_gerlache_crater",
    "offset": 1599894
   },
   {
    "name": "slope_hist",
-   "target": "malapert",
+   "target": "mons_mouton",
    "offset": 1688777
   },
   {
    "name": "relief",
-   "target": "malapert",
+   "target": "mons_mouton",
    "offset": 1777660
   },
   {
    "name": "roughness",
-   "target": "malapert",
+   "target": "mons_mouton",
    "offset": 1866543
   },
   {
    "name": "slope_hist",
-   "target": "jezero",
+   "target": "malapert",
    "offset": 1955426
   },
   {
    "name": "relief",
-   "target": "jezero",
+   "target": "malapert",
    "offset": 2044309
   },
   {
    "name": "roughness",
-   "target": "jezero",
+   "target": "malapert",
    "offset": 2133192
   },
   {
    "name": "slope_hist",
-   "target": "arcadia_planitia",
+   "target": "jezero",
    "offset": 2222075
   },
   {
    "name": "relief",
-   "target": "arcadia_planitia",
+   "target": "jezero",
    "offset": 2310958
   },
   {
    "name": "roughness",
-   "target": "arcadia_planitia",
+   "target": "jezero",
    "offset": 2399841
   },
   {
    "name": "slope_hist",
-   "target": "gale",
+   "target": "arcadia_planitia",
    "offset": 2488724
   },
   {
    "name": "relief",
-   "target": "gale",
+   "target": "arcadia_planitia",
    "offset": 2577607
   },
   {
    "name": "roughness",
-   "target": "gale",
+   "target": "arcadia_planitia",
    "offset": 2666490
   },
   {
    "name": "slope_hist",
-   "target": "phoenix",
+   "target": "gale",
    "offset": 2755373
   },
   {
    "name": "relief",
-   "target": "phoenix",
+   "target": "gale",
    "offset": 2844256
   },
   {
    "name": "roughness",
-   "target": "phoenix",
+   "target": "gale",
    "offset": 2933139
   },
   {
    "name": "slope_hist",
-   "target": "viking2_utopia",
+   "target": "phoenix",
    "offset": 3022022
   },
   {
    "name": "relief",
-   "target": "viking2_utopia",
+   "target": "phoenix",
    "offset": 3110905
   },
   {
    "name": "roughness",
-   "target": "viking2_utopia",
+   "target": "phoenix",
    "offset": 3199788
   },
   {
    "name": "slope_hist",
-   "target": "meridiani",
+   "target": "viking2_utopia",
    "offset": 3288671
   },
   {
    "name": "relief",
-   "target": "meridiani",
+   "target": "viking2_utopia",
    "offset": 3377554
   },
   {
    "name": "roughness",
-   "target": "meridiani",
+   "target": "viking2_utopia",
    "offset": 3466437
   },
   {
    "name": "slope_hist",
-   "target": "mawrth_vallis",
+   "target": "meridiani",
    "offset": 3555320
   },
   {
    "name": "relief",
-   "target": "mawrth_vallis",
+   "target": "meridiani",
    "offset": 3644203
   },
   {
    "name": "roughness",
-   "target": "mawrth_vallis",
+   "target": "meridiani",
    "offset": 3733086
+  },
+  {
+   "name": "slope_hist",
+   "target": "mawrth_vallis",
+   "offset": 3821969
+  },
+  {
+   "name": "relief",
+   "target": "mawrth_vallis",
+   "offset": 3910852
+  },
+  {
+   "name": "roughness",
+   "target": "mawrth_vallis",
+   "offset": 3999735
   }
  ],
  "constraint_bits": {
   "bare_ground_min": 0,
   "flat_patch_exists": 1,
   "ground_ice_present": 2,
-  "snow_free_window": 3
+  "snow_free_window": 3,
+  "not_ice_sheet": 4
  },
  "constraints_not_checked": [
   "road_access",
   "safe_access",
   "protected_ecosystem_flag"
  ],
- "constraint_offset": 3821969,
+ "constraint_offset": 4088618,
  "min_coverage": 0.5,
- "no_data_yet": [
-  "dryness",
-  "volcanic",
-  "impact"
- ],
+ "no_data_yet": [],
  "composition_worlds": [
   "mars"
  ],
@@ -258,7 +270,9 @@
    },
    "constraints": [
     "bare_ground_min",
-    "flat_patch_exists"
+    "flat_patch_exists",
+    "not_ice_sheet",
+    "snow_free_window"
    ]
   },
   {
@@ -278,7 +292,8 @@
    },
    "constraints": [
     "bare_ground_min",
-    "road_access"
+    "road_access",
+    "not_ice_sheet"
    ]
   },
   {
@@ -289,16 +304,17 @@
     "moon"
    ],
    "weights": {
-    "relief": 0.25,
-    "slope_hist": 0.2,
+    "relief": 0.15,
+    "slope_hist": 0.1,
     "volcanic": 0.2,
     "impact": 0.15,
     "composition": 0.1,
-    "low_sun": 0.1
+    "low_sun": 0.1,
+    "bare_ground": 0.2
    },
    "constraints": [
-    "bare_ground_min",
-    "safe_access"
+    "safe_access",
+    "not_ice_sheet"
    ]
   },
   {
@@ -335,7 +351,8 @@
    },
    "constraints": [
     "snow_free_window",
-    "bare_ground_min"
+    "bare_ground_min",
+    "not_ice_sheet"
    ]
   },
   {
@@ -352,7 +369,8 @@
     "relief": 0.2
    },
    "constraints": [
-    "safe_access"
+    "safe_access",
+    "not_ice_sheet"
    ]
   },
   {
@@ -371,7 +389,8 @@
    },
    "constraints": [
     "bare_ground_min",
-    "protected_ecosystem_flag"
+    "protected_ecosystem_flag",
+    "not_ice_sheet"
    ]
   }
  ]
