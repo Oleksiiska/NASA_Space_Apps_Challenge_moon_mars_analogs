@@ -239,7 +239,8 @@
   "flat_patch_exists": 1,
   "ground_ice_present": 2,
   "snow_free_window": 3,
-  "road_access": 4
+  "sun_window": 4,
+  "road_access": 5
  },
  "constraints_not_checked": [
   "safe_access",
@@ -265,12 +266,15 @@
     "slope_hist": 0.35,
     "roughness": 0.3,
     "relief": 0.1,
-    "low_sun": 0.15,
     "bare_ground": 0.1
    },
+   "show_sun_window": true,
    "constraints": [
     "bare_ground_min",
     "flat_patch_exists"
+   ],
+   "optional_constraints": [
+    "sun_window"
    ]
   },
   {
@@ -305,12 +309,15 @@
     "slope_hist": 0.2,
     "volcanic": 0.2,
     "impact": 0.15,
-    "composition": 0.1,
-    "low_sun": 0.1
+    "composition": 0.1
    },
+   "show_sun_window": true,
    "constraints": [
     "bare_ground_min",
     "safe_access"
+   ],
+   "optional_constraints": [
+    "sun_window"
    ]
   },
   {
@@ -340,13 +347,13 @@
     "moon"
    ],
    "weights": {
-    "low_sun": 0.45,
     "relief": 0.2,
     "snow_free": 0.2,
     "bare_ground": 0.15
    },
+   "show_sun_window": true,
    "constraints": [
-    "snow_free_window",
+    "sun_window",
     "bare_ground_min"
    ]
   },

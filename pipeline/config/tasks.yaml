@@ -1,6 +1,15 @@
 # Test-task profiles: which criteria matter for which kind of field test.
-# Weights are a starting point for the sliders in the web app; within a task
-# they sum to 1. `constraints` are hard filters (a cell that fails gets score 0).
+# Weights are a starting point for the sliders in the web app. The score is a
+# weighted mean, so only the ratios matter. `constraints` are hard filters (a cell
+# that fails gets no score).
+#
+# Low Sun is not a weight. It depends only on latitude and season, so it says
+# *when* to test, not *where*: every place north of ~60 deg has a long low-Sun
+# season. Tasks with `show_sun_window: true` show the low-Sun window of every
+# cell next to its score (hours per day with the Sun 0-5 deg up in a snow-free
+# month, and that month); the `sun_window` filter requires at least 2 h of it.
+# `optional_constraints` are filters the page offers unchecked; validation and
+# the stability check use only `constraints`.
 #
 # Criteria and the features they are computed from:
 #   slope_hist    similarity of slope distributions at ~1 km step   (terrain)
@@ -12,7 +21,7 @@
 #   bare_ground   lack of vegetation                                (MOD13C2, MCD12C1)
 #   dryness       aridity                                           (precipitation, humidity)
 #   composition   mineral classes                                   (EMIT L3ASA)
-#   low_sun       hours per day with the Sun 0-5 deg above horizon  (computed, features/sun.py)
+#   low_sun       hours per day with the Sun 0-5 deg above horizon  (computed, features/sun.py; shown, never weighted)
 #   snow_free     months without snow cover                         (MOD10CM)
 #   volcanic      volcanic field / lava tubes nearby                (context layer)
 #   impact        impact structure nearby                           (context layer)
@@ -27,8 +36,10 @@ tasks:
     name: Landing and descent navigation
     name_uk: Посадка і навігація при посадці
     worlds: [moon, mars]
-    weights: {slope_hist: 0.35, roughness: 0.30, relief: 0.10, low_sun: 0.15, bare_ground: 0.10}
+    weights: {slope_hist: 0.35, roughness: 0.30, relief: 0.10, bare_ground: 0.10}
+    show_sun_window: true
     constraints: [bare_ground_min, flat_patch_exists]
+    optional_constraints: [sun_window]
 
   - id: mobility
     name: Rover mobility
@@ -41,8 +52,10 @@ tasks:
     name: Surface EVA and field geology
     name_uk: Виходи на поверхню та польова геологія
     worlds: [moon]
-    weights: {relief: 0.25, slope_hist: 0.20, volcanic: 0.20, impact: 0.15, composition: 0.10, low_sun: 0.10}
+    weights: {relief: 0.25, slope_hist: 0.20, volcanic: 0.20, impact: 0.15, composition: 0.10}
+    show_sun_window: true
     constraints: [bare_ground_min, safe_access]
+    optional_constraints: [sun_window]
 
   - id: isru_ice
     name: Ice mining and processing (ISRU)
@@ -55,8 +68,9 @@ tasks:
     name: Operations under a low Sun
     name_uk: Робота при низькому Сонці
     worlds: [moon]
-    weights: {low_sun: 0.45, relief: 0.20, snow_free: 0.20, bare_ground: 0.15}
-    constraints: [snow_free_window, bare_ground_min]
+    weights: {relief: 0.20, snow_free: 0.20, bare_ground: 0.15}
+    show_sun_window: true
+    constraints: [sun_window, bare_ground_min]
 
   - id: caves
     name: Caves and shelters
@@ -78,5 +92,6 @@ constraints:
   road_access: A major road of Natural Earth 1:10M within 50 km of the cell centre (small and unpaved roads are not in that map).
   safe_access: No access restrictions or hazards that rule out field work.
   ground_ice_present: Permafrost or ground ice is present in the cell.
-  snow_free_window: At least one month with a low Sun and no snow cover.
+  snow_free_window: At least one month without snow cover.
+  sun_window: At least 2 h a day with the Sun 0-5 degrees up in a month with snow cover under 10 %.
   protected_ecosystem_flag: Not a hard filter; shows a warning for protected areas.

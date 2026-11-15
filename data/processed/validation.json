@@ -557,9 +557,9 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.862,
-   "percentile_filtered": 0.836,
+   "coverage": 0.89,
+   "percentile": 0.88,
+   "percentile_filtered": 0.872,
    "failed_filters": []
   },
   {
@@ -568,9 +568,9 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.384,
-   "percentile_filtered": 0.343,
+   "coverage": 0.89,
+   "percentile": 0.505,
+   "percentile_filtered": 0.524,
    "failed_filters": []
   },
   {
@@ -579,9 +579,9 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.819,
-   "percentile_filtered": 0.788,
+   "coverage": 0.89,
+   "percentile": 0.846,
+   "percentile_filtered": 0.837,
    "failed_filters": []
   },
   {
@@ -590,9 +590,9 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.919,
-   "percentile_filtered": 0.902,
+   "coverage": 0.89,
+   "percentile": 0.905,
+   "percentile_filtered": 0.899,
    "failed_filters": []
   },
   {
@@ -601,9 +601,9 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.954,
-   "percentile_filtered": 0.945,
+   "coverage": 0.89,
+   "percentile": 0.959,
+   "percentile_filtered": 0.959,
    "failed_filters": []
   },
   {
@@ -612,9 +612,9 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.762,
-   "percentile_filtered": 0.729,
+   "coverage": 0.89,
+   "percentile": 0.8,
+   "percentile_filtered": 0.788,
    "failed_filters": []
   },
   {
@@ -623,8 +623,8 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.904,
+   "coverage": 0.89,
+   "percentile": 0.906,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -636,8 +636,8 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.927,
+   "coverage": 0.89,
+   "percentile": 0.923,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -649,8 +649,8 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.908,
+   "coverage": 0.89,
+   "percentile": 0.912,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -662,9 +662,9 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.943,
-   "percentile_filtered": 0.932,
+   "coverage": 0.89,
+   "percentile": 0.922,
+   "percentile_filtered": 0.918,
    "failed_filters": []
   },
   {
@@ -673,9 +673,9 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.949,
-   "percentile_filtered": 0.939,
+   "coverage": 0.89,
+   "percentile": 0.923,
+   "percentile_filtered": 0.919,
    "failed_filters": []
   },
   {
@@ -684,7 +684,7 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
+   "coverage": 0.89,
    "percentile": 0.999,
    "percentile_filtered": null,
    "failed_filters": [
@@ -697,8 +697,8 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.977,
+   "coverage": 0.89,
+   "percentile": 0.983,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -710,9 +710,9 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.914,
-   "percentile_filtered": 0.896,
+   "coverage": 0.89,
+   "percentile": 0.92,
+   "percentile_filtered": 0.915,
    "failed_filters": []
   },
   {
@@ -721,9 +721,9 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.847,
-   "percentile_filtered": 0.819,
+   "coverage": 0.89,
+   "percentile": 0.879,
+   "percentile_filtered": 0.87,
    "failed_filters": []
   },
   {
@@ -732,8 +732,8 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.993,
+   "coverage": 0.89,
+   "percentile": 0.994,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -745,8 +745,8 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.956,
+   "coverage": 0.89,
+   "percentile": 0.958,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -758,8 +758,8 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.769,
+   "coverage": 0.89,
+   "percentile": 0.77,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -771,8 +771,8 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.997,
+   "coverage": 0.89,
+   "percentile": 0.999,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -784,9 +784,9 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.857,
-   "percentile_filtered": 0.828,
+   "coverage": 0.89,
+   "percentile": 0.879,
+   "percentile_filtered": 0.871,
    "failed_filters": []
   },
   {
@@ -795,9 +795,9 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.368,
-   "percentile_filtered": 0.338,
+   "coverage": 0.89,
+   "percentile": 0.506,
+   "percentile_filtered": 0.525,
    "failed_filters": []
   },
   {
@@ -806,9 +806,9 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.816,
-   "percentile_filtered": 0.784,
+   "coverage": 0.89,
+   "percentile": 0.845,
+   "percentile_filtered": 0.836,
    "failed_filters": []
   },
   {
@@ -817,9 +817,9 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.929,
-   "percentile_filtered": 0.913,
+   "coverage": 0.89,
+   "percentile": 0.915,
+   "percentile_filtered": 0.91,
    "failed_filters": []
   },
   {
@@ -828,9 +828,9 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.958,
-   "percentile_filtered": 0.95,
+   "coverage": 0.89,
+   "percentile": 0.963,
+   "percentile_filtered": 0.962,
    "failed_filters": []
   },
   {
@@ -839,9 +839,9 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.758,
-   "percentile_filtered": 0.729,
+   "coverage": 0.89,
+   "percentile": 0.796,
+   "percentile_filtered": 0.786,
    "failed_filters": []
   },
   {
@@ -850,8 +850,8 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.902,
+   "coverage": 0.89,
+   "percentile": 0.905,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -863,8 +863,8 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.943,
+   "coverage": 0.89,
+   "percentile": 0.938,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -876,8 +876,8 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.902,
+   "coverage": 0.89,
+   "percentile": 0.907,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -889,9 +889,9 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.944,
-   "percentile_filtered": 0.932,
+   "coverage": 0.89,
+   "percentile": 0.92,
+   "percentile_filtered": 0.915,
    "failed_filters": []
   },
   {
@@ -900,9 +900,9 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.946,
-   "percentile_filtered": 0.935,
+   "coverage": 0.89,
+   "percentile": 0.916,
+   "percentile_filtered": 0.911,
    "failed_filters": []
   },
   {
@@ -911,8 +911,8 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.999,
+   "coverage": 0.89,
+   "percentile": 1.0,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -924,8 +924,8 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.98,
+   "coverage": 0.89,
+   "percentile": 0.986,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -937,9 +937,9 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.905,
-   "percentile_filtered": 0.883,
+   "coverage": 0.89,
+   "percentile": 0.914,
+   "percentile_filtered": 0.909,
    "failed_filters": []
   },
   {
@@ -948,9 +948,9 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.833,
-   "percentile_filtered": 0.802,
+   "coverage": 0.89,
+   "percentile": 0.873,
+   "percentile_filtered": 0.865,
    "failed_filters": []
   },
   {
@@ -959,8 +959,8 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.992,
+   "coverage": 0.89,
+   "percentile": 0.993,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -972,8 +972,8 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.956,
+   "coverage": 0.89,
+   "percentile": 0.959,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -985,7 +985,7 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
+   "coverage": 0.89,
    "percentile": 0.772,
    "percentile_filtered": null,
    "failed_filters": [
@@ -998,8 +998,8 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.9,
-   "percentile": 0.996,
+   "coverage": 0.89,
+   "percentile": 0.998,
    "percentile_filtered": null,
    "failed_filters": [
     "bare_ground_min"
@@ -1166,8 +1166,8 @@
    "world": "moon",
    "in_grid": true,
    "coverage": 1.0,
-   "percentile": 0.748,
-   "percentile_filtered": 0.922,
+   "percentile": 0.459,
+   "percentile_filtered": 0.906,
    "failed_filters": []
   },
   {
@@ -1176,11 +1176,11 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.795,
+   "coverage": 0.36,
+   "percentile": null,
    "percentile_filtered": null,
    "failed_filters": [
-    "snow_free_window"
+    "sun_window"
    ]
   },
   {
@@ -1189,11 +1189,11 @@
    "target": "shackleton_ridge",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.688,
+   "coverage": 0.36,
+   "percentile": null,
    "percentile_filtered": null,
    "failed_filters": [
-    "snow_free_window"
+    "sun_window"
    ]
   },
   {
@@ -1203,10 +1203,10 @@
    "world": "moon",
    "in_grid": true,
    "coverage": 1.0,
-   "percentile": 0.767,
+   "percentile": 0.434,
    "percentile_filtered": null,
    "failed_filters": [
-    "snow_free_window"
+    "sun_window"
    ]
   },
   {
@@ -1216,8 +1216,8 @@
    "world": "moon",
    "in_grid": true,
    "coverage": 1.0,
-   "percentile": 0.75,
-   "percentile_filtered": 0.929,
+   "percentile": 0.466,
+   "percentile_filtered": 0.914,
    "failed_filters": []
   },
   {
@@ -1226,11 +1226,11 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.797,
+   "coverage": 0.36,
+   "percentile": null,
    "percentile_filtered": null,
    "failed_filters": [
-    "snow_free_window"
+    "sun_window"
    ]
   },
   {
@@ -1239,11 +1239,11 @@
    "target": "mons_mouton",
    "world": "moon",
    "in_grid": true,
-   "coverage": 0.65,
-   "percentile": 0.691,
+   "coverage": 0.36,
+   "percentile": null,
    "percentile_filtered": null,
    "failed_filters": [
-    "snow_free_window"
+    "sun_window"
    ]
   },
   {
@@ -1253,10 +1253,10 @@
    "world": "moon",
    "in_grid": true,
    "coverage": 1.0,
-   "percentile": 0.765,
+   "percentile": 0.415,
    "percentile_filtered": null,
    "failed_filters": [
-    "snow_free_window"
+    "sun_window"
    ]
   },
   {
@@ -1626,19 +1626,19 @@
   "all": {
    "scores_only": {
     "pairs": 136,
-    "scored": 132,
-    "median_percentile": 0.774,
-    "share_top20": 0.462,
-    "share_top10": 0.326,
-    "share_above_median": 0.879
+    "scored": 128,
+    "median_percentile": 0.782,
+    "share_top20": 0.484,
+    "share_top10": 0.336,
+    "share_above_median": 0.859
    },
    "with_filters": {
     "pairs": 136,
     "scored": 78,
-    "median_percentile": 0.716,
-    "share_top20": 0.41,
-    "share_top10": 0.295,
-    "share_above_median": 0.603
+    "median_percentile": 0.722,
+    "share_top20": 0.436,
+    "share_top10": 0.308,
+    "share_above_median": 0.628
    }
   },
   "context_tasks": [
@@ -1686,18 +1686,18 @@
     "scores_only": {
      "pairs": 38,
      "scored": 38,
-     "median_percentile": 0.923,
-     "share_top20": 0.842,
+     "median_percentile": 0.915,
+     "share_top20": 0.868,
      "share_top10": 0.684,
-     "share_above_median": 0.947
+     "share_above_median": 1.0
     },
     "with_filters": {
      "pairs": 38,
      "scored": 20,
-     "median_percentile": 0.859,
-     "share_top20": 0.7,
-     "share_top10": 0.4,
-     "share_above_median": 0.9
+     "median_percentile": 0.885,
+     "share_top20": 0.8,
+     "share_top10": 0.45,
+     "share_above_median": 1.0
     }
    },
    "isru_ice": {
@@ -1721,16 +1721,16 @@
    "low_sun_ops": {
     "scores_only": {
      "pairs": 8,
-     "scored": 8,
-     "median_percentile": 0.758,
+     "scored": 4,
+     "median_percentile": 0.447,
      "share_top20": 0.0,
      "share_top10": 0.0,
-     "share_above_median": 1.0
+     "share_above_median": 0.0
     },
     "with_filters": {
      "pairs": 8,
      "scored": 2,
-     "median_percentile": 0.925,
+     "median_percentile": 0.91,
      "share_top20": 1.0,
      "share_top10": 1.0,
      "share_above_median": 1.0
@@ -1758,11 +1758,11 @@
   "independent": {
    "scores_only": {
     "pairs": 86,
-    "scored": 82,
-    "median_percentile": 0.696,
-    "share_top20": 0.207,
-    "share_top10": 0.061,
-    "share_above_median": 0.829
+    "scored": 78,
+    "median_percentile": 0.673,
+    "share_top20": 0.218,
+    "share_top10": 0.064,
+    "share_above_median": 0.769
    },
    "with_filters": {
     "pairs": 86,
@@ -1783,32 +1783,32 @@
     "task": "landing",
     "target": "shackleton_ridge",
     "top_cells": 1175,
-    "mean_overlap": 0.982,
-    "min_overlap": 0.957,
+    "mean_overlap": 0.983,
+    "min_overlap": 0.97,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "landing",
     "target": "mons_mouton",
     "top_cells": 1175,
-    "mean_overlap": 0.973,
-    "min_overlap": 0.932,
+    "mean_overlap": 0.983,
+    "min_overlap": 0.964,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "landing",
     "target": "jezero",
     "top_cells": 1175,
-    "mean_overlap": 0.928,
-    "min_overlap": 0.826,
+    "mean_overlap": 0.943,
+    "min_overlap": 0.9,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "landing",
     "target": "arcadia_planitia",
     "top_cells": 1175,
-    "mean_overlap": 0.952,
-    "min_overlap": 0.909,
+    "mean_overlap": 0.97,
+    "min_overlap": 0.889,
     "share_dense_vegetation": 0.0
    },
    {
@@ -1823,15 +1823,15 @@
     "task": "mobility",
     "target": "mons_mouton",
     "top_cells": 518,
-    "mean_overlap": 0.976,
-    "min_overlap": 0.954,
+    "mean_overlap": 0.977,
+    "min_overlap": 0.942,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "mobility",
     "target": "jezero",
     "top_cells": 518,
-    "mean_overlap": 0.95,
+    "mean_overlap": 0.948,
     "min_overlap": 0.917,
     "share_dense_vegetation": 0.0
    },
@@ -1839,24 +1839,24 @@
     "task": "mobility",
     "target": "arcadia_planitia",
     "top_cells": 518,
-    "mean_overlap": 0.953,
-    "min_overlap": 0.898,
+    "mean_overlap": 0.954,
+    "min_overlap": 0.905,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "eva_geology",
     "target": "shackleton_ridge",
     "top_cells": 1175,
-    "mean_overlap": 0.956,
-    "min_overlap": 0.82,
+    "mean_overlap": 0.972,
+    "min_overlap": 0.928,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "eva_geology",
     "target": "mons_mouton",
     "top_cells": 1175,
-    "mean_overlap": 0.947,
-    "min_overlap": 0.822,
+    "mean_overlap": 0.971,
+    "min_overlap": 0.945,
     "share_dense_vegetation": 0.0
    },
    {
@@ -1879,47 +1879,47 @@
     "task": "isru_ice",
     "target": "jezero",
     "top_cells": 2295,
-    "mean_overlap": 0.992,
-    "min_overlap": 0.99,
+    "mean_overlap": 0.993,
+    "min_overlap": 0.991,
     "share_dense_vegetation": null
    },
    {
     "task": "isru_ice",
     "target": "arcadia_planitia",
     "top_cells": 2295,
-    "mean_overlap": 0.992,
+    "mean_overlap": 0.993,
     "min_overlap": 0.99,
     "share_dense_vegetation": null
    },
    {
     "task": "low_sun_ops",
     "target": "shackleton_ridge",
-    "top_cells": 931,
-    "mean_overlap": 0.708,
-    "min_overlap": 0.343,
+    "top_cells": 278,
+    "mean_overlap": 0.88,
+    "min_overlap": 0.741,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "low_sun_ops",
     "target": "mons_mouton",
-    "top_cells": 931,
-    "mean_overlap": 0.798,
-    "min_overlap": 0.507,
+    "top_cells": 278,
+    "mean_overlap": 0.894,
+    "min_overlap": 0.698,
     "share_dense_vegetation": 0.0
    },
    {
     "task": "caves",
     "target": "shackleton_ridge",
     "top_cells": 4444,
-    "mean_overlap": 0.919,
-    "min_overlap": 0.843,
+    "mean_overlap": 0.918,
+    "min_overlap": 0.84,
     "share_dense_vegetation": 0.173
    },
    {
     "task": "caves",
     "target": "mons_mouton",
     "top_cells": 4444,
-    "mean_overlap": 0.888,
+    "mean_overlap": 0.913,
     "min_overlap": 0.785,
     "share_dense_vegetation": 0.166
    },
@@ -1928,22 +1928,22 @@
     "target": "jezero",
     "top_cells": 4444,
     "mean_overlap": 0.936,
-    "min_overlap": 0.841,
+    "min_overlap": 0.881,
     "share_dense_vegetation": 0.143
    },
    {
     "task": "caves",
     "target": "arcadia_planitia",
     "top_cells": 4444,
-    "mean_overlap": 0.947,
-    "min_overlap": 0.884,
+    "mean_overlap": 0.93,
+    "min_overlap": 0.867,
     "share_dense_vegetation": 0.041
    },
    {
     "task": "biosignatures",
     "target": "jezero",
     "top_cells": 2409,
-    "mean_overlap": 0.915,
+    "mean_overlap": 0.886,
     "min_overlap": 0.119,
     "share_dense_vegetation": 0.0
    },
@@ -1951,22 +1951,22 @@
     "task": "biosignatures",
     "target": "arcadia_planitia",
     "top_cells": 2409,
-    "mean_overlap": 0.75,
+    "mean_overlap": 0.867,
     "min_overlap": 0.119,
     "share_dense_vegetation": 0.0
    }
   ],
   "by_task": {
    "biosignatures": {
-    "mean_overlap": 0.833,
+    "mean_overlap": 0.877,
     "share_dense_vegetation": 0.0
    },
    "caves": {
-    "mean_overlap": 0.922,
+    "mean_overlap": 0.924,
     "share_dense_vegetation": 0.131
    },
    "eva_geology": {
-    "mean_overlap": 0.952,
+    "mean_overlap": 0.972,
     "share_dense_vegetation": 0.0
    },
    "isru_ice": {
@@ -1974,11 +1974,11 @@
     "share_dense_vegetation": 0.0
    },
    "landing": {
-    "mean_overlap": 0.959,
+    "mean_overlap": 0.97,
     "share_dense_vegetation": 0.0
    },
    "low_sun_ops": {
-    "mean_overlap": 0.753,
+    "mean_overlap": 0.887,
     "share_dense_vegetation": 0.0
    },
    "mobility": {

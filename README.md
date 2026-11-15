@@ -31,7 +31,8 @@ This is a screening tool, not an engineering assessment or a site-selection reco
 ## What the page does
 
 - Map of all land cells coloured by the score of the chosen task and target; 10 best regions (at least 600 km apart); sliders for every weight and switches for the hard filters.
-- **Low-Sun window** map mode: for any month, hours per day with the Sun 0–5 degrees up, with cells under snow that month hatched.
+- **Low-Sun window** map mode: for any month, hours per day with the Sun 0–5 degrees up, with cells under snow that month hatched; a play button runs through the year.
+- Low Sun is kept out of the similarity score (it depends only on latitude and season). Each candidate shows its usable window instead, e.g. 4.4 h a day in July, and tasks that need lunar-like light can require at least 2 h of it.
 - Card of any cell: score, rank, data coverage, contribution of each criterion, stability under ±25 % weight changes, the cell's values with their source, its slope classes next to the target's, a 12-month low-Sun calendar, nearby known analogs, and "new" when none is within 1,000 km. A cell without a score says why (which filter, or how little data).
 - "Where the known analogs land": the percentile of every known site for the current settings.
 - "What Earth cannot reproduce" next to every candidate, never inside the score.

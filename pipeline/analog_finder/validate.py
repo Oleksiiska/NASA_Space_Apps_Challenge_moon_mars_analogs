@@ -139,7 +139,9 @@ def report_markdown(result: dict) -> str:
              f"- Scores only: {a['scored']} of {a['pairs']} site-task-target pairs scored, median percentile {a['median_percentile']}, "
              f"top 20 % in {a['share_top20']:.0%}, top 10 % in {a['share_top10']:.0%}.",
              f"- With the hard filters of each task: {f['scored']} pairs left, median {f['median_percentile']}, top 20 % in {f['share_top20']:.0%}. "
-             "Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands), and remote sites with no major road within 50 km for rover mobility.",
+             "Filters remove sites whose 55 km cell is mostly vegetated although the site itself is bare (impact craters in forest, volcanic islands), remote sites with no major road within 50 km for rover mobility, "
+             "and, for operations under a low Sun, cells without a snow-free month that has at least 2 h a day of low Sun (glaciated cells such as Svalbard and the Antarctic sites).",
+             "- Low Sun is not part of any score: it depends only on latitude and season, so the page shows it as a separate window (hours per day with the Sun 0-5 degrees up in a snow-free month, and which month).",
              f"- Independent part: the tasks {', '.join(s.get('context_tasks', [])) or '(none)'} use the volcano and impact lists, and those lists contain many "
              "of the analog sites themselves, so their high percentiles show that the layers work, not that the method finds analogs on its own. "
              f"Without them: {s['independent']['scores_only']['scored']} pairs, median percentile {s['independent']['scores_only']['median_percentile']}, "

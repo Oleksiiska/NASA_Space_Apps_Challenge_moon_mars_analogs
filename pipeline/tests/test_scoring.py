@@ -121,3 +121,31 @@ def test_export_layout(tmp_path):
     off = next(c["offset"] for c in doc["criteria"] if c["name"] == "composition")
     assert (raw[off: off + cells.n] == 255).all()                               # no EMIT values: unknown, not zero
     json.loads((tmp_path / "criteria.json").read_text())
+
+
+def test_sun_window_is_the_best_snow_free_month_and_never_a_weight():
+    """Low Sun is shown as a window (when), never weighted: best low-Sun month among the snow-free ones."""
+    from analog_finder import config
+    from analog_finder.features import sun
+    rows = np.array([40, 40, 180, 40])                                  # 69.75 N, 69.75 N, 0.25 S, 69.75 N
+    idx = (rows * 720 + np.arange(4)).astype(np.uint32)
+    summer = np.array([100, 100, 100, 100, 100, 0, 0, 0, 0, 100, 100, 100], dtype=np.float32)
+    snow = {f"snow_m{m:02d}": np.array([summer[m - 1], 100.0, 0.0, np.nan], dtype=np.float32) for m in range(1, 13)}
+    meta = {"grid": {"cell_deg": 0.5, "n_lat": 360, "n_lon": 720, "row0_lat_center": 89.75, "col0_lon_center": -179.75}}
+    z = np.zeros(4, dtype=np.float32)
+    f = {"ndvi_mean": z, "slope_lt8": z + 1, "lst_day_mean_k": z + 280, "lst_night_mean_k": z + 260, "ice_frac": z,
+         "snow_free_months": z + 4, **snow}
+    cells = scoring.Cells(index=idx, lat=89.75 - rows * 0.5, lon=z, f=f, meta=meta)
+    best, month = scoring.sun_window(cells)
+    table = np.round(sun.low_sun_table(0.5)["monthly_hours"], 2)
+    assert best[0] == pytest.approx(table[40, 5:9].max()) and month[0] == 6 + int(table[40, 5:9].argmax())
+    assert np.isnan(best[1]) and month[1] == 0                         # snow all year: no usable window
+    assert best[2] < scoring.SUN_WINDOW_MIN_H                           # the equator: about 0.7 h, sunrise and sunset only
+    assert np.isnan(best[3])                                            # unknown snow does not count as snow-free
+    assert scoring.constraints(cells)["sun_window"].tolist() == [True, False, False, False]
+    known = set(config.tasks()["constraints"])
+    for t in config.tasks()["tasks"]:
+        assert "low_sun" not in t["weights"], t["id"]
+        assert set(t.get("constraints", [])) | set(t.get("optional_constraints", [])) <= known, t["id"]
+        if "sun_window" in t.get("constraints", []):
+            assert t.get("show_sun_window"), t["id"]
