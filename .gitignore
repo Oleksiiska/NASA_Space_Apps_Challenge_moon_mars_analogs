@@ -37,3 +37,7 @@ Thumbs.db
 
 # Experimental grids of other cell sizes (ANALOG_CELL_DEG), rebuilt from the raw data
 data/processed_*/
+
+# Outputs of `evaluate` (the baseline eval_baseline.json is kept)
+data/processed/eval_current.json
+data/processed/eval_holdout*.json
